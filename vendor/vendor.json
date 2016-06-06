@@ -1,0 +1,49 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "fh3G19liS3cCQDnBzUJxE0YrsOk=",
+			"path": "github.com/buger/goterm",
+			"revision": "db9aaed44abbb1be9061aa43612ede2e864c5973",
+			"revisionTime": "2015-04-18T15:48:25Z"
+		},
+		{
+			"checksumSHA1": "YekVGKyKnfoCMeqsk+P4chiy8Fc=",
+			"path": "github.com/gizak/termui",
+			"revision": "cede030c415fcb9b99b23fccfcb790d37ad3edb8",
+			"revisionTime": "2016-03-10T20:52:15Z"
+		},
+		{
+			"checksumSHA1": "DdH3xAkzAWJ4B/LGYJyCeRsly2I=",
+			"path": "github.com/mattn/go-runewidth",
+			"revision": "d6bea18f789704b5f83375793155289da36a3c7f",
+			"revisionTime": "2016-03-15T04:07:12Z"
+		},
+		{
+			"checksumSHA1": "L3leymg2RT8hFl5uL+5KP/LpBkg=",
+			"path": "github.com/mitchellh/go-wordwrap",
+			"revision": "ad45545899c7b13c020ea92b2072220eefad42b8",
+			"revisionTime": "2015-03-14T17:03:34Z"
+		},
+		{
+			"checksumSHA1": "kaaW7bJe/+GStqqL66NO/eAj/Vs=",
+			"path": "github.com/nsf/termbox-go",
+			"revision": "362329b0aa6447eadd52edd8d660ec1dff470295",
+			"revisionTime": "2016-01-22T23:29:15Z"
+		},
+		{
+			"checksumSHA1": "gAhLoEQbazL8ZNWQzA9ch/8kB/s=",
+			"path": "github.com/spf13/cobra",
+			"revision": "65a708cee0a4424f4e353d031ce440643e312f92",
+			"revisionTime": "2016-02-07T18:29:17Z"
+		},
+		{
+			"checksumSHA1": "MrBzoMkuXdrGKo09/ka+JCC2Mlk=",
+			"path": "github.com/spf13/pflag",
+			"revision": "7f60f83a2c81bc3c3c0d5297f61ddfa68da9d3b7",
+			"revisionTime": "2015-10-24T10:54:09Z"
+		}
+	],
+	"rootPath": "github.com/spaceapegames/go-wavefront"
+}
