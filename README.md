@@ -171,6 +171,14 @@ wavefront query 'sum(last(1m,interpolate(ts("server.connections", tag="preprod")
 
 ![screen shot](live-graph.png)
 
+## Development
+
+Package vendoring is performed using `govendor`.
+
+Pull this repo and run `govendor sync` to pull down requirements.
+
+If you are using Go 1.5 set the environment variable `GO15VENDOREXPERIMENT=1`
+
 ## Contributing
 
 Pull requests are welcomed. 
