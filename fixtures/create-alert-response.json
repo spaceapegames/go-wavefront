@@ -1,0 +1,118 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "string",
+    "code": 0
+  },
+  "response": {
+    "created": 0,
+    "minutes": 0,
+    "name": "test alert",
+    "id": "1234",
+    "target": "test@example.com",
+    "status": [
+      "FIRING"
+    ],
+    "tags": {
+      "customerTags": [
+        "mytag1",
+        "mytag2"
+      ]
+    },
+    "inTrash": true,
+    "notificationResendFrequencyMinutes": 0,
+    "createdEpochMillis": 0,
+    "updatedEpochMillis": 0,
+    "updaterId": "string",
+    "creatorId": "string",
+    "condition": "string",
+    "conditionQBEnabled": true,
+    "conditionQBSerialization": "string",
+    "displayExpression": "string",
+    "displayExpressionQBEnabled": true,
+    "displayExpressionQBSerialization": "string",
+    "resolveAfterMinutes": 0,
+    "snoozed": 0,
+    "event": {
+      "startTime": 0,
+      "endTime": 0,
+      "name": "string",
+      "annotations": {},
+      "id": "string",
+      "table": "string",
+      "tags": [
+        "string"
+      ],
+      "createdEpochMillis": 0,
+      "updatedEpochMillis": 0,
+      "updaterId": "string",
+      "creatorId": "string",
+      "createdAt": 0,
+      "updatedAt": 0,
+      "hosts": [
+        "string"
+      ],
+      "summarizedEvents": 0,
+      "isUserEvent": true,
+      "isEphemeral": true,
+      "runningState": "ONGOING",
+      "canDelete": true,
+      "canClose": true,
+      "creatorType": [
+        "USER"
+      ]
+    },
+    "failingHostLabelPairs": [
+      {
+        "label": "string",
+        "host": "string",
+        "tags": {},
+        "observed": 0,
+        "firing": 0
+      }
+    ],
+    "updated": 0,
+    "severity": "INFO",
+    "queryFailing": true,
+    "lastFailedTime": 0,
+    "lastErrorMessage": "string",
+    "additionalInformation": "string",
+    "metricsUsed": [
+      "string"
+    ],
+    "hostsUsed": [
+      "string"
+    ],
+    "inMaintenanceHostLabelPairs": [
+      {
+        "label": "string",
+        "host": "string",
+        "tags": {},
+        "observed": 0,
+        "firing": 0
+      }
+    ],
+    "activeMaintenanceWindows": [
+      "string"
+    ],
+    "updateUserId": "string",
+    "prefiringHostLabelPairs": [
+      {
+        "label": "string",
+        "host": "string",
+        "tags": {},
+        "observed": 0,
+        "firing": 0
+      }
+    ],
+    "notificants": [
+      "string"
+    ],
+    "createUserId": "string",
+    "lastProcessedMillis": 0,
+    "processRateMinutes": 0,
+    "pointsScannedAtLastQuery": 0,
+    "lastNotificationMillis": 0,
+    "deleted": true
+  }
+}

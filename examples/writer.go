@@ -1,0 +1,40 @@
+package main
+
+import (
+	"os"
+	"time"
+
+	wavefront "github.com/spaceapegames/go-wavefront/writer"
+)
+
+func main() {
+	// create a Writer with the source = hostname and
+	// with all metrics exhibiting the tag environment=staging
+	tags := []*wavefront.PointTag{
+		&wavefront.PointTag{
+			Key:   "environment",
+			Value: "staging",
+		},
+	}
+
+	source, _ := os.Hostname()
+
+	wf, _ := wavefront.NewWriter(
+		"wavefront-proxy.example.com",
+		2878,
+		source,
+		tags,
+	)
+	defer wf.Close()
+
+	// write a simple metric (timestamp now)
+	wf.Write(wavefront.NewMetric("something.very.good.count", 33))
+
+	// for more control over the metric (e.g. setting the timestamp and decimal places)
+	m := wavefront.Metric{
+		Name:      "something.very.good.count",
+		Timestamp: time.Now().Unix() - 60*1000,
+		Precision: 2,
+	}
+	wf.Write(m.Update(35.07))
+}
