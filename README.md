@@ -35,7 +35,7 @@ func main() {
         log.Fatal(err)
     }
 
-  fmt.Println(result.TimeSeries[0].Label)
+    fmt.Println(result.TimeSeries[0].Label)
     fmt.Println(result.TimeSeries[0].DataPoints[0])
 }
 ```
