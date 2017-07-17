@@ -10,7 +10,7 @@ Presently support for querying, searching, alerts and events.
 
 Please see the [examples](examples) directory for an example on how to use each.
 
-```
+```Go
 package main
 
 import (
@@ -46,7 +46,7 @@ Writer has full support for metric tagging etc.
 
 Again, see [examples](examples) for a more detailed explanation.
 
-```
+```Go
 package main
 
 import (
