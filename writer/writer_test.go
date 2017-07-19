@@ -1,52 +1,84 @@
 package wavefront
 
 import (
-	"log"
-	"net"
-	"strings"
+	"bytes"
+	"fmt"
 	"testing"
 )
 
-var ln = mockSocket()
+type dummyConn struct{}
 
-func mockSocket() net.Listener {
-	l, err := net.Listen("tcp", "localhost:31245")
-	if err != nil {
-		log.Fatalf("Unable to create listener: %s", err)
-	}
-	return l
+var b bytes.Buffer
+
+func (d dummyConn) Write(p []byte) (int, error) {
+	fmt.Fprintf(&b, string(p))
+	return 0, nil
+}
+
+func (d dummyConn) Close() error {
+	return nil
 }
 
 func TestWriteMetrics(t *testing.T) {
-	w, err := NewWriter("localhost", 31245)
+	w, err := NewWriter("localhost", 31245, "myHost1", nil)
 	if err != nil {
 		t.Fatalf("NewWriter failed with %s", err)
 	}
+	w.conn = dummyConn{}
+	defer w.Close()
 
-	connChannel := make(chan string)
-	go func() {
-		conn, err := ln.Accept()
+	updated := NewMetric("my.cool.test", 6969)
+	updated.Update(7000)
+
+	testMetrics := []struct {
+		metric *Metric
+		expect string
+	}{
+		{NewMetric("my.cool.test", 6969), "my.cool.test 6969 source=myHost1"},
+		{updated, "my.cool.test 7000 source=myHost1"},
+		{&Metric{"my.cool.test", 6969.00, 0, 0}, "my.cool.test 6969 source=myHost1"},
+		{&Metric{"my.cool.test", 6969.00, 2, 1499695112}, "my.cool.test 6969.00 1499695112 source=myHost1"},
+	}
+
+	for _, tm := range testMetrics {
+		var out []byte
+		err := w.Write(tm.metric)
 		if err != nil {
-			log.Fatalf("Failed to accept connection: %s, err")
+			t.Error(err)
 		}
-		defer conn.Close()
-		buf := make([]byte, 1000)
-		if _, err := conn.Read(buf); err != nil && err.Error() != "EOF" {
-			log.Fatalf("Error reading from socket: %s", err)
-		} else {
-			connChannel <- string(buf)
+		out, err = b.ReadBytes('\n')
+		if err != nil {
+			t.Error(err)
 		}
-
-	}()
-
-	w.Write(&Metric{Name: "my.cool.test", Value: "6969"})
-	output := <-connChannel
-	if strings.Split(output, " ")[0] != "my.cool.test" {
-		t.Errorf("metric name expected my.cool.test, got %s", strings.Split(output, " ")[0])
+		if string(out) != tm.expect+"\n" {
+			t.Errorf("metric, expected %s, got %s", tm.expect, string(out))
+		}
 	}
 
-	if strings.Split(output, " ")[1] != "6969" {
-		t.Errorf("metric value expected 6969, got %s", strings.Split(output, " ")[1])
+	w.SetPointTags([]*PointTag{
+		&PointTag{Key: "some",
+			Value: "tag",
+		},
+	})
+
+	w.Write(NewMetric("my.cool.test", 7077))
+	out, err := b.ReadBytes('\n')
+	if err != nil {
+		t.Error(err)
+	}
+	expect := "my.cool.test 7077 source=myHost1 some=tag"
+	if string(out) != expect+"\n" {
+		t.Errorf("point tags, expected %s, got %s", expect, string(out))
 	}
 
+	w.SetSource("anotherHost")
+	w.Write(NewMetric("my.cool.test", 7077))
+	out, err = b.ReadBytes('\n')
+	if err != nil {
+		t.Error(err)
+	}
+	expect = "my.cool.test 7077 source=anotherHost some=tag"
+	if string(out) != expect+"\n" {
+		t.Errorf("set source, expected %s, got %s", expect, string(out))
+	}
 }

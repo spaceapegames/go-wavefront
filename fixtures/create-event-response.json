@@ -1,0 +1,38 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "string",
+    "code": 200 
+  },
+  "response": {
+    "startTime": 1499427143000,
+    "endTime": 0,
+    "name": "test event",
+    "annotations": {
+      "severity" : "warn"
+    },
+    "id": "1234",
+    "table": "example",
+    "tags": [
+      "mystage1"
+    ],
+    "runningState": "ONGOING",
+    "createdAt": 0,
+    "createdEpochMillis": 0,
+    "updatedEpochMillis": 0,
+    "updaterId": "string",
+    "creatorId": "string",
+    "updatedAt": 0,
+    "hosts": [
+      "string"
+    ],
+    "summarizedEvents": 0,
+    "isUserEvent": true,
+    "isEphemeral": true,
+    "canDelete": true,
+    "canClose": true,
+    "creatorType": [
+      "USER"
+    ]
+  }
+}

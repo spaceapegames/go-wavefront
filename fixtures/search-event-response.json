@@ -1,0 +1,91 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "items": [
+      {
+        "startTime": 1498664617084,
+        "endTime": 1498664617085,
+        "name": "Alert Fired: Service Errors",
+        "annotations": {
+          "severity": "warn",
+          "details": "some details",
+          "type": "alert-detail",
+          "subtype": "failing",
+          "created": "1429278900427"
+        },
+        "id": "1498664617084:Alert Fired: Service Errors",
+        "table": "example",
+        "runningState": "ENDED",
+        "updaterId": "System Event",
+        "creatorId": "System Event",
+        "hosts": [
+          "i-1234.service.prod.example.net"
+        ],
+        "canDelete": false,
+        "canClose": false,
+        "creatorType": [
+          "SYSTEM"
+        ]
+      },
+      {
+        "startTime": 1498664551701,
+        "endTime": 1498664814302,
+        "name": "Service Errors",
+        "annotations": {
+          "severity": "warn",
+          "details": "",
+          "type": "alert",
+          "created": "1429278900427",
+          "target": "ops@example.com"
+        },
+        "id": "1498664551701:Service Errors",
+        "table": "example",
+        "runningState": "ENDED",
+        "updaterId": "System Event",
+        "creatorId": "System Event",
+        "hosts": [
+          "i-42415.service.prod.example.net",
+          "i-b75eb.service.prod.example.net"
+        ],
+        "canDelete": false,
+        "canClose": false,
+        "creatorType": [
+          "SYSTEM",
+          "ALERT"
+        ]
+      },
+      {
+        "startTime": 1498644835937,
+        "endTime": 1498644965386,
+        "name": "Service Errors",
+        "annotations": {
+          "severity": "warn",
+          "details": "",
+          "type": "alert",
+          "created": "1429278900427",
+          "target": "ops@example.com"
+        },
+        "id": "1498644835937:Service Errors",
+        "table": "example",
+        "runningState": "ENDED",
+        "updaterId": "System Event",
+        "creatorId": "System Event",
+        "hosts": [
+          "i-087e9.service.prod.example.net"
+        ],
+        "canDelete": false,
+        "canClose": false,
+        "creatorType": [
+          "SYSTEM",
+          "ALERT"
+        ]
+      }
+    ],
+    "limit": 10,
+    "moreItems": false
+  }
+}
