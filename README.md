@@ -1,4 +1,4 @@
-# Golang Wavefront Client
+# Golang Wavefront Client [![GoDoc](https://godoc.org/github.com/spaceapegames/go-wavefront?status.svg)](https://godoc.org/github.com/spaceapegames/go-wavefront)
 
 Golang SDK for interacting with the Wavefront v2 API, and sending metrics through a Wavefront proxy. 
 
