@@ -8,7 +8,7 @@ Golang SDK for interacting with the Wavefront v2 API, and sending metrics throug
  
 Presently support for querying, searching, alerts and events.
 
-Please see the [examples](examples) directory for an example on how to use each.
+Please see the [examples](examples) directory for an example on how to use each, or check out the [documentation](https://godoc.org/github.com/spaceapegames/go-wavefront).
 
 ```Go
 package main
