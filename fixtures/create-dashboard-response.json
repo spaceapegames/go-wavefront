@@ -1,0 +1,69 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "name": "Dashboard API example",
+    "id": "api-example",
+    "parameters": {},
+    "description": "Dashboard Description",
+    "numCharts": 1,
+    "numFavorites": 0,
+    "favorite": false,
+    "systemOwned": false,
+    "tags": {
+      "customertags": [
+        "test"
+      ]
+    },
+    "customer": "spaceape",
+    "url": "api-example",
+    "eventFilterType": "BYCHART",
+    "sections": [
+      {
+        "name": "Section 1",
+        "rows": [
+          {
+            "charts": [
+              {
+                "name": "Chart 1",
+                "includeObsoleteMetrics": false,
+                "description": "description1",
+                "base": 0,
+                "sources": [
+                  {
+                    "name": "Source1",
+                    "query": "ts()"
+                  }
+                ],
+                "noDefaultEvents": false,
+                "interpolatePoints": false
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "viewsLastDay": 0,
+    "viewsLastWeek": 0,
+    "viewsLastMonth": 0,
+    "createdEpochMillis": 1502881472646,
+    "updatedEpochMillis": 1502881472646,
+    "updaterId": "test@example.com",
+    "creatorId": "test@example.com",
+    "deleted": false,
+    "parameterDetails": {
+      "env": {
+        "label": "env",
+        "defaultValue": "Label",
+        "hideFromView": false,
+        "parameterType": "SIMPLE",
+        "valuesToReadableStrings": {
+          "Label": "test"
+        }
+      }
+    }
+  }
+}
