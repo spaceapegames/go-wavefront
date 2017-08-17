@@ -20,11 +20,13 @@ func (d dummyConn) Close() error {
 }
 
 func TestWriteMetrics(t *testing.T) {
-	w, err := NewWriter("localhost", 31245, "myHost1", nil)
-	if err != nil {
-		t.Fatalf("NewWriter failed with %s", err)
+
+	w := &Writer{
+		conn:      dummyConn{},
+		source:    "myHost1",
+		pointTags: nil,
+		suffix:    metricSuffix("myHost1", nil),
 	}
-	w.conn = dummyConn{}
 	defer w.Close()
 
 	updated := NewMetric("my.cool.test", 6969)
