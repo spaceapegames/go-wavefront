@@ -1,6 +1,12 @@
 # Changelog
 
 Changelog for go-wavefront.
+## [1.1.0] - 2017-08-17
+
+*Add the ability to manage dashboards*
+
+- Support for dashboards
+
 ## [1.0.0] - 2017-07-17
 
 *Complete re-write of libraries. Breaking API changes*

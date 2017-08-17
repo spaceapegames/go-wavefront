@@ -1,0 +1,98 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "items": [
+      {
+        "name": "test 2",
+        "id": "test2",
+        "parameters": {},
+        "description": "test 2",
+        "numCharts": 4,
+        "numFavorites": 0,
+        "favorite": false,
+        "systemOwned": false,
+        "displayQueryParameters": true,
+        "tags": {
+          "customerTags": [
+            "test 2.1",
+            "test 2.2"
+          ]
+        },
+        "customer": "spaceape",
+        "url": "test2",
+        "eventFilterType": "BYCHART",
+        "sections": [
+          {
+            "name": "Summary",
+            "rows": [
+              {
+                "heightFactor": 100,
+                "charts": [
+                  {
+                    "units": "USD per day",
+                    "name": "Account Spend per Day",
+                    "includeObsoleteMetrics": false,
+                    "base": 0,
+                    "sources": [
+                      {
+                        "name": "Test 2.1",
+                        "query": "ts()",
+                        "scatterPlotSource": "Y"
+                      }
+                    ],
+                    "noDefaultEvents": false,
+                    "interpolatePoints": true,
+                    "chartSettings": {
+                      "min": 0,
+                      "type": "table",
+                      "lineType": "linear",
+                      "stackType": "zero",
+                      "windowing": "full",
+                      "windowSize": 5,
+                      "showHosts": true,
+                      "showLabels": true,
+                      "showRawValues": false,
+                      "autoColumnTags": false,
+                      "columnTags": "",
+                      "tagMode": "all",
+                      "numTags": 4,
+                      "xmin": 0,
+                      "timeBasedColoring": false
+                    },
+                    "summarization": "MEAN"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "parameterDetails": {
+          "service": {
+            "label": "Service",
+            "defaultValue": "Label",
+            "parameterType": "SIMPLE",
+            "valuesToReadableStrings": {
+              "Label": "AmazonEC2"
+            }
+          }
+        },
+        "displayDescription": false,
+        "displaySectionTableOfContents": true,
+        "viewsLastDay": 0,
+        "viewsLastWeek": 1,
+        "viewsLastMonth": 1,
+        "updatedEpochMillis": 1460480364794,
+        "updaterId": "test@example.com",
+        "deleted": false
+      }
+    ],
+    "offset": 0,
+    "limit": 1,
+    "totalItems": 2,
+    "moreItems": false
+  }
+}
