@@ -1,4 +1,4 @@
-TEST?=$$(go list ./... |grep -v 'vendor'|grep -v 'examples'| grep -v 'writer')
+TEST?=$$(go list ./... |grep -v 'vendor'|grep -v 'examples')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 
 default: test
