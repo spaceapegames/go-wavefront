@@ -188,11 +188,7 @@ func (a Dashboards) Get(dashboard *Dashboard) error {
 		return fmt.Errorf("Dashboard id field is not set")
 	}
 
-	err := a.crudDashboard("GET", fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard)
-	if err != nil {
-		return err
-	}
-	return nil
+	return a.crudDashboard("GET", fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard)
 }
 
 // Delete is used to delete an existing Dashboard.
