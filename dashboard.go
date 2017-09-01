@@ -181,6 +181,20 @@ func (a Dashboards) Update(dashboard *Dashboard) error {
 
 }
 
+// Get is used to retrieve an existing Dashboard by ID.
+// The ID field must be provided
+func (a Dashboards) Get(dashboard *Dashboard) error {
+	if dashboard.ID == "" {
+		return fmt.Errorf("Dashboard id field is not set")
+	}
+
+	err := a.crudDashboard("GET", fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Delete is used to delete an existing Dashboard.
 // The ID field of the Dashboard must be populated
 func (a Dashboards) Delete(dashboard *Dashboard) error {
