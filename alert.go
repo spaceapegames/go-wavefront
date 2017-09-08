@@ -14,6 +14,9 @@ type Alert struct {
 	// ID is the Wavefront-assigned ID of an existing Alert
 	ID *string `json:"id,omitempty"`
 
+	// AdditionalInfo is any extra information about the Alert
+	AdditionalInfo string `json:"additionalInformation"`
+
 	// Target is a comma-separated list of email targets for the Alert
 	Target string `json:"target"`
 

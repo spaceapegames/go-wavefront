@@ -113,6 +113,7 @@ func TestAlerts_CreateUpdateDeleteAlert(t *testing.T) {
 		Minutes:             2,
 		ResolveAfterMinutes: 2,
 		Severity:            "WARN",
+		AdditionalInfo:      "please resolve this alert",
 		Tags:                []string{"mytag1", "mytag2"},
 	}
 
