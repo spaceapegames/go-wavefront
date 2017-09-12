@@ -17,7 +17,7 @@ type Alert struct {
 	// AdditionalInfo is any extra information about the Alert
 	AdditionalInfo string `json:"additionalInformation"`
 
-	// Target is a comma-separated list of email targets for the Alert
+	// Target is a comma-separated list of targets for the Alert
 	Target string `json:"target"`
 
 	// Condition is the condition under which the Alert will fire

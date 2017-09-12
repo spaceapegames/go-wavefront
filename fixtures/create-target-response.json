@@ -1,0 +1,29 @@
+{
+   "status" : {
+      "result" : "OK",
+      "code" : 200,
+      "message" : ""
+   },
+   "response" : {
+      "updatedEpochMillis" : 1505224633193,
+      "updaterId" : "bob@example.com",
+      "emailSubject" : "",
+      "title" : "test target",
+      "method" : "WEBHOOK",
+      "customHttpHeaders" : {
+         "Testing" : "true"
+      },
+      "contentType" : "application/json",
+      "creatorId" : "bob@example.com",
+      "id" : "7",
+      "customerId" : "testy",
+      "description" : "testing something",
+      "triggers" : [
+         "ALERT_OPENED",
+         "ALERT_RESOLVED"
+      ],
+      "recipient" : "https://hooks.slack.com/services/1224/3344",
+      "createdEpochMillis" : 1505224633193,
+      "template" : ""
+   }
+}
