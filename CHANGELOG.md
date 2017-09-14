@@ -1,6 +1,12 @@
 # Changelog
 
 Changelog for go-wavefront.
+## [1.1.11] - 2017-09-14
+
+*Add the ability to manage alert targets*
+
+- Support for Alert Targets (notificants)
+
 ## [1.1.0] - 2017-08-17
 
 *Add the ability to manage dashboards*
