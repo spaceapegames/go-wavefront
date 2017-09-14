@@ -1,0 +1,36 @@
+{{! https://docs.wavefront.com/webhooks_managing.html#customizing-a-webhook-template }}
+{{#setDefaultIterationLimit}}500{{/setDefaultIterationLimit}}
+{{#setFailingLimit}}500{{/setFailingLimit}}
+{{#setInMaintenanceLimit}}500{{/setInMaintenanceLimit}}
+{{#setNewlyFailingLimit}}500{{/setNewlyFailingLimit}}
+{{#setRecoveredLimit}}500{{/setRecoveredLimit}}
+{
+  "attachments": [
+    {
+      "fallback": "{{#jsonEscape}}{{{subject}}} {{{reason}}} [{{{severity}}}] {{{name}}}{{/jsonEscape}}",
+      "pretext": "{{#jsonEscape}}{{{subject}}} {{{reason}}} [{{{severity}}}] {{{name}}}{{/jsonEscape}}",
+      "mrkdwn_in": [
+        "text",
+        "pretext",
+        "fields"
+      ],
+      "fields": [
+        {
+          "title": "Severity",
+          "value": "{{#jsonEscape}}{{{severity}}}{{/jsonEscape}}",
+          "short": true
+        },
+        {
+          "title": "URL",
+          "value": "<{{{url}}}>",
+          "short": true
+        },
+        {
+          "title": "Additional Info",
+          "value": "{{#jsonEscape}}{{{additionalInformation}}}{{/jsonEscape}}",
+          "short": false
+        }
+      ]
+    }
+  ]
+}

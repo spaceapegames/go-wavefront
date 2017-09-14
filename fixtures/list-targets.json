@@ -1,0 +1,57 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "items": [
+      {
+        "method": "WEBHOOK",
+        "contentType": "application/json",
+        "id": "1",
+        "description": "Webhook for Slack",
+        "customerId": "testing",
+        "createdEpochMillis": 1502198558402,
+        "updatedEpochMillis": 1505204057427,
+        "updaterId": "ops@example.com",
+        "creatorId": "bob@example.com",
+        "title": "Slack On Call",
+        "template": "{{! https://docs.wavefront.com/webhooks_managing.html#customizing-a-webhook-template }}\n{{#setDefaultIterationLimit}}500{{/setDefaultIterationLimit}}\n{{#setFailingLimit}}500{{/setFailingLimit}}\n{{#setInMaintenanceLimit}}500{{/setInMaintenanceLimit}}\n{{#setNewlyFailingLimit}}500{{/setNewlyFailingLimit}}\n{{#setRecoveredLimit}}500{{/setRecoveredLimit}}\n{\n  \"attachments\": [\n    {\n      \"fallback\": \"{{#jsonEscape}}{{{subject}}} {{{reason}}} [{{{severity}}}] {{{name}}}{{/jsonEscape}}\",\n      \"pretext\": \"{{#jsonEscape}}{{{subject}}} {{{reason}}} [{{{severity}}}] {{{name}}}{{/jsonEscape}}\",\n      \"mrkdwn_in\": [\n        \"text\",\n        \"pretext\",\n        \"fields\"\n      ],\n      \"fields\": [\n        {\n          \"title\": \"Severity\",\n          \"value\": \"{{#jsonEscape}}{{{severity}}}{{/jsonEscape}}\",\n          \"short\": true\n        },\n        {\n          \"title\": \"URL\",\n          \"value\": \"<{{{url}}}>\",\n          \"short\": true\n        },\n        {\n          \"title\": \"Additional Info\",\n          \"value\": \"{{#jsonEscape}}{{{additionalInformation}}}{{/jsonEscape}}\",\n          \"short\": false\n        }\n      ]\n    }\n  ]\n}\n",
+        "triggers": [
+          "ALERT_OPENED",
+          "ALERT_RESOLVED"
+        ],
+        "recipient": "https://hooks.slack.com/services/1234/5678",
+        "customHttpHeaders": {
+          "Testing" : "true"
+        },
+        "emailSubject": ""
+      },
+      {
+        "method": "EMAIL",
+        "id": "2",
+        "description": "Email Target",
+        "customerId": "testing",
+        "createdEpochMillis": 1505122637180,
+        "updatedEpochMillis": 1505208854347,
+        "updaterId": "ops@example.com",
+        "creatorId": "ops@example.com",
+        "title": "Email Target",
+        "template": "{{! https://docs.wavefront.com/webhooks_managing.html#customizing-a-webhook-template }}\n{{#setDefaultIterationLimit}}500{{/setDefaultIterationLimit}}\n{{#setFailingLimit}}500{{/setFailingLimit}}\n{{#setInMaintenanceLimit}}500{{/setInMaintenanceLimit}}\n{{#setNewlyFailingLimit}}500{{/setNewlyFailingLimit}}\n{{#setRecoveredLimit}}500{{/setRecoveredLimit}}\n{\n  \"attachments\": [\n    {\n      \"fallback\": \"{{#jsonEscape}}{{{subject}}} {{{reason}}} [{{{severity}}}] {{{name}}}{{/jsonEscape}}\",\n      \"pretext\": \"{{#jsonEscape}}{{{subject}}} {{{reason}}} [{{{severity}}}] {{{name}}}{{/jsonEscape}}\",\n      \"mrkdwn_in\": [\n        \"text\",\n        \"pretext\",\n        \"fields\"\n      ],\n      \"fields\": [\n        {\n          \"title\": \"Severity\",\n          \"value\": \"{{#jsonEscape}}{{{severity}}}{{/jsonEscape}}\",\n          \"short\": true\n        },\n        {\n          \"title\": \"URL\",\n          \"value\": \"<{{{url}}}>\",\n          \"short\": true\n        },\n        {\n          \"title\": \"Additional Info\",\n          \"value\": \"{{#jsonEscape}}{{{additionalInformation}}}{{/jsonEscape}}\",\n          \"short\": false\n        }\n      ]\n    }\n  ]\n}",
+        "triggers": [
+          "ALERT_OPENED",
+          "ALERT_RESOLVED"
+        ],
+        "recipient": "https://hooks.slack.com/services/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",
+        "customHttpHeaders": {},
+        "emailSubject": "Alert alert",
+        "recipient" : "bob@example.com"
+      }
+    ],
+    "offset": 0,
+    "limit": 100,
+    "totalItems": 3,
+    "moreItems": false
+  }
+}
