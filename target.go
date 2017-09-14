@@ -23,11 +23,11 @@ type Target struct {
 	// Title is the title(name) of the Target
 	Title string `json:"title"`
 
-	// Method must be "EMAIL" or "WEBHOOK"
+	// Method must be EMAIL, WEBHOOK or PAGERDUTY
 	Method string `json:"method"`
 
-	// Recipient is a comma-separated list of email addresses, or a webhook URL,
-	// to which notifications will be sent for this Target
+	// Recipient is a comma-separated list of email addresses, webhook URL,
+	// or 32-digit PagerDuty key  to which notifications will be sent for this Target
 	Recipient string `json:"recipient"`
 
 	// EmailSubject is the subject of the email which will be sent for this Target
