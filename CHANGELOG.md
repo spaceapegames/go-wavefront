@@ -1,6 +1,11 @@
 # Changelog
 
 Changelog for go-wavefront.
+
+## [1.1.12] - 2017-10-03
+
+For Events process annotations before unmarshelling JSON
+
 ## [1.1.11] - 2017-09-14
 
 *Add the ability to manage alert targets*
