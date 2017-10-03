@@ -57,12 +57,13 @@ func (e *Event) UnmarshalJSON(b []byte) error {
 	}{
 		event: (*event)(e),
 	}
-	if err := json.Unmarshal(b, &temp); err != nil {
-		return err
-	}
+
 	e.Severity = temp.Annotations["severity"]
 	e.Type = temp.Annotations["type"]
 	e.Details = temp.Annotations["details"]
+	if err := json.Unmarshal(b, &temp); err != nil {
+		return err
+	}
 
 	return nil
 }
