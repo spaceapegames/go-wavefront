@@ -24,7 +24,7 @@ type Alert struct {
 	Condition string `json:"condition"`
 
 	// DisplayExpression is the ts query to generate a graph of this Alert, in the UI
-	DisplayExpression string `json:"displayExpressionomitempty"`
+	DisplayExpression string `json:"displayExpression,omitempty"`
 
 	// Minutes is the number of minutes the Condition must be met, before the
 	// Alert will fire

@@ -1,6 +1,10 @@
 # Changelog
 
 Changelog for go-wavefront.
+## [1.1.12] - 2017-10-13
+
+*Allow optional Alert fields to be omitted
+
 ## [1.1.11] - 2017-09-14
 
 *Add the ability to manage alert targets*
