@@ -24,7 +24,7 @@ type Alert struct {
 	Condition string `json:"condition"`
 
 	// DisplayExpression is the ts query to generate a graph of this Alert, in the UI
-	DisplayExpression string `json:"displayExpression"`
+	DisplayExpression string `json:"displayExpression,omitempty"`
 
 	// Minutes is the number of minutes the Condition must be met, before the
 	// Alert will fire
@@ -32,7 +32,7 @@ type Alert struct {
 
 	// ResolveAfterMinutes is the number of minutes the Condition must be un-met
 	// before the Alert is considered resolved
-	ResolveAfterMinutes int `json:"resolveAfterMinutes"`
+	ResolveAfterMinutes int `json:"resolveAfterMinutes,omitempty"`
 
 	// Severity is the severity of the Alert, and can be one of SEVERE,
 	// SMOKE, WARN or INFO
