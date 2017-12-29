@@ -1,9 +1,17 @@
 # Changelog
 
 Changelog for go-wavefront.
+
+## [1.2.0]
+
+*Improvements to Dashboards*
+
+- Add missing fields from Sources (ScatterPlotSource, Disabled, QuerybuilderEnabled and SourceDescription)
+- Add Dynamic and List parameter types
+
 ## [1.1.12] - 2017-10-13
 
-*Allow optional Alert fields to be omitted
+- Allow optional Alert fields to be omitted
 
 ## [1.1.11] - 2017-09-14
 

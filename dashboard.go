@@ -41,11 +41,20 @@ type ParameterDetail struct {
 	// HideFromView Whether to hide from the view of the user viewing the Dashboard
 	HideFromView bool `json:"hideFromView"`
 
-	// ParameterType
+	// ParameterType (SIMPLE, LIST, DYNAMIC)
 	ParameterType string `json:"parameterType"`
 
 	// ValuesToReadableStrings
 	ValuesToReadableStrings map[string]string `json:"valuesToReadableStrings"`
+
+	// QueryValue
+	QueryValue string `json:"queryValue,omitempty"`
+
+	// TagKey Only required for a DynamicFieldType of TAG_KEY
+	TagKey string `json:"tagKey,omitempty"`
+
+	// DynamicFieldType (TAG_KEY, MATCHING_SOURCE_TAG, SOURCE_TAG, SOURCE, METRIC_NAME) Only required for a Parameter type of Dynamic.
+	DynamicFieldType string `json:"dynamicFieldType,omitempty"`
 }
 
 // Section Represents a Single section within a Dashboard
@@ -88,6 +97,18 @@ type Source struct {
 
 	// Query is a wavefront Query
 	Query string `json:"query"`
+
+	// Disabled indicated whether the source is disabled from being rendered on the chart
+	Disabled bool `json:"disabled,omitempty"`
+
+	// ScatterPlotSource
+	ScatterPlotSource string `json:"scatterPlotSource"`
+
+	// QuerybuilderEnabled
+	QuerybuilderEnabled bool `json:"querybuilderEnabled"`
+
+	// SourceDescription
+	SourceDescription string `json:"sourceDescription"`
 }
 
 // Dashboards is used to perform Dashboard-related operations against the Wavefront API
