@@ -1,0 +1,10 @@
+test:
+  image: golang:1.9
+  volumes:
+    - .:/go/src/github.com/spaceapegames/go-wavefront
+  working_dir: /go/src/github.com/spaceapegames/go-wavefront
+  environment:
+    CGO_ENABLED: 0
+    GOOS: linux
+    GOARCH: amd64
+  command: make test
