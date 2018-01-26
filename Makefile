@@ -1,5 +1,6 @@
 TEST?=$$(go list ./... |grep -v 'vendor'|grep -v 'examples')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
+VERSION=$$(cat version)
 
 default: test
 
@@ -25,3 +26,9 @@ test: fmtcheck
 	go test -i $(TEST) || exit 1
 	echo $(TEST) | \
 		xargs -t -n4 go test -v $(TESTARGS) -timeout=30s -parallel=4
+.PHONY: test
+
+release:
+	git tag -a $(VERSION) -m "Release version $(VERSION)"
+	git push --tags
+.PHONY: release
