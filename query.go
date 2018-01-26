@@ -77,6 +77,7 @@ type QueryResponse struct {
 	Name        string         `json:"name"`
 	Granularity int            `json:"granularity"`
 	Hosts       []string       `json:"hostsUsed"`
+	Warnings    string         `json:"warnings"`
 }
 
 // DataPoint represents a single timestamp/value data point as returned
@@ -85,9 +86,10 @@ type DataPoint []float64
 
 // TimeSeries represents a single TimeSeries as returned by Wavefront
 type TimeSeries struct {
-	DataPoints []DataPoint `json:"data"`
-	Label      string      `json:"label"`
-	Host       string      `json:"host"`
+	DataPoints []DataPoint       `json:"data"`
+	Label      string            `json:"label"`
+	Host       string            `json:"host"`
+	Tags       map[string]string `json:"tags"`
 }
 
 const (
@@ -204,11 +206,19 @@ func (qr *QueryResponse) UnmarshalJSON(data []byte) error {
 // in a human-readable format
 func (qr QueryResponse) String() string {
 	var out string
+	if qr.Warnings != "" {
+		out += fmt.Sprintf("Warnings : %s\n", qr.Warnings)
+	}
 	for _, t := range qr.TimeSeries {
 		if t.Host != "" {
 			out += fmt.Sprintf("%s : %s\n", t.Label, t.Host)
 		} else {
 			out += fmt.Sprintf("%s\n", t.Label)
+		}
+		if t.Tags != nil {
+			for k, v := range t.Tags {
+				out += fmt.Sprintf("%s : %s\n", k, v)
+			}
 		}
 		for _, d := range t.DataPoints {
 			out += fmt.Sprintf("%d %f\n", int64(d[0]), d[1])
