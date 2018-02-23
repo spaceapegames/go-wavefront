@@ -62,6 +62,16 @@ func (c *Client) Targets() *Targets {
 	return &Targets{client: c}
 }
 
+// Get is used to retrieve an existing Target by ID.
+// The ID field must be provided
+func (t Targets) Get(target *Target) error {
+	if *target.ID == "" {
+		return fmt.Errorf("Target id field is not set")
+	}
+
+	return t.crudTarget("GET", fmt.Sprintf("%s/%s", baseTargetPath, *target.ID), target)
+}
+
 // Find returns all targets filtered by the given search conditions.
 // If filter is nil, all targets are returned.
 func (t Targets) Find(filter []*SearchCondition) ([]*Target, error) {

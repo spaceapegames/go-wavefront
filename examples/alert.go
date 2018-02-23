@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/spaceapegames/go-wavefront"
+	"time"
 )
 
 func main() {
@@ -40,20 +41,13 @@ func main() {
 	fmt.Println("alert ID is", *a.ID)
 
 	// Alternatively we could search for the Alert
-	results, err := alerts.Find(
-		[]*wavefront.SearchCondition{
-			&wavefront.SearchCondition{
-				Key:            "name",
-				Value:          "My First Alert",
-				MatchingMethod: "EXACT",
-			},
-		})
+	err = alerts.Get(&wavefront.Alert{
+		ID: a.ID,
+	})
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println("found alert with ID", *results[0].ID)
 
 	// Update the Alert
 	a.Target = "test@example.com,bob@example.com"
