@@ -88,6 +88,16 @@ func (c *Client) Alerts() *Alerts {
 	return &Alerts{client: c}
 }
 
+// Get is used to retrieve an existing Alert by ID.
+// The ID field must be provided
+func (a Alerts) Get(alert *Alert) error {
+	if *alert.ID == "" {
+		return fmt.Errorf("Dashboard id field is not set")
+	}
+
+	return a.crudAlert("GET", fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID), alert)
+}
+
 // Find returns all alerts filtered by the given search conditions.
 // If filter is nil, all alerts are returned.
 func (a Alerts) Find(filter []*SearchCondition) ([]*Alert, error) {

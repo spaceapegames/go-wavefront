@@ -9,7 +9,7 @@ import (
 
 func main() {
 	config := &wavefront.Config{
-		Address: "spaceape.wavefront.com",
+		Address: "test.wavefront.com",
 		Token:   "xxxx-xxxx-xxxx-xxxx-xxxx",
 	}
 	client, err := wavefront.NewClient(config)
@@ -39,6 +39,12 @@ func main() {
 
 	// Create the target on Wavefront
 	err = targets.Create(&target)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Get an alert by ID
+	err = targets.Get(&wavefront.Target{ID: target.ID})
 	if err != nil {
 		log.Fatal(err)
 	}
