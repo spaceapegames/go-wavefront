@@ -40,17 +40,14 @@ func main() {
 	// The ID field is now set, so we can update/delete the Alert
 	fmt.Println("alert ID is", *a.ID)
 
-	time.Sleep(time.Millisecond * 1 )
-
 	// Alternatively we could search for the Alert
 	err = alerts.Get(&wavefront.Alert{
-		ID:                  a.ID,
+		ID: a.ID,
 	})
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
 
 	// Update the Alert
 	a.Target = "test@example.com,bob@example.com"
