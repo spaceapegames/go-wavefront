@@ -2,6 +2,12 @@
 
 Changelog for go-wavefront.
 
+## [1.3.0]
+
+*Add Missing Fields to Dashboards*
+
+- A large number of fields previously missing from Dashboard have been implemented
+
 ## [1.2.0]
 
 *Improvements to Dashboards*
