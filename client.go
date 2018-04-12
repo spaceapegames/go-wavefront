@@ -28,6 +28,9 @@ type Config struct {
 	// Token is an authentication token that will be passed with all requests
 	Token string
 
+	// SET HTTP Proxy configuration
+	HttpProxy string
+
 	// SkipTLSVerify disables SSL certificate checking and should be used for
 	// testing only
 	SkipTLSVerify bool
@@ -66,6 +69,14 @@ func NewClient(config *Config) (*Client, error) {
 			},
 		},
 		debug: false,
+	}
+
+	// ENABLE HTTP Proxy
+	if config.HttpProxy != "" {
+		proxyUrl, _ := url.Parse(config.HttpProxy)
+		c.httpClient.Transport = &http.Transport{
+			Proxy: http.ProxyURL(proxyUrl),
+		}
 	}
 
 	//For testing ONLY
