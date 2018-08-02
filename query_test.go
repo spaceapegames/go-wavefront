@@ -27,7 +27,7 @@ func TestQuery(t *testing.T) {
 	baseurl, _ := url.Parse("http://testing.wavefront.com")
 	q := &Query{
 		Params: NewQueryParams(query),
-		client: &MockWavefrontClient{
+		Client: &MockWavefrontClient{
 			Response: []byte(`{"valid":"json"}`),
 			Client: Client{
 				Config:     &Config{Token: "1234-5678-9977"},
@@ -77,7 +77,7 @@ func TestQuery_SingleSeries(t *testing.T) {
 	}
 	q := &Query{
 		Params: NewQueryParams("ts(some.query)"),
-		client: &MockWavefrontClient{
+		Client: &MockWavefrontClient{
 			Response: response,
 			Client: Client{
 				Config:     &Config{Token: "1234-5678-9977"},
@@ -115,7 +115,7 @@ func TestQuery_MultiSeries(t *testing.T) {
 	}
 	q := &Query{
 		Params: NewQueryParams("ts(some.query)"),
-		client: &MockWavefrontClient{
+		Client: &MockWavefrontClient{
 			Response: response,
 			Client: Client{
 				Config:     &Config{Token: "1234-5678-9977"},
