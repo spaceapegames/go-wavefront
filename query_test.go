@@ -161,3 +161,41 @@ func TestQuery_MultiSeries(t *testing.T) {
 	}
 
 }
+
+type ClosingBuffer struct {
+	*bytes.Buffer
+}
+
+func (cb ClosingBuffer) Close() error {
+	return nil
+}
+
+type mockQueryWaveFronter struct {
+	Wavefronter
+}
+
+func (c mockQueryWaveFronter) Do(req *http.Request) (io.ReadCloser, error) {
+	cb := ClosingBuffer{bytes.NewBufferString("{\"dog\" : \"chihuahua\"}")}
+	return cb, nil
+}
+func (c mockQueryWaveFronter) NewRequest(method, path string, params *map[string]string, body []byte) (*http.Request, error) {
+	return nil, nil
+}
+
+func TestWaveFronterInjection(t *testing.T) {
+	config := &Config{
+		Address: "test.wavefront.com",
+		Token:   "xxxx-xxxx-xxxx-xxxx-xxxx",
+	}
+	client, _ := NewClient(config)
+	query := client.NewQuery(NewQueryParams(
+		`ts("cpu.load.1m.avg", dc=dc1)`,
+	))
+	query.Client = mockQueryWaveFronter{} // mocking
+	result, _ := query.Execute()
+	b, _ := ioutil.ReadAll(result.RawResponse)
+	if string(b) != "{\"dog\" : \"chihuahua\"}" {
+		t.Errorf("TestWaveFronterInjection - got %s", string(b))
+	}
+
+}
