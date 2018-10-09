@@ -140,7 +140,7 @@ type Chart struct {
 	Units string `json:"units,omitempty"`
 
 	// ChartSettings are custom settings for the chart
-	ChartSettings ChartSetting `json:"chartSettings,omitempty"`
+	ChartSettings *ChartSetting `json:"chartSettings,omitempty"`
 }
 
 // Source represents a single Source for a Chart
