@@ -117,6 +117,18 @@ func NewQueryParams(query string) *QueryParams {
 	}
 }
 
+func NewQueryParamsNoStrict(query string) *QueryParams {
+	endTime := time.Now().Unix()
+	startTime := endTime - LastHour
+	return &QueryParams{
+		QueryString: query,
+		EndTime:     strconv.FormatInt(endTime, 10),
+		StartTime:   strconv.FormatInt(startTime, 10),
+		Granularity: "s",
+		StrictMode:  false,
+	}
+}
+
 // NewQuery returns a Query based on QueryParams
 func (c *Client) NewQuery(params *QueryParams) *Query {
 	return &Query{
