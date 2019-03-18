@@ -20,7 +20,7 @@ type Event struct {
 	StartTime int64 `json:"startTime"`
 
 	// EndTime is the end time, in epoch milliseconds, of the Event
-	EndTime int64 `json:"endTime"`
+	EndTime int64 `json:"endTime,omitempty"`
 
 	// Tags are the tags associated with the Event
 	Tags []string `json:"tags"`
