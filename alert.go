@@ -33,6 +33,9 @@ type Alert struct {
 	// ResolveAfterMinutes is the number of minutes the Condition must be un-met
 	// before the Alert is considered resolved
 	ResolveAfterMinutes int `json:"resolveAfterMinutes,omitempty"`
+ 
+	// Minutes to wait before re-sending notification of firing alert.
+	NotificationResendFrequencyMinutes int `json:"notificationResendFrequencyMinutes"`
 
 	// Severity is the severity of the Alert, and can be one of SEVERE,
 	// SMOKE, WARN or INFO
