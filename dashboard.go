@@ -162,6 +162,9 @@ type Source struct {
 
 	// SourceDescription
 	SourceDescription string `json:"sourceDescription"`
+
+	// SourceColor
+	SourceColor string `json:"sourceColor,omitempty"`
 }
 
 // ChartSetting represents various custom settings for a Chart
