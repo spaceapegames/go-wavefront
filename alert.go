@@ -18,11 +18,15 @@ type Alert struct {
 	AdditionalInfo string `json:"additionalInformation"`
 
 	// Target is a comma-separated list of targets for the Alert
-	Target  string            `json:"target"`
+	Target string `json:"target"`
+
+	// For THRESHOLD alerts. Targets is a map[string]string. This maps severity to lists of targets.
 	Targets map[string]string `json:"targets"`
 
 	// Condition is the condition under which the Alert will fire
-	Condition  string            `json:"condition"`
+	Condition string `json:"condition"`
+
+	// For THRESHOLD alerts. Conditions is a map[string]string. This maps severity to respective conditions.
 	Conditions map[string]string `json:"conditions"`
 
 	// DisplayExpression is the ts query to generate a graph of this Alert, in the UI
@@ -41,7 +45,9 @@ type Alert struct {
 
 	// Severity is the severity of the Alert, and can be one of SEVERE,
 	// SMOKE, WARN or INFO
-	Severity     string   `json:"severity"`
+	Severity string `json:"severity"`
+
+	// For THRESHOLD alerts. SeverityList is a list of strings. Different severities applicable to this alert.
 	SeverityList []string `json:"severityList"`
 
 	// Status is the current status of the Alert
