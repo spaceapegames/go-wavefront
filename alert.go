@@ -14,11 +14,13 @@ type Alert struct {
 	// ID is the Wavefront-assigned ID of an existing Alert
 	ID *string `json:"id,omitempty"`
 
+	AlertType string `json:"alertType,omitempty"`
+
 	// AdditionalInfo is any extra information about the Alert
 	AdditionalInfo string `json:"additionalInformation"`
 
 	// Target is a comma-separated list of targets for the Alert
-	Target string `json:"target"`
+	Target string `json:"target,omitempty"`
 
 	// For THRESHOLD alerts. Targets is a map[string]string. This maps severity to lists of targets.
 	// Valid keys are: severe, smoke, warn or info
@@ -47,7 +49,7 @@ type Alert struct {
 
 	// Severity is the severity of the Alert, and can be one of SEVERE,
 	// SMOKE, WARN or INFO
-	Severity string `json:"severity"`
+	Severity string `json:"severity,omitempty"`
 
 	// For THRESHOLD alerts. SeverityList is a list of strings. Different severities applicable to this alert.
 	// Valid elements are: SEVERE, SMOKE, WARN or INFO
