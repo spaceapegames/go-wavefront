@@ -60,6 +60,14 @@ type Alert struct {
 
 	// Tags are the tags applied to the Alert
 	Tags []string
+
+	FailingHostLabelPairs       []SourceLabelPair `json:"failingHostLabelPairs,omitempty"`
+	InMaintenanceHostLabelPairs []SourceLabelPair `json:"inMaintenanceHostLabelPairs,omitempty"`
+}
+
+type SourceLabelPair struct {
+	Host   string `json:"host"`
+	Firing int    `json:"firing"`
 }
 
 // Alerts is used to perform alert-related operations against the Wavefront API
