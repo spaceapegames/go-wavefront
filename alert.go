@@ -14,14 +14,24 @@ type Alert struct {
 	// ID is the Wavefront-assigned ID of an existing Alert
 	ID *string `json:"id,omitempty"`
 
+	AlertType string `json:"alertType,omitempty"`
+
 	// AdditionalInfo is any extra information about the Alert
 	AdditionalInfo string `json:"additionalInformation"`
 
 	// Target is a comma-separated list of targets for the Alert
-	Target string `json:"target"`
+	Target string `json:"target,omitempty"`
+
+	// For THRESHOLD alerts. Targets is a map[string]string. This maps severity to lists of targets.
+	// Valid keys are: severe, smoke, warn or info
+	Targets map[string]string `json:"targets"`
 
 	// Condition is the condition under which the Alert will fire
 	Condition string `json:"condition"`
+
+	// For THRESHOLD alerts. Conditions is a map[string]string. This maps severity to respective conditions.
+	// Valid keys are: severe, smoke, warn or info
+	Conditions map[string]string `json:"conditions"`
 
 	// DisplayExpression is the ts query to generate a graph of this Alert, in the UI
 	DisplayExpression string `json:"displayExpression,omitempty"`
@@ -33,13 +43,17 @@ type Alert struct {
 	// ResolveAfterMinutes is the number of minutes the Condition must be un-met
 	// before the Alert is considered resolved
 	ResolveAfterMinutes int `json:"resolveAfterMinutes,omitempty"`
- 
+
 	// Minutes to wait before re-sending notification of firing alert.
 	NotificationResendFrequencyMinutes int `json:"notificationResendFrequencyMinutes"`
 
 	// Severity is the severity of the Alert, and can be one of SEVERE,
 	// SMOKE, WARN or INFO
-	Severity string `json:"severity"`
+	Severity string `json:"severity,omitempty"`
+
+	// For THRESHOLD alerts. SeverityList is a list of strings. Different severities applicable to this alert.
+	// Valid elements are: SEVERE, SMOKE, WARN or INFO
+	SeverityList []string `json:"severityList"`
 
 	// Status is the current status of the Alert
 	Status []string `json:"status"`

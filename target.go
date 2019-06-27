@@ -33,7 +33,7 @@ type Target struct {
 	// EmailSubject is the subject of the email which will be sent for this Target
 	// (EMAIL targets only)
 	EmailSubject string `json:"emailSubject"`
-	
+
 	// IsHTMLContent is a boolean value for wavefront to add HTML Boilerplate
 	// while using HTML Templates as email.
 	// (EMAIL targets only)

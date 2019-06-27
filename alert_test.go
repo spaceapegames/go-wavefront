@@ -143,3 +143,63 @@ func TestAlerts_CreateUpdateDeleteAlert(t *testing.T) {
 	}
 
 }
+
+func TestMultiThresholdAlerts_CreateUpdateDeleteAlert(t *testing.T) {
+	baseurl, _ := url.Parse("http://testing.wavefront.com")
+	a := &Alerts{
+		client: &MockCrudAlertClient{
+			Client: Client{
+				Config:     &Config{Token: "1234-5678-9977"},
+				BaseURL:    baseurl,
+				httpClient: http.DefaultClient,
+				debug:      true,
+			},
+			method: "PUT",
+			T:      t,
+		},
+	}
+
+	alert := Alert{
+		Name: "test alert",
+		Targets: map[string]string{
+			"smoke": "test@example.com",
+			"warn":  "test2@example.com",
+		},
+		Conditions: map[string]string{
+			"smoke": "ts(servers.cpu.usage) > 5 * 10",
+			"warn":  "ts(servers.cpu.usage) > 10 * 10",
+		},
+		DisplayExpression:   "ts(servers.cpu.usage)",
+		Minutes:             2,
+		ResolveAfterMinutes: 2,
+		SeverityList:        []string{"SMOKE", "WARN"},
+		AdditionalInfo:      "please resolve this alert",
+		Tags:                []string{"mytag1", "mytag2"},
+	}
+
+	if err := a.Update(&alert); err == nil {
+		t.Errorf("expected alert update to error with no ID")
+	}
+
+	a.client.(*MockCrudAlertClient).method = "POST"
+
+	a.Create(&alert)
+	if *alert.ID != "1234" {
+		t.Errorf("alert ID expected 1234, got %s", *alert.ID)
+	}
+
+	a.client.(*MockCrudAlertClient).method = "PUT"
+	if err := a.Update(&alert); err != nil {
+		t.Error(err)
+	}
+
+	a.client.(*MockCrudAlertClient).method = "DELETE"
+	if err := a.Delete(&alert); err != nil {
+		t.Error(err)
+	}
+
+	if alert.ID != nil {
+		t.Error("expected alert ID to be reset after deletion")
+	}
+
+}

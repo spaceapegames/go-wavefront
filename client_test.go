@@ -11,8 +11,8 @@ import (
 
 func TestClientGet(t *testing.T) {
 	params := &map[string]string{
-		"s": "144242525262",
-		"e": "142252272822",
+		"s":                      "144242525262",
+		"e":                      "142252272822",
 		"includeObsoleteMetrics": "true",
 	}
 
@@ -66,8 +66,8 @@ func TestClientGet(t *testing.T) {
 
 func TestClientPost(t *testing.T) {
 	params := &map[string]string{
-		"s": "144242525262",
-		"e": "142252272822",
+		"s":                      "144242525262",
+		"e":                      "142252272822",
 		"includeObsoleteMetrics": "true",
 	}
 	body := []byte(`{ "some" : "json" }`)
