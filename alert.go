@@ -6,6 +6,11 @@ import (
 	"io/ioutil"
 )
 
+const (
+	AlertTypeThreshold = "THRESHOLD"
+	AlertTypeClassic = "CLASSIC"
+)
+
 // Alert represents a single Wavefront Alert
 type Alert struct {
 	// Name is the name given to an Alert
@@ -14,6 +19,7 @@ type Alert struct {
 	// ID is the Wavefront-assigned ID of an existing Alert
 	ID *string `json:"id,omitempty"`
 
+	// AlertType should be either CLASSIC or THRESHOLD
 	AlertType string `json:"alertType,omitempty"`
 
 	// AdditionalInfo is any extra information about the Alert
