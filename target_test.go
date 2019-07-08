@@ -94,7 +94,7 @@ func TestTargets_CreateUpdateDeleteTarget(t *testing.T) {
 		Title:       "test target",
 		Description: "testing something",
 		Method:      "WEBHOOK",
-		Recipient:   "https://hooks.slack.com/services/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",
+		Recipient:   "https://hooks.slack.com/services/test/me",
 		ContentType: "application/json",
 		CustomHeaders: map[string]string{
 			"Testing": "true",

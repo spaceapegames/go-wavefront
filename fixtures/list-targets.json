@@ -43,7 +43,7 @@
           "ALERT_OPENED",
           "ALERT_RESOLVED"
         ],
-        "recipient": "https://hooks.slack.com/services/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",
+        "recipient": "https://hooks.slack.com/services/test/me",
         "customHttpHeaders": {},
         "emailSubject": "Alert alert",
         "recipient" : "bob@example.com"
