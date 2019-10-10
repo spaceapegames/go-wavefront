@@ -61,7 +61,7 @@ func (g UserGroups) Get(userGroup *UserGroup) error {
 		return fmt.Errorf("UserGroup ID field is not set")
 	}
 
-	return g.crudUserGroup("GET", fmt.Sprintf("%s/%s", userGroup.ID), userGroup)
+	return g.crudUserGroup("GET", fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup)
 }
 
 // Find returns all UsersGroups filtered by the given search conditions.

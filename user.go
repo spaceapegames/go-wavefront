@@ -22,7 +22,7 @@ type NewUserRequest struct {
 // User represents a Wavefront User
 type User struct {
 	// The email identifier for a user
-	Identifier string `json:"identifier"`
+	ID *string `json:"identifier"`
 
 	// The customer the user is a member of
 	Customer string `json:"customer,omitempty"`
@@ -54,7 +54,6 @@ type Users struct {
 
 const (
 	baseUserPath               = "/api/v2/user"
-	BROWSE                     = "browse"
 	AGENT_MANAGEMENT           = "agent_management"
 	ALERTS_MANAGEMENT          = "alerts_management"
 	DASHBOARD_MANAGEMENT       = "dashboard_management"
@@ -67,6 +66,7 @@ const (
 	INTEGRATIONS_MANAGEMENT    = "application_management"
 	DIRECT_INGESTION           = "ingestion"
 	BATCH_QUERY_PRIORITY       = "batch_query_priority"
+	DERIVED_METRICS_MANAGEMENT = "derived_metrics_management"
 )
 
 // Users is used to return a client for user-related operations
@@ -74,14 +74,14 @@ func (c *Client) Users() *Users {
 	return &Users{client: c}
 }
 
-// Get is used to retrieve an existing User by Identifier.
+// Get is used to retrieve an existing User by ID.
 // The identifier field must be specified
 func (u Users) Get(user *User) error {
-	if user.Identifier == "" {
-		return fmt.Errorf("User Identifier field is not set")
+	if *user.ID == "" {
+		return fmt.Errorf("user ID field is not set")
 	}
 
-	return u.updateUser("GET", fmt.Sprintf("%s/%s", baseUserPath, user.Identifier), nil, user)
+	return u.updateUser("GET", fmt.Sprintf("%s/%s", baseUserPath, *user.ID), nil, user)
 }
 
 // Find returns all Users filtered by the given search conditions.
@@ -120,7 +120,7 @@ func (u Users) Find(filter []*SearchCondition) ([]*User, error) {
 // The EmailAddress field must be specified
 func (u Users) Create(newUser *NewUserRequest, user *User, sendEmail bool) error {
 	if newUser.EmailAddress == "" {
-		return fmt.Errorf("A valid email address must be specified")
+		return fmt.Errorf("a valid email address must be specified")
 	}
 
 	params := map[string]string{
@@ -157,21 +157,21 @@ func (u Users) Create(newUser *NewUserRequest, user *User, sendEmail bool) error
 // Supports specifying the credential
 // The identifier field must be specified
 func (u Users) Update(user *User) error {
-	if user.Identifier == "" {
-		return fmt.Errorf("User Identifier field is not set")
+	if *user.ID == "" {
+		return fmt.Errorf("user ID field is not set")
 	}
 
-	return u.updateUser("PUT", fmt.Sprintf("%s/%s", baseUserPath, user.Identifier), nil, user)
+	return u.updateUser("PUT", fmt.Sprintf("%s/%s", baseUserPath, *user.ID), nil, user)
 }
 
 // Deletes the specified user
-// The identifier field must be specified
+// The ID field must be specified
 func (u Users) Delete(user *User) error {
-	if user.Identifier == "" {
-		return fmt.Errorf("User Identifier field is not set")
+	if *user.ID == "" {
+		return fmt.Errorf("user ID field is not set")
 	}
 
-	req, err := u.client.NewRequest("DELETE", fmt.Sprintf("%s/%s", baseUserPath, user.Identifier), nil, nil)
+	req, err := u.client.NewRequest("DELETE", fmt.Sprintf("%s/%s", baseUserPath, *user.ID), nil, nil)
 	if err != nil {
 		return err
 	}
@@ -182,7 +182,7 @@ func (u Users) Delete(user *User) error {
 	}
 	defer resp.Close()
 
-	user.Identifier = ""
+	*user.ID = ""
 	return nil
 }
 
