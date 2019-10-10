@@ -15,7 +15,7 @@
         "permissions": [
           "derived_metrics_management"
         ],
-        "customer": "collector",
+        "customer": "test",
         "properties": {
           "nameEditable": false,
           "permissionsEditable": true,

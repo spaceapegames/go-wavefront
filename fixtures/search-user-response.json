@@ -1,0 +1,57 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "items": [
+      {
+        "userGroups": [
+          "12345678-1234-5678-9977-123456789111"
+        ],
+        "id": "thatoneperson@wavefront.com",
+        "groups": [],
+        "customer": "test",
+        "lastSuccessfulLogin": 1570680085013,
+        "escapedIdentifier": "thatoneperson%40wavefront.com",
+        "self": true,
+        "identifier": "thatoneperson@wavefront.com"
+      },
+      {
+        "userGroups": [
+          "12345678-1234-5678-9977-123456789111"
+        ],
+        "id": "someone@wavefront.com",
+        "groups": [
+          "user_management",
+          "dashboard_management",
+          "agent_management",
+          "alerts_management",
+          "embedded_charts",
+          "events_management",
+          "external_links_management",
+          "host_tag_management",
+          "metrics_management",
+          "ingestion",
+          "application_management",
+          "derived_metrics_management"
+        ],
+        "customer": "test",
+        "lastSuccessfulLogin": 1570680085013,
+        "escapedIdentifier": "someone%40wavefront.com",
+        "self": true,
+        "identifier": "someone@wavefront.com"
+      }
+    ],
+    "offset": 0,
+    "limit": 100,
+    "totalItems": 1,
+    "moreItems": false,
+    "sort": {
+      "ascending": false,
+      "field": "default",
+      "default": true
+    }
+  }
+}
