@@ -1,0 +1,28 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "identifier": "someone+testing@wavefront.com",
+    "customer": "collector",
+    "groups": [],
+    "userGroups": [
+      {
+        "id": "12345678-1234-5678-9977-123456789111",
+        "name": "Everyone",
+        "permissions": [
+          "derived_metrics_management"
+        ],
+        "customer": "collector",
+        "properties": {
+          "nameEditable": false,
+          "permissionsEditable": true,
+          "usersEditable": false
+        },
+        "description": "System group which contains all users"
+      }
+    ]
+  }
+}
