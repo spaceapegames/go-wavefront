@@ -94,7 +94,7 @@ func TestUsers_Find(t *testing.T) {
 }
 
 func (m *MockCrudUserClient) Do(req *http.Request) (io.ReadCloser, error) {
-	response, err := ioutil.ReadFile("./fixtures/createupdate-user-response.json")
+	response, err := ioutil.ReadFile("./fixtures/crud-user-response.json")
 	if err != nil {
 		m.T.Fatal(err)
 	}
