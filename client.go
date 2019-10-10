@@ -142,7 +142,13 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	if resp.StatusCode != 200 {
+	// Per RFC Spec these are safe to accept as valid status codes as they all intent that the request was fulfilled
+	// 200 -> OK
+	// 201 -> Created
+	// 202 -> Accepted
+	// 203 -> Accepted but payload has been modified  via transforming proxy
+	// 204 -> No Content
+	if !(resp.StatusCode >= 200 && resp.StatusCode <= 204) {
 		body, err := ioutil.ReadAll(resp.Body)
 		resp.Body.Close()
 		if err != nil {
