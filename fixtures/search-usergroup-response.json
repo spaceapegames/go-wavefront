@@ -1,0 +1,36 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "items": [
+      {
+        "userCount": 253,
+        "properties": {
+          "nameEditable": false,
+          "permissionsEditable": true,
+          "usersEditable": false
+        },
+        "name": "Everyone",
+        "permissions": [
+          "derived_metrics_management"
+        ],
+        "id": "12345678-1234-5678-9977-123456789111",
+        "customer": "testing",
+        "description": "System group which contains all users",
+        "createdEpochMillis": 1545159967574
+      }
+    ],
+    "offset": 0,
+    "limit": 100,
+    "totalItems": 2,
+    "moreItems": false,
+    "sort": {
+      "ascending": false,
+      "field": "default",
+      "default": true
+    }
+  }
+}

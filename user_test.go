@@ -104,8 +104,8 @@ func (m *MockCrudUserClient) Do(req *http.Request) (io.ReadCloser, error) {
 	// the delete call is sent with zero body in the request
 	if req.Body != nil {
 		body, _ := ioutil.ReadAll(req.Body)
-		event := User{}
-		err = json.Unmarshal(body, &event)
+		user := User{}
+		err = json.Unmarshal(body, &user)
 		if err != nil {
 			m.T.Fatal(err)
 		}
@@ -152,10 +152,9 @@ func TestUsers_CreateUpdateDelete(t *testing.T) {
 
 	u.client.(*MockCrudUserClient).method = "PUT"
 	user.ID = &emailAddress
-	if err := u.Update(user); err != nil {
-		if len(user.Permissions) != 1 {
-			t.Errorf("expected only a single permission on user, got %d", len(user.Permissions))
-		}
+	var _ = u.Update(user)
+	if len(user.Permissions) != 1 {
+		t.Errorf("expected only a single permission on user, got %d", len(user.Permissions))
 	}
 
 	u.client.(*MockCrudUserClient).method = "DELETE"

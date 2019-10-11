@@ -7,7 +7,7 @@
   "response": {
     "identifier": "someone+testing@wavefront.com",
     "customer": "collector",
-    "groups": [],
+    "groups": ["derived_metrics_management"],
     "userGroups": [
       {
         "id": "12345678-1234-5678-9977-123456789111",

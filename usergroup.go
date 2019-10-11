@@ -54,6 +54,17 @@ func (c *Client) UserGroups() *UserGroups {
 	return &UserGroups{client: c}
 }
 
+func (g UserGroups) Create(userGroup *UserGroup) error {
+	if userGroup.Name == "" {
+		return fmt.Errorf("name must be specified when creating a usergroup")
+	}
+	if len(userGroup.Permissions) == 0 {
+		return fmt.Errorf("permissions must be specified when creating a usergroup")
+	}
+
+	return g.crudUserGroup("POST", baseUserGroupPath, userGroup)
+}
+
 // Gets a specific UserGroup by ID
 // The ID field must be specified
 func (g UserGroups) Get(userGroup *UserGroup) error {
@@ -107,8 +118,8 @@ func (g UserGroups) Update(userGroup *UserGroup) error {
 }
 
 // Adds the specified users to the group
-func (g UserGroups) AddUsers(id string, users []*string) error {
-	if id == "" {
+func (g UserGroups) AddUsers(id *string, users *[]string) error {
+	if *id == "" {
 		return fmt.Errorf("UserGroup ID must be specified")
 	}
 
@@ -116,8 +127,8 @@ func (g UserGroups) AddUsers(id string, users []*string) error {
 }
 
 // Removes the specified users from the group
-func (g UserGroups) RemoveUsers(id string, users []*string) error {
-	if id == "" {
+func (g UserGroups) RemoveUsers(id *string, users *[]string) error {
+	if *id == "" {
 		return fmt.Errorf("UserGroup ID must be specified")
 	}
 
@@ -135,17 +146,17 @@ func (g UserGroups) Delete(userGroup *UserGroup) error {
 	}
 
 	// Clear the ID so that we do not accidentally re-submit
-	userGroup.ID = nil
+	*userGroup.ID = ""
 	return nil
 }
 
-func (g UserGroups) updateUserGroupUsers(users []*string, id, endpoint string) error {
+func (g UserGroups) updateUserGroupUsers(users *[]string, id *string, endpoint string) error {
 	payload, err := json.Marshal(users)
 	if err != nil {
 		return err
 	}
 
-	req, err := g.client.NewRequest("POST", fmt.Sprintf("%s/%s/%s", baseUserGroupPath, id, endpoint), nil, payload)
+	req, err := g.client.NewRequest("POST", fmt.Sprintf("%s/%s/%s", baseUserGroupPath, *id, endpoint), nil, payload)
 	if err != nil {
 		return err
 	}
