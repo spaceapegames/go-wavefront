@@ -92,7 +92,6 @@ func (m *MockCrudUserGroupClient) Do(req *http.Request) (io.ReadCloser, error) {
 	return ioutil.NopCloser(bytes.NewReader(resp)), nil
 }
 
-
 func Test_CreatReadUpdateDelete(t *testing.T) {
 	baseurl, _ := url.Parse("http://testing.wavefront.com")
 	g := &UserGroups{

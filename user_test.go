@@ -80,8 +80,8 @@ func TestUsers_Find(t *testing.T) {
 	}
 
 	foundPermission := false
-	for _,v := range permissions {
-		for _,p := range (*users[1]).Permissions {
+	for _, v := range permissions {
+		for _, p := range (*users[1]).Permissions {
 			if v == p {
 				foundPermission = true
 				break
@@ -124,7 +124,7 @@ func TestUsers_CreateUpdateDelete(t *testing.T) {
 				httpClient: http.DefaultClient,
 				debug:      true,
 			},
-			T: t,
+			T:      t,
 			method: "POST",
 		},
 	}
@@ -132,12 +132,12 @@ func TestUsers_CreateUpdateDelete(t *testing.T) {
 	emailAddress := "someone+testing@wavefront.com"
 	newUser := &NewUserRequest{
 		Permissions: []string{},
-		Groups: UserGroupsWrapper{},
+		Groups:      UserGroupsWrapper{},
 	}
 	user := &User{
-		Customer:            "test",
-		Permissions:         []string{DERIVED_METRICS_MANAGEMENT,},
-		Groups:              UserGroupsWrapper{},
+		Customer:    "test",
+		Permissions: []string{DERIVED_METRICS_MANAGEMENT},
+		Groups:      UserGroupsWrapper{},
 	}
 
 	if err := u.Create(newUser, user, true); err == nil {
@@ -163,4 +163,3 @@ func TestUsers_CreateUpdateDelete(t *testing.T) {
 		t.Errorf("expected user ID to be blank got %s", *user.ID)
 	}
 }
-
