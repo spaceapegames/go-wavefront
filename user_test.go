@@ -59,8 +59,8 @@ func TestUsers_Find(t *testing.T) {
 		t.Errorf("expected two users returned, got %d", len(users))
 	}
 
-	if *users[0].ID != "thatoneperson@wavefront.com" {
-		t.Errorf("expected first user to be someone@wavefront.com, got %s", *users[0].ID)
+	if *users[0].ID != "thatoneperson@example.com" {
+		t.Errorf("expected first user to be someone@example.com, got %s", *users[0].ID)
 	}
 
 	permissions := []string{
@@ -129,7 +129,7 @@ func TestUsers_CreateUpdateDelete(t *testing.T) {
 		},
 	}
 
-	emailAddress := "someone+testing@wavefront.com"
+	emailAddress := "someone+testing@example.com"
 	newUser := &NewUserRequest{
 		Permissions: []string{},
 		Groups:      UserGroupsWrapper{},

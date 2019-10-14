@@ -6,7 +6,7 @@
   },
   "response": {
     "users": [
-      "someone@wavefront.com"
+      "someone@example.com"
     ],
     "userCount": 1,
     "name": "testing",

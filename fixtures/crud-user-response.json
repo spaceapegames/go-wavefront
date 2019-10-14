@@ -5,7 +5,7 @@
     "code": 200
   },
   "response": {
-    "identifier": "someone+testing@wavefront.com",
+    "identifier": "someone+testing@example.com",
     "customer": "collector",
     "groups": ["derived_metrics_management"],
     "userGroups": [

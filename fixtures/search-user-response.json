@@ -10,19 +10,19 @@
         "userGroups": [
           "12345678-1234-5678-9977-123456789111"
         ],
-        "id": "thatoneperson@wavefront.com",
+        "id": "thatoneperson@example.com",
         "groups": [],
         "customer": "test",
         "lastSuccessfulLogin": 1570680085013,
         "escapedIdentifier": "thatoneperson%40wavefront.com",
         "self": true,
-        "identifier": "thatoneperson@wavefront.com"
+        "identifier": "thatoneperson@example.com"
       },
       {
         "userGroups": [
           "12345678-1234-5678-9977-123456789111"
         ],
-        "id": "someone@wavefront.com",
+        "id": "someone@example.com",
         "groups": [
           "user_management",
           "dashboard_management",
@@ -41,7 +41,7 @@
         "lastSuccessfulLogin": 1570680085013,
         "escapedIdentifier": "someone%40wavefront.com",
         "self": true,
-        "identifier": "someone@wavefront.com"
+        "identifier": "someone@example.com"
       }
     ],
     "offset": 0,
