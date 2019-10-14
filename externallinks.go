@@ -32,16 +32,16 @@ func (c *Client) ExternalLinks() *ExternalLinks {
 
 func (e ExternalLinks) Find(conditions []*SearchCondition) ([]*ExternalLink, error) {
 	search := Search{
-		client:  e.client,
-		Type:    "extlink",
-		Params:  &SearchParams{
+		client: e.client,
+		Type:   "extlink",
+		Params: &SearchParams{
 			Conditions: conditions,
 		},
 	}
 
 	var results []*ExternalLink
 	moreItems := true
-	for moreItems  {
+	for moreItems {
 		resp, err := search.Execute()
 		if err != nil {
 			return nil, err
@@ -120,7 +120,7 @@ func (e ExternalLinks) crudExtLinks(method, path string, extLink *ExternalLink) 
 		return err
 	}
 
-	return json.Unmarshal(body, &struct{
+	return json.Unmarshal(body, &struct {
 		Response *ExternalLink `json:"response"`
 	}{
 		Response: extLink,
