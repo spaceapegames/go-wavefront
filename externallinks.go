@@ -121,8 +121,8 @@ func (e ExternalLinks) crudExtLinks(method, path string, extLink *ExternalLink) 
 	}
 
 	return json.Unmarshal(body, &struct{
-		Response ExternalLink `json:"response"`
+		Response *ExternalLink `json:"response"`
 	}{
-		Response: *extLink,
+		Response: extLink,
 	})
 }
