@@ -111,7 +111,6 @@ func (m *MockCrudUserClient) Do(req *http.Request) (io.ReadCloser, error) {
 		}
 	}
 	return ioutil.NopCloser(bytes.NewReader(response)), nil
-
 }
 
 func TestUsers_CreateUpdateDelete(t *testing.T) {
