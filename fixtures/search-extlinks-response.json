@@ -7,7 +7,7 @@
   "response": {
     "items": [
       {
-        "name": "Scalyr",
+        "name": "Example",
         "id": "someid",
         "description": "someUrl",
         "creatorId": "someone@example.com",

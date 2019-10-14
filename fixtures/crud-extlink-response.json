@@ -1,0 +1,20 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response":       {
+    "name": "Example",
+    "id": "someid",
+    "description": "someUrl",
+    "creatorId": "someone@example.com",
+    "updaterId": "someone+else@example.com",
+    "updatedEpochMillis": 1566333425859,
+    "createdEpochMillis": 1501113581428,
+    "template": "https://www.someSystem.com/events?logSource={{{source}}}&startTime={{startEpochMillis}}&endTime={{endEpochMillis}}",
+    "metricFilterRegex": "",
+    "sourceFilterRegex": ".*",
+    "pointTagFilterRegexes": {}
+  }
+}
