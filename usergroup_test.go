@@ -60,7 +60,7 @@ func TestUserGroups_Find(t *testing.T) {
 	}
 
 	if *userGroups[0].ID != "12345678-1234-5678-9977-123456789111" {
-		t.Errorf("expected first UserGroup to id to be 12345678-1234-5678-9977-123456789111, got %s", *userGroups[0].ID)
+		t.Errorf("expected first UserGroup id to be 12345678-1234-5678-9977-123456789111, got %s", *userGroups[0].ID)
 	}
 }
 

@@ -9,7 +9,7 @@
       {
         "name": "Example",
         "id": "someid",
-        "description": "someUrl",
+        "description": "someDescription",
         "creatorId": "someone@example.com",
         "updaterId": "someone+else@example.com",
         "updatedEpochMillis": 1566333425859,

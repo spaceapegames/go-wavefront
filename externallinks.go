@@ -80,7 +80,7 @@ func (e ExternalLinks) Update(link *ExternalLink) error {
 		return fmt.Errorf("id must be specified")
 	}
 
-	return e.crudExtLinks("POST", fmt.Sprintf("%s/%s", baseExtLinkPath, *link.ID), link)
+	return e.crudExtLinks("PUT", fmt.Sprintf("%s/%s", baseExtLinkPath, *link.ID), link)
 }
 
 func (e ExternalLinks) Delete(link *ExternalLink) error {
