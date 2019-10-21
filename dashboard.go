@@ -165,6 +165,9 @@ type Source struct {
 
 	// SourceColor
 	SourceColor string `json:"sourceColor,omitempty"`
+
+	// SecondaryAxis
+	SecondaryAxis string `json:"secondaryAxis,omitempty"`
 }
 
 // ChartSetting represents various custom settings for a Chart

@@ -2,6 +2,12 @@
 
 Changelog for go-wavefront.
 
+## [1.4.0]
+
+*Add Missing Fields to Dashboards*
+
+- Add missing field from Sources (SecondaryAxis)
+
 ## [1.3.0]
 
 *Add Missing Fields to Dashboards*
