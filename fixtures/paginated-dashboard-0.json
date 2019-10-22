@@ -41,7 +41,8 @@
                       {
                         "name": "Test 1.1",
                         "query": "ts()",
-                        "scatterPlotSource": "Y"
+                        "scatterPlotSource": "Y",
+                        "secondaryAxis": false
                       }
                     ],
                     "noDefaultEvents": false,
