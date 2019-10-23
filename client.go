@@ -140,20 +140,21 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 		}
 		fmt.Printf("%s\n", d)
 	}
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
 
-	// Per RFC Spec these are safe to accept as valid status codes as they all intent that the request was fulfilled
-	// 200 -> OK
-	// 201 -> Created
-	// 202 -> Accepted
-	// 203 -> Accepted but payload has been modified  via transforming proxy
-	// 204 -> No Content
 	retries := 0.0
 	maxRetries := 4.0
 	for {
+		resp, err := c.httpClient.Do(req)
+		if err != nil {
+			return nil, err
+		}
+
+		// Per RFC Spec these are safe to accept as valid status codes as they all intent that the request was fulfilled
+		// 200 -> OK
+		// 201 -> Created
+		// 202 -> Accepted
+		// 203 -> Accepted but payload has been modified  via transforming proxy
+		// 204 -> No Content
 		if !(resp.StatusCode >= 200 && resp.StatusCode <= 204) {
 			// Exponential backoff / Retry logic...
 			if retries <= maxRetries {
@@ -173,10 +174,8 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 			}
 			return nil, fmt.Errorf("server returned %s\n%s\n", resp.Status, string(body))
 		}
-		break
+		return resp.Body, nil
 	}
-
-	return resp.Body, nil
 }
 
 // Debug enables dumping http request objects to stdout
