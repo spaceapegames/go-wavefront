@@ -1,0 +1,66 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "items": [
+      {
+        "name": "example",
+        "id": "1234567891011",
+        "query": "ts(cpu.usage.*)",
+        "minutes": 10,
+        "tags": {
+          "customerTags": [
+            "example",
+            "tags"
+          ]
+        },
+        "status": [
+          "ACTIVE"
+        ],
+        "created": 1523286633525,
+        "updated": 1533150545815,
+        "inTrash": false,
+        "queryFailing": false,
+        "additionalInformation": "",
+        "hostsUsed": [
+          "example-2b-app78",
+          "example-2b-app68"
+        ],
+        "updateUserId": "example@example.com",
+        "createUserId": "example@example.com",
+        "lastProcessedMillis": 1571861240404,
+        "processRateMinutes": 5,
+        "pointsScannedAtLastQuery": 21410023,
+        "includeObsoleteMetrics": false,
+        "lastQueryTime": 7480,
+        "metricsUsed": [
+          "cpu.usage.idle",
+          "cpu.usage.guest",
+          "cpu.usage.steal",
+          "cpu.usage.nice"
+        ],
+        "creatorId": "example@example.com",
+        "updaterId": "example@example.com",
+        "queryQBEnabled": false,
+        "updatedEpochMillis": 1533150545815,
+        "createdEpochMillis": 1523286633525,
+        "deleted": false
+      }
+    ],
+    "offset": 0,
+    "limit": 100,
+    "totalItems": 1,
+    "moreItems": false,
+    "sort": {
+      "ascending": false,
+      "field": "default",
+      "default": true
+    },
+    "counts": {
+      "ACTIVE": 1
+    }
+  }
+}
