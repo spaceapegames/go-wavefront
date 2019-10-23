@@ -141,8 +141,8 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 		fmt.Printf("%s\n", d)
 	}
 
-	retries := 0.0
-	maxRetries := 4.0
+	retries := 0
+	maxRetries := 4
 	for {
 		resp, err := c.httpClient.Do(req)
 		if err != nil {
@@ -159,12 +159,7 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 			// Exponential backoff / Retry logic...
 			if retries <= maxRetries {
 				retries++
-				slot := (math.Pow(2, retries) - 1.0) / 2.0
-				rand.Seed(time.Now().UTC().UnixNano())
-				slotChoice := math.Mod(rand.Float64()*slot, slot)
-				// Add some jitter, add 100ms * our random slot choice, convert to MS
-				sleep := (time.Duration(math.Mod(rand.Float64()*50, 50)) + time.Duration(100.0*slotChoice)) * time.Millisecond
-				time.Sleep(sleep)
+				time.Sleep(getSleepTime(retries))
 				continue
 			}
 			body, err := ioutil.ReadAll(resp.Body)
@@ -176,6 +171,19 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 		}
 		return resp.Body, nil
 	}
+}
+
+func getSleepTime(retries int) time.Duration {
+	slot := int((math.Pow(2, float64(retries)) - 1) / 2)
+	rand.Seed(time.Now().UTC().UnixNano())
+	var slotChoice int
+	if slotChoice = 0; slot > 0 {
+		slotChoice = rand.Intn(slot)
+	}
+	// Add some jitter, add 100ms * our random slot choice, convert to MS
+	jitter := rand.Intn(50) + 50
+	sleep := (time.Duration(jitter) + time.Duration(100.0*slotChoice)) * time.Millisecond
+	return sleep
 }
 
 // Debug enables dumping http request objects to stdout
