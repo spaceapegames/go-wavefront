@@ -8,9 +8,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
+	"math/rand"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 )
 
 // Wavefronter is an interface that a Wavefront client must satisfy
@@ -148,13 +151,29 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 	// 202 -> Accepted
 	// 203 -> Accepted but payload has been modified  via transforming proxy
 	// 204 -> No Content
-	if !(resp.StatusCode >= 200 && resp.StatusCode <= 204) {
-		body, err := ioutil.ReadAll(resp.Body)
-		resp.Body.Close()
-		if err != nil {
-			return nil, fmt.Errorf("server returned %s\n", resp.Status)
+	retries := 0.0
+	maxRetries := 4.0
+	for {
+		if !(resp.StatusCode >= 200 && resp.StatusCode <= 204) {
+			// Exponential backoff / Retry logic...
+			if retries <= maxRetries {
+				retries++
+				slot := (math.Pow(2, retries) - 1.0) / 2.0
+				rand.Seed(time.Now().UTC().UnixNano())
+				slotChoice := math.Mod(rand.Float64()*slot, slot)
+				// Add some jitter, add 100ms * our random slot choice, convert to MS
+				sleepyTime := (time.Duration(math.Mod(rand.Float64()*50, 50)) + time.Duration(100.0*slotChoice)) * time.Millisecond
+				time.Sleep(sleepyTime)
+				continue
+			}
+			body, err := ioutil.ReadAll(resp.Body)
+			resp.Body.Close()
+			if err != nil {
+				return nil, fmt.Errorf("server returned %s\n", resp.Status)
+			}
+			return nil, fmt.Errorf("server returned %s\n%s\n", resp.Status, string(body))
 		}
-		return nil, fmt.Errorf("server returned %s\n%s\n", resp.Status, string(body))
+		break
 	}
 
 	return resp.Body, nil
