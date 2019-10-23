@@ -163,8 +163,8 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 				rand.Seed(time.Now().UTC().UnixNano())
 				slotChoice := math.Mod(rand.Float64()*slot, slot)
 				// Add some jitter, add 100ms * our random slot choice, convert to MS
-				sleepyTime := (time.Duration(math.Mod(rand.Float64()*50, 50)) + time.Duration(100.0*slotChoice)) * time.Millisecond
-				time.Sleep(sleepyTime)
+				sleep := (time.Duration(math.Mod(rand.Float64()*50, 50)) + time.Duration(100.0*slotChoice)) * time.Millisecond
+				time.Sleep(sleep)
 				continue
 			}
 			body, err := ioutil.ReadAll(resp.Body)
