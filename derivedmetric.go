@@ -43,12 +43,17 @@ type WFTags struct {
 
 const baseDerivedMetricsPath = "/api/v2/derivedmetrics"
 
+// Get is used to retrieve an existing DerivedMetric by ID.
+// The ID field must be specified
 func (dm DerivedMetrics) Get(metric *DerivedMetric) error {
 	if *metric.ID == "" {
 		return fmt.Errorf("id must be specified")
 	}
 	return dm.crudDerivedMetrics("GET", fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID), metric)
 }
+
+// Find returns all DerivedMetrics filtered by the given search conditions.
+// If filter is nil, all DerivedMetrics are returned.
 func (dm DerivedMetrics) Find(filter []*SearchCondition) ([]*DerivedMetric, error) {
 	search := &Search{
 		client: dm.client,
@@ -78,6 +83,7 @@ func (dm DerivedMetrics) Find(filter []*SearchCondition) ([]*DerivedMetric, erro
 	return results, nil
 }
 
+// Create a DerivedMetric, name, query, and minutes are required
 func (dm DerivedMetrics) Create(metric *DerivedMetric) error {
 	if metric.Name == "" || metric.Query == "" || metric.Minutes == 0 {
 		return fmt.Errorf("name, query, and minutes must be specified to create a derived metric")
@@ -86,6 +92,7 @@ func (dm DerivedMetrics) Create(metric *DerivedMetric) error {
 	return dm.crudDerivedMetrics("POST", baseDerivedMetricsPath, metric)
 }
 
+// Update a DerivedMetric all fields are optional except for ID
 func (dm DerivedMetrics) Update(metric *DerivedMetric) error {
 	if *metric.ID == "" {
 		return fmt.Errorf("id must be specified")
@@ -94,6 +101,7 @@ func (dm DerivedMetrics) Update(metric *DerivedMetric) error {
 	return dm.crudDerivedMetrics("PUT", fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID), metric)
 }
 
+// Delete a DerivedMetric all fields are optional except for ID
 func (dm DerivedMetrics) Delete(metric *DerivedMetric) error {
 	if *metric.ID == "" {
 		return fmt.Errorf("id must be specified")
@@ -127,5 +135,9 @@ func (dm DerivedMetrics) crudDerivedMetrics(method, path string, metric *Derived
 		return err
 	}
 
-	return json.Unmarshal(body, &metric)
+	return json.Unmarshal(body, &struct {
+		Response *DerivedMetric
+	}{
+		Response: metric,
+	})
 }
