@@ -43,6 +43,10 @@ type WFTags struct {
 
 const baseDerivedMetricsPath = "/api/v2/derivedmetrics"
 
+func (c *Client) DerivedMetrics() *DerivedMetrics {
+	return &DerivedMetrics{client: c}
+}
+
 // Get is used to retrieve an existing DerivedMetric by ID.
 // The ID field must be specified
 func (dm DerivedMetrics) Get(metric *DerivedMetric) error {
