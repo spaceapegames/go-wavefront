@@ -143,6 +143,15 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 
 	retries := 0
 	maxRetries := 4
+	var buf []byte
+	var err error
+	if req.Body != nil {
+		buf, err = ioutil.ReadAll(req.Body)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	for {
 		resp, err := c.httpClient.Do(req)
 		if err != nil {
@@ -159,6 +168,10 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 			// Exponential backoff / Retry logic...
 			if retries <= maxRetries {
 				retries++
+				// replay the buffer back into the body for retry
+				if req.Body != nil {
+					req.Body = ioutil.NopCloser(bytes.NewReader(buf))
+				}
 				time.Sleep(getSleepTime(retries))
 				continue
 			}
