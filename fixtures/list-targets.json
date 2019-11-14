@@ -46,7 +46,13 @@
         "recipient": "https://hooks.slack.com/services/test/me",
         "customHttpHeaders": {},
         "emailSubject": "Alert alert",
-        "recipient" : "bob@example.com"
+        "routes": [
+          {
+            "method": "WEBHOOK",
+            "target": "https://hooks.slack.com/services/1224/3344",
+            "filter": "env prod*"
+          }
+        ]
       }
     ],
     "offset": 0,

@@ -26,6 +26,9 @@ type Target struct {
 	// Method must be EMAIL, WEBHOOK or PAGERDUTY
 	Method string `json:"method"`
 
+	// List of routing targets that this notificant will notify
+	Routes []AlertRoute `json:"routes"`
+
 	// Recipient is a comma-separated list of email addresses, webhook URL,
 	// or 32-digit PagerDuty key  to which notifications will be sent for this Target
 	Recipient string `json:"recipient"`
@@ -52,6 +55,17 @@ type Target struct {
 	// ALERT_AFFECTED_BY_MAINTENANCE_WINDOW, ALERT_SNOOZED, ALERT_NO_DATA,
 	// ALERT_NO_DATA_RESOLVED
 	Triggers []string `json:"triggers"`
+}
+
+type AlertRoute struct {
+	// The notification target method, supports values in EMAIL, PAGERDUTY, WEBHOOK
+	Method string `json:"method,omitempty"`
+
+	// The endpoint for the notification target
+	Target string `json:"target,omitempty"`
+
+	// A space delimited string to filter on tagk=value e.g. env prod
+	Filter string `json:"filter,omitempty"`
 }
 
 // Targets is used to perform target-related operations against the Wavefront API

@@ -95,6 +95,13 @@ func TestTargets_CreateUpdateDeleteTarget(t *testing.T) {
 		Description: "testing something",
 		Method:      "WEBHOOK",
 		Recipient:   "https://hooks.slack.com/services/test/me",
+		Routes: []AlertRoute{
+			{
+				Method: "WEBHOOK",
+				Target: "https://hooks.slack.com/services/test/me",
+				Filter: "env prod*",
+			},
+		},
 		ContentType: "application/json",
 		CustomHeaders: map[string]string{
 			"Testing": "true",
