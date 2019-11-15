@@ -41,7 +41,7 @@ type WFTags struct {
 	CustomerTags []string `json:"customerTags"`
 }
 
-const baseDerivedMetricsPath = "/api/v2/derivedmetrics"
+const baseDerivedMetricsPath = "/api/v2/derivedmetric"
 
 func (c *Client) DerivedMetrics() *DerivedMetrics {
 	return &DerivedMetrics{client: c}
