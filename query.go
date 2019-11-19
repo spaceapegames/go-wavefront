@@ -150,6 +150,9 @@ func (q *Query) Execute() (*QueryResponse, error) {
 		if qp.Field(i).String() != "" {
 			params[qpType.Field(i).Tag.Get("query")] = qp.Field(i).String()
 		}
+
+		fmt.Println("Type: " + qpType.Field(i).Type.String())
+		fmt.Println("Value: " + qp.Field(i).String())
 	}
 
 	req, err := q.client.NewRequest("GET", baseQueryPath, &params, nil)
