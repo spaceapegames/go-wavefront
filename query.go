@@ -150,9 +150,9 @@ func (q *Query) Execute() (*QueryResponse, error) {
 		if qp.Field(i).String() != "" {
 
 			if qp.Field(i).Type().String() == "bool" {
-				params[qpType.Field(i).Tag.Get("query")] = qp.Field(i).Interface().(string)
+				params[qpType.Field(i).Tag.Get("query")] = strconv.FormatBool(qp.Field(i).Bool())
 			} else {
-				params[qpType.Field(i).Tag.Get("query")] = qp.Field(i).Type().String() //qp.Field(i).String()
+				params[qpType.Field(i).Tag.Get("query")] = qp.Field(i).String()
 			}
 		}
 	}
