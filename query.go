@@ -13,7 +13,7 @@ import (
 // Query represents a query to be made against the Charts API
 type Query struct {
 	// client is the Wavefront client used to execute queries
-	client Wavefronter
+	Client Wavefronter
 
 	// Params is the set of parameters that will be used when executing the Query
 	Params *QueryParams
@@ -132,7 +132,7 @@ func NewQueryParamsNoStrict(query string) *QueryParams {
 // NewQuery returns a Query based on QueryParams
 func (c *Client) NewQuery(params *QueryParams) *Query {
 	return &Query{
-		client: c,
+		Client: c,
 		Params: params,
 	}
 }
@@ -152,11 +152,11 @@ func (q *Query) Execute() (*QueryResponse, error) {
 		}
 	}
 
-	req, err := q.client.NewRequest("GET", baseQueryPath, &params, nil)
+	req, err := q.Client.NewRequest("GET", baseQueryPath, &params, nil)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := q.client.Do(req)
+	resp, err := q.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
