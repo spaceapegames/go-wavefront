@@ -149,10 +149,10 @@ func (q *Query) Execute() (*QueryResponse, error) {
 	for i := 0; i < qpType.NumField(); i++ {
 		if qp.Field(i).String() != "" {
 
-			if qp.Field(i).String() == "<bool Value>" {
+			if qp.Field(i).Type().String() == "bool" {
 				params[qpType.Field(i).Tag.Get("query")] = qp.Field(i).Interface().(string)
 			} else {
-				params[qpType.Field(i).Tag.Get("query")] = qp.Field(i).String()
+				params[qpType.Field(i).Tag.Get("query")] = qp.Field(i).Type().String() //qp.Field(i).String()
 			}
 		}
 	}
