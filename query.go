@@ -148,13 +148,13 @@ func (q *Query) Execute() (*QueryResponse, error) {
 
 	for i := 0; i < qpType.NumField(); i++ {
 		if qp.Field(i).String() != "" {
-			params[qpType.Field(i).Tag.Get("query")] = qp.Field(i).String()
+
+			if qp.Field(i).String() == "<bool Value>" {
+				params[qpType.Field(i).Tag.Get("query")] = qp.Field(i).Interface().(string)
+			} else {
+				params[qpType.Field(i).Tag.Get("query")] = qp.Field(i).String()
+			}
 		}
-
-		params["type"+strconv.Itoa(i)] = qpType.Field(i).Type.String()
-		params["type"+strconv.Itoa(i)] = qpType.Field(i).Name
-		params["val"+strconv.Itoa(i)] = qp.Field(i).String()
-
 	}
 
 	req, err := q.client.NewRequest("GET", baseQueryPath, &params, nil)
