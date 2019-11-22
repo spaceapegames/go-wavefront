@@ -8,7 +8,7 @@ import (
 
 const (
 	AlertTypeThreshold = "THRESHOLD"
-	AlertTypeClassic = "CLASSIC"
+	AlertTypeClassic   = "CLASSIC"
 )
 
 // Alert represents a single Wavefront Alert
