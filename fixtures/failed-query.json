@@ -1,0 +1,5 @@
+{
+  "query": "ts(servers.load.load.longterm, source=server1.example.net)",
+  "errorType": "QueryExecutionFailed",
+  "errorMessage": "Terminating Query to save resources"
+}

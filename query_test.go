@@ -69,11 +69,11 @@ func TestQuery(t *testing.T) {
 	}
 }
 
-func TestQuery_SingleSeries(t *testing.T) {
+func getQueryOutputFromFixture(fixture string) (*QueryResponse, error) {
 	baseurl, _ := url.Parse("http://testing.wavefront.com")
-	response, err := ioutil.ReadFile("./fixtures/single-series.json")
+	response, err := ioutil.ReadFile(fixture)
 	if err != nil {
-		t.Fatal(err)
+		return nil, err
 	}
 	q := &Query{
 		Params: NewQueryParams("ts(some.query)"),
@@ -87,7 +87,11 @@ func TestQuery_SingleSeries(t *testing.T) {
 			},
 		},
 	}
-	resp, err := q.Execute()
+	return q.Execute()
+}
+
+func TestQuery_SingleSeries(t *testing.T) {
+	resp, err := getQueryOutputFromFixture("./fixtures/single-series.json")
 	if err != nil {
 		t.Fatal("error executing query:", err)
 	}
@@ -108,24 +112,7 @@ func TestQuery_SingleSeries(t *testing.T) {
 }
 
 func TestQuery_MultiSeries(t *testing.T) {
-	baseurl, _ := url.Parse("http://testing.wavefront.com")
-	response, err := ioutil.ReadFile("./fixtures/multi-series.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-	q := &Query{
-		Params: NewQueryParams("ts(some.query)"),
-		client: &MockWavefrontClient{
-			Response: response,
-			Client: Client{
-				Config:     &Config{Token: "1234-5678-9977"},
-				BaseURL:    baseurl,
-				httpClient: http.DefaultClient,
-				debug:      true,
-			},
-		},
-	}
-	resp, err := q.Execute()
+	resp, err := getQueryOutputFromFixture("./fixtures/multi-series.json")
 	if err != nil {
 		t.Fatal("error executing query:", err)
 	}
@@ -160,4 +147,29 @@ func TestQuery_MultiSeries(t *testing.T) {
 		t.Errorf("datapoints, expected 59, got %d", len(ts.DataPoints))
 	}
 
+}
+
+func TestQuery_Error(t *testing.T) {
+	resp, err := getQueryOutputFromFixture("./fixtures/failed-query.json")
+	if err != nil {
+		t.Fatal("error executing query:", err)
+	}
+
+	// must have the ErrType field populated if there is one
+	if resp.ErrType == "" {
+		t.Errorf("Expected to have ErrType field populated.")
+	}
+
+	if resp.ErrType != "QueryExecutionFailed" {
+		t.Errorf("Unexpected Error Type found.")
+	}
+
+	// must have the ErrType field populated if there is one
+	if resp.ErrMessage == "" {
+		t.Errorf("Expected to have ErrMessage field populated.")
+	}
+
+	if resp.ErrMessage != "Terminating Query to save resources" {
+		t.Errorf("Unexpected Error Message found.")
+	}
 }
