@@ -78,6 +78,12 @@ type QueryResponse struct {
 	Granularity int            `json:"granularity"`
 	Hosts       []string       `json:"hostsUsed"`
 	Warnings    string         `json:"warnings"`
+
+	// ErrType : ref https://code.vmware.com/apis/714/wavefront-rest#/Query/queryApi
+	ErrType string `json:"errorType"`
+
+	// ErrMessage : ref https://code.vmware.com/apis/714/wavefront-rest#/Query/queryApi
+	ErrMessage string `json:"errorMessage"`
 }
 
 // DataPoint represents a single timestamp/value data point as returned
