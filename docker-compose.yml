@@ -1,8 +1,8 @@
 test:
-  image: golang:1.9
+  image: golang:1.13
   volumes:
-    - .:/go/src/github.com/spaceapegames/go-wavefront
-  working_dir: /go/src/github.com/spaceapegames/go-wavefront
+    - .:/go/src/github.com/WavefrontHQ/go-wavefront-management-api
+  working_dir: /go/src/github.com/WavefrontHQ/go-wavefront-management-api
   environment:
     CGO_ENABLED: 0
     GOOS: linux

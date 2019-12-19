@@ -4,7 +4,7 @@ import (
 	"os"
 	"time"
 
-	wavefront "github.com/spaceapegames/go-wavefront/writer"
+	wavefront "github.com/WavefrontHQ/go-wavefront-management-api/writer"
 )
 
 func main() {

@@ -22,7 +22,7 @@
             "test 2.2"
           ]
         },
-        "customer": "spaceape",
+        "customer": "wavefront",
         "url": "test2",
         "eventFilterType": "BYCHART",
         "sections": [

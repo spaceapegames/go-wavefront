@@ -1,4 +1,4 @@
-# Golang Wavefront Client [![GoDoc](https://godoc.org/github.com/spaceapegames/go-wavefront?status.svg)](https://godoc.org/github.com/spaceapegames/go-wavefront) [![Build Status](https://travis-ci.org/spaceapegames/go-wavefront.svg?branch=master)](https://travis-ci.org/spaceapegames/go-wavefront)
+# Golang Wavefront Client
 
 Golang SDK for interacting with the Wavefront v2 API, and sending metrics through a Wavefront proxy.
 
@@ -13,7 +13,7 @@ Presently support for:
  * Alert (and Alert Target) Management
  * Events Management
 
-Please see the [examples](examples) directory for an example on how to use each, or check out the [documentation](https://godoc.org/github.com/spaceapegames/go-wavefront).
+Please see the [examples](examples) directory for an example on how to use each, or check out the [documentation](https://godoc.org/github.com/WavefrontHQ/go-wavefront-management-api).
 
 ```Go
 package main
@@ -21,7 +21,7 @@ package main
 import (
     "log"
 
-    wavefront "github.com/spaceapegames/go-wavefront"
+    wavefront "github.com/WavefrontHQ/go-wavefront-management-api"
 )
 
 func main() {
@@ -58,7 +58,7 @@ import (
     "log"
     "os"
 
-    wavefront "github.com/spaceapegames/go-wavefront/writer"
+    wavefront "github.com/WavefrontHQ/go-wavefront-management-api/writer"
 )
 
 func main() {

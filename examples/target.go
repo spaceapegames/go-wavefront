@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/spaceapegames/go-wavefront"
+	"github.com/WavefrontHQ/go-wavefront-management-api"
 )
 
 func main() {

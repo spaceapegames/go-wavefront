@@ -18,7 +18,7 @@
         "test"
       ]
     },
-    "customer": "spaceape",
+    "customer": "wavefront",
     "url": "api-example",
     "eventFilterType": "BYCHART",
     "sections": [
