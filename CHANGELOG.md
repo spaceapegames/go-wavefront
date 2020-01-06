@@ -2,6 +2,18 @@
 
 Changelog for go-wavefront.
 
+## [1.7.0]
+
+*Add Support for more Wavefront Primitives*
+
+- Add support for Derived Metrics
+- Add support for Users
+- Add support for User Groups
+
+*Improvements to Targets*
+
+- Support for Routes on Targets
+
 ## [1.4.0]
 
 *Add Missing Fields to Dashboards*
