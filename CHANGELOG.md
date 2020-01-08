@@ -2,6 +2,10 @@
 
 Changelog for go-wavefront.
 
+## [1.7.1]
+
+- fixed missing UserGroup id on update call
+
 ## [1.7.0]
 
 *Add Support for more Wavefront Primitives*

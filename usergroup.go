@@ -114,7 +114,7 @@ func (g UserGroups) Update(userGroup *UserGroup) error {
 		return fmt.Errorf("UserGroup ID must be specified")
 	}
 
-	return g.crudUserGroup("PUT", baseUserGroupPath, userGroup)
+	return g.crudUserGroup("PUT", fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup)
 }
 
 // Adds the specified users to the group
