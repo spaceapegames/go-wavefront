@@ -2,6 +2,11 @@
 
 Changelog for go-wavefront.
 
+## [1.7.2]
+
+- Add support for AccessControlList management on Alerts
+- Add support for AccessControlList management on Dashboards
+
 ## [1.7.1]
 
 - fixed missing UserGroup id on update call
