@@ -67,6 +67,9 @@ type Alert struct {
 	// Tags are the tags applied to the Alert
 	Tags []string
 
+	// Access Control Lists for who can view or modify (user or group IDs)// ACL to apply to the alert
+	ACL AccessControlList `json:"acl"`
+
 	FailingHostLabelPairs       []SourceLabelPair `json:"failingHostLabelPairs,omitempty"`
 	InMaintenanceHostLabelPairs []SourceLabelPair `json:"inMaintenanceHostLabelPairs,omitempty"`
 }
@@ -193,6 +196,13 @@ func (a Alerts) Delete(alert *Alert) error {
 	alert.ID = nil
 	return nil
 
+}
+
+// Sets the ACL on the alert with the supplied list of IDs for canView and canModify
+// an empty []string on canView will remove all values set
+// an empty []string on canModify will set the value to the owner of the token issuing the API call
+func (a Alerts) SetACL(id string, canView, canModify []string) error {
+	return putEntityACL(id, canView, canModify, baseAlertPath, a.client)
 }
 
 func (a Alerts) crudAlert(method, path string, alert *Alert) error {
