@@ -360,7 +360,7 @@ func (a Dashboards) Delete(dashboard *Dashboard) error {
 // an empty []string on canView will remove all values set
 // an empty []string on canModify will set the value to the owner of the token issuing the API call
 func (a Dashboards) SetACL(id string, canView, canModify []string) error {
-	return putEntityACL(id, canView, canModify, baseAlertPath, a.client)
+	return putEntityACL(id, canView, canModify, baseDashboardPath, a.client)
 }
 
 func (a Dashboards) crudDashboard(method, path string, dashboard *Dashboard) error {
