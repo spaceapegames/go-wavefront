@@ -25,7 +25,7 @@ func TestClientGet(t *testing.T) {
 
 		if header, ok := r.Header["Authorization"]; ok {
 			if header[0] != "Bearer 123456789" {
-				t.Errorf("Authorization header, expected 'Bearer 123456789', got %s", header[0])
+				t.Errorf("authorization header, expected 'Bearer 123456789', got %s", header[0])
 			}
 		} else {
 			t.Errorf("no Authorization header set")
@@ -81,7 +81,7 @@ func TestClientPost(t *testing.T) {
 
 		if header, ok := r.Header["Authorization"]; ok {
 			if header[0] != "Bearer 123456789" {
-				t.Errorf("Authorization header, expected 'Bearer 123456789', got %s", header[0])
+				t.Errorf("authorization header, expected 'Bearer 123456789', got %s", header[0])
 			}
 		} else {
 			t.Errorf("no Authorization header set")
@@ -89,7 +89,7 @@ func TestClientPost(t *testing.T) {
 
 		if header, ok := r.Header["Content-Type"]; ok {
 			if header[0] != "application/json" {
-				t.Errorf("Authorization header, expected 'application/json', got %s", header[0])
+				t.Errorf("authorization header, expected 'application/json', got %s", header[0])
 			}
 		} else {
 			t.Errorf("no Content-Type header set")

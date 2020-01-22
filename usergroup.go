@@ -69,7 +69,7 @@ func (g UserGroups) Create(userGroup *UserGroup) error {
 // The ID field must be specified
 func (g UserGroups) Get(userGroup *UserGroup) error {
 	if *userGroup.ID == "" {
-		return fmt.Errorf("UserGroup ID field is not set")
+		return fmt.Errorf("usergroup ID field is not set")
 	}
 
 	return g.crudUserGroup("GET", fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup)
@@ -111,7 +111,7 @@ func (g UserGroups) Find(filter []*SearchCondition) ([]*UserGroup, error) {
 // The ID field must be specified
 func (g UserGroups) Update(userGroup *UserGroup) error {
 	if *userGroup.ID == "" {
-		return fmt.Errorf("UserGroup ID must be specified")
+		return fmt.Errorf("usergroup ID must be specified")
 	}
 
 	return g.crudUserGroup("PUT", fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup)
@@ -120,7 +120,7 @@ func (g UserGroups) Update(userGroup *UserGroup) error {
 // Adds the specified users to the group
 func (g UserGroups) AddUsers(id *string, users *[]string) error {
 	if *id == "" {
-		return fmt.Errorf("UserGroup ID must be specified")
+		return fmt.Errorf("usergroup ID must be specified")
 	}
 
 	return g.updateUserGroupUsers(users, id, "addUsers")
@@ -129,7 +129,7 @@ func (g UserGroups) AddUsers(id *string, users *[]string) error {
 // Removes the specified users from the group
 func (g UserGroups) RemoveUsers(id *string, users *[]string) error {
 	if *id == "" {
-		return fmt.Errorf("UserGroup ID must be specified")
+		return fmt.Errorf("usergroup ID must be specified")
 	}
 
 	return g.updateUserGroupUsers(users, id, "removeUsers")
@@ -137,7 +137,7 @@ func (g UserGroups) RemoveUsers(id *string, users *[]string) error {
 
 func (g UserGroups) Delete(userGroup *UserGroup) error {
 	if *userGroup.ID == "" {
-		return fmt.Errorf("UserGroup ID must be specified")
+		return fmt.Errorf("usergroup ID must be specified")
 	}
 
 	err := g.crudUserGroup("DELETE", fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup)

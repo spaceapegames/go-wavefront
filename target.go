@@ -85,7 +85,7 @@ func (c *Client) Targets() *Targets {
 // The ID field must be provided
 func (t Targets) Get(target *Target) error {
 	if *target.ID == "" {
-		return fmt.Errorf("Target id field is not set")
+		return fmt.Errorf("target id field is not set")
 	}
 
 	return t.crudTarget("GET", fmt.Sprintf("%s/%s", baseTargetPath, *target.ID), target)

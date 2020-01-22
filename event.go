@@ -152,7 +152,7 @@ func (a Events) Create(event *Event) error {
 // The ID field of the Event must be populated
 func (e Events) Update(event *Event) error {
 	if event.ID == nil {
-		return fmt.Errorf("Event id field not set")
+		return fmt.Errorf("event id field not set")
 	}
 
 	return e.crudEvent("PUT", fmt.Sprintf("%s/%s", baseEventPath, *event.ID), event)
@@ -162,7 +162,7 @@ func (e Events) Update(event *Event) error {
 // Close is used to close an existing Event
 func (e Events) Close(event *Event) error {
 	if event.ID == nil {
-		return fmt.Errorf("Event id field not set")
+		return fmt.Errorf("event id field not set")
 	}
 
 	return e.crudEvent("POST", fmt.Sprintf("%s/%s/close", baseEventPath, *event.ID), event)
@@ -172,7 +172,7 @@ func (e Events) Close(event *Event) error {
 // The ID field of the Event must be populated
 func (e Events) Delete(event *Event) error {
 	if event.ID == nil {
-		return fmt.Errorf("Event id field not set")
+		return fmt.Errorf("event id field not set")
 	}
 
 	err := e.crudEvent("DELETE", fmt.Sprintf("%s/%s", baseEventPath, *event.ID), event)

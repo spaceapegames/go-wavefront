@@ -157,19 +157,19 @@ func TestQuery_Error(t *testing.T) {
 
 	// must have the ErrType field populated if there is one
 	if resp.ErrType == "" {
-		t.Errorf("Expected to have ErrType field populated.")
+		t.Errorf("expected to have ErrType field populated.")
 	}
 
 	if resp.ErrType != "QueryExecutionFailed" {
-		t.Errorf("Unexpected Error Type found.")
+		t.Errorf("unexpected Error Type found.")
 	}
 
 	// must have the ErrType field populated if there is one
 	if resp.ErrMessage == "" {
-		t.Errorf("Expected to have ErrMessage field populated.")
+		t.Errorf("expected to have ErrMessage field populated.")
 	}
 
 	if resp.ErrMessage != "Terminating Query to save resources" {
-		t.Errorf("Unexpected Error Message found.")
+		t.Errorf("unexpected Error Message found.")
 	}
 }

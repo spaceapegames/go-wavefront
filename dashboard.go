@@ -322,7 +322,7 @@ func (a Dashboards) Create(dashboard *Dashboard) error {
 // The ID field of the Dashboard must be populated
 func (a Dashboards) Update(dashboard *Dashboard) error {
 	if dashboard.ID == "" {
-		return fmt.Errorf("Dashboard id field not set")
+		return fmt.Errorf("dashboard id field not set")
 	}
 
 	return a.crudDashboard("PUT", fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard)
@@ -333,7 +333,7 @@ func (a Dashboards) Update(dashboard *Dashboard) error {
 // The ID field must be provided
 func (a Dashboards) Get(dashboard *Dashboard) error {
 	if dashboard.ID == "" {
-		return fmt.Errorf("Dashboard id field is not set")
+		return fmt.Errorf("dashboard id field is not set")
 	}
 
 	return a.crudDashboard("GET", fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard)
@@ -343,7 +343,7 @@ func (a Dashboards) Get(dashboard *Dashboard) error {
 // The ID field of the Dashboard must be populated
 func (a Dashboards) Delete(dashboard *Dashboard) error {
 	if dashboard.ID == "" {
-		return fmt.Errorf("Dashboard id field not set")
+		return fmt.Errorf("dashboard id field not set")
 	}
 
 	err := a.crudDashboard("DELETE", fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard)

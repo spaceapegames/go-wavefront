@@ -126,7 +126,7 @@ func (c *Client) Alerts() *Alerts {
 // The ID field must be provided
 func (a Alerts) Get(alert *Alert) error {
 	if *alert.ID == "" {
-		return fmt.Errorf("Alert id field is not set")
+		return fmt.Errorf("alert id field is not set")
 	}
 
 	return a.crudAlert("GET", fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID), alert)
