@@ -20,7 +20,7 @@ vet:
 	fi
 
 errcheck:
-	@sh -c "'$(CURDIR)/scripts/errcheck.sh'" | grep -v example
+	@sh -c "'$(CURDIR)/scripts/errcheck.sh'"
 
 test: fmtcheck
 	go test -i $(TEST) || exit 1
