@@ -2,6 +2,12 @@
 
 Changelog for go-wavefront.
 
+## [1.5.0]
+
+*Feature to configure http client timeout*
+
+- Expose http client timeout parameter 
+
 ## [1.4.0]
 
 *Add Missing Fields to Dashboards*
