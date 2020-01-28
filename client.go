@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 )
 
 // Wavefronter is an interface that a Wavefront client must satisfy
@@ -27,6 +28,10 @@ type Config struct {
 
 	// Token is an authentication token that will be passed with all requests
 	Token string
+
+	// Timeout exposes the http client timeout
+	// https://golang.org/src/net/http/client.go
+	Timeout time.Duration
 
 	// SET HTTP Proxy configuration
 	HttpProxy string
@@ -59,15 +64,21 @@ func NewClient(config *Config) (*Client, error) {
 		return nil, err
 	}
 
+	// Added timeout to http client
+	// Timeout of zero means no timeout
+	h := &http.Client{
+		Timeout: config.Timeout,
+		Transport: &http.Transport{
+			TLSNextProto: map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
+		},
+	}
+
 	// need to disable http/2 as it doesn't play nicely with nginx
 	// to do so we set TLSNextProto to an empty, non-nil map
-	c := &Client{Config: config,
+	c := &Client{
+		Config: config,
 		BaseURL: baseURL,
-		httpClient: &http.Client{
-			Transport: &http.Transport{
-				TLSNextProto: map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
-			},
-		},
+		httpClient: h,
 		debug: false,
 	}
 
