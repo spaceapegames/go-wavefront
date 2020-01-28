@@ -14,7 +14,7 @@ const (
 // Alert represents a single Wavefront Alert
 type Alert struct {
 	// Name is the name given to an Alert
-	Name string `json:"name"`
+	Name string `json:"name1"`
 
 	// ID is the Wavefront-assigned ID of an existing Alert
 	ID *string `json:"id,omitempty"`
