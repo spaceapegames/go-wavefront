@@ -12,7 +12,7 @@ err_files=$(errcheck -ignoretests \
                      -ignore 'github.com/hashicorp/terraform/helper/schema:Set' \
                      -ignore 'bytes:.*' \
                      -ignore 'io:Close|Write' \
-                     $(go list ./...| grep -v /vendor/))
+                     $(go list ./...| grep -v /vendor/ | grep -v examples))
 
 if [[ -n ${err_files} ]]; then
     echo 'Unchecked errors found in the following places:'
