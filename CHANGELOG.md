@@ -2,6 +2,10 @@
 
 Changelog for go-wavefront.
 
+## [1.7.3]
+
+- Fixing go.mod file 
+
 ## [1.7.2]
 
 - Add support for AccessControlList management on Alerts
