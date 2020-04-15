@@ -142,7 +142,7 @@ type Chart struct {
 	// ChartSettings are custom settings for the chart
 	ChartSettings ChartSetting `json:"chartSettings"`
 
-	// ChartSettings are custom settings for the chart
+	// ChartAttributes are custom attributes for the chart
 	ChartAttributes ChartAttributes `json:"chartAttributes,omitempty"`
 }
 
