@@ -33,6 +33,9 @@ type Config struct {
 	// https://golang.org/src/net/http/client.go
 	Timeout time.Duration
 
+	// https://golang.org/src/net/http/client.go
+	TLSClientConfig *tls.Config
+
 	// SET HTTP Proxy configuration
 	HttpProxy string
 
@@ -69,17 +72,18 @@ func NewClient(config *Config) (*Client, error) {
 	h := &http.Client{
 		Timeout: config.Timeout,
 		Transport: &http.Transport{
-			TLSNextProto: map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
+			TLSClientConfig: config.TLSClientConfig,
+			TLSNextProto:    map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
 		},
 	}
 
 	// need to disable http/2 as it doesn't play nicely with nginx
 	// to do so we set TLSNextProto to an empty, non-nil map
 	c := &Client{
-		Config: config,
-		BaseURL: baseURL,
+		Config:     config,
+		BaseURL:    baseURL,
 		httpClient: h,
-		debug: false,
+		debug:      false,
 	}
 
 	// ENABLE HTTP Proxy
