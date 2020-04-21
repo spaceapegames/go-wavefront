@@ -33,6 +33,7 @@ type Config struct {
 	// https://golang.org/src/net/http/client.go
 	Timeout time.Duration
 
+	// TLSClientConfig exposes the underlying TLS configuration. If none specified, the default is used.
 	// https://golang.org/src/net/http/client.go
 	TLSClientConfig *tls.Config
 
