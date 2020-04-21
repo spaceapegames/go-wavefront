@@ -141,6 +141,9 @@ type Chart struct {
 
 	// ChartSettings are custom settings for the chart
 	ChartSettings ChartSetting `json:"chartSettings"`
+
+	// ChartAttributes are custom attributes for the chart
+	ChartAttributes ChartAttributes `json:"chartAttributes,omitempty"`
 }
 
 // Source represents a single Source for a Chart
@@ -235,6 +238,18 @@ type ChartSetting struct {
 type Dashboards struct {
 	// client is the Wavefront client used to perform Dashboard-related operations
 	client Wavefronter
+}
+
+type ChartAttributes struct {
+	DashboardLinks DashboardLinks `json:"dashboardLinks,omitempty"`
+}
+
+type DashboardLinks struct {
+	DashboardLink DashboardLink `json:"*,omitempty"`
+}
+
+type DashboardLink struct {
+	Destination string `json:"destination,omitempty"`
 }
 
 const baseDashboardPath = "/api/v2/dashboard"

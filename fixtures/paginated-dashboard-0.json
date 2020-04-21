@@ -64,6 +64,13 @@
                       "xmin": 0,
                       "timeBasedColoring": false
                     },
+                    "chartAttributes": {
+                      "dashboardLinks": {
+                        "*": {
+                          "destination": "/dashboards/test-url"
+                        }
+                      }
+                    },
                     "summarization": "MEAN"
                   }
                 ]
