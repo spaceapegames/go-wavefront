@@ -70,12 +70,14 @@ func NewClient(config *Config) (*Client, error) {
 
 	// Added timeout to http client
 	// Timeout of zero means no timeout
+	t := &http.Transport{
+		TLSClientConfig: config.TLSClientConfig,
+		TLSNextProto:    map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
+	}
+
 	h := &http.Client{
-		Timeout: config.Timeout,
-		Transport: &http.Transport{
-			TLSClientConfig: config.TLSClientConfig,
-			TLSNextProto:    map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
-		},
+		Timeout:   config.Timeout,
+		Transport: t,
 	}
 
 	// need to disable http/2 as it doesn't play nicely with nginx
@@ -90,9 +92,7 @@ func NewClient(config *Config) (*Client, error) {
 	// ENABLE HTTP Proxy
 	if config.HttpProxy != "" {
 		proxyUrl, _ := url.Parse(config.HttpProxy)
-		c.httpClient.Transport = &http.Transport{
-			Proxy: http.ProxyURL(proxyUrl),
-		}
+		t.Proxy = http.ProxyURL(proxyUrl)
 	}
 
 	//For testing ONLY
