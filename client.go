@@ -68,20 +68,18 @@ func NewClient(config *Config) (*Client, error) {
 		return nil, err
 	}
 
-	// Added timeout to http client
-	// Timeout of zero means no timeout
 	t := &http.Transport{
 		TLSClientConfig: config.TLSClientConfig,
 		TLSNextProto:    map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
 	}
 
+	// Add timeout to http client
+	// Timeout of zero means no timeout
 	h := &http.Client{
 		Timeout:   config.Timeout,
 		Transport: t,
 	}
 
-	// need to disable http/2 as it doesn't play nicely with nginx
-	// to do so we set TLSNextProto to an empty, non-nil map
 	c := &Client{
 		Config:     config,
 		BaseURL:    baseURL,
