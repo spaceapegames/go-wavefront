@@ -195,3 +195,32 @@ func TestClientTLSConfig(t *testing.T) {
 	output, _ := ioutil.ReadAll(resp)
 	fmt.Println(string(output))
 }
+
+func TestClientTLSWithProxy(t *testing.T) {
+	pool := x509.NewCertPool()
+	tlsConfig := tls.Config{
+		RootCAs: pool,
+	}
+	httpProxy := "http://example.com:8080"
+
+	client, err := NewClient(&Config{
+		Address:         "example.org",
+		Token:           "123456789",
+		TLSClientConfig: &tlsConfig,
+		HttpProxy:       httpProxy,
+	})
+
+	if err != nil {
+		t.Fatal("error initiating client:", err)
+	}
+
+	transport := client.httpClient.Transport.(*http.Transport)
+	if transport.TLSClientConfig != &tlsConfig {
+		t.Fatal("TLS Client Config not preserved")
+	}
+
+	transportProxy, _ := transport.Proxy(nil)
+	if httpProxy != transportProxy.String() {
+		t.Fatal("HttpProxy not preserved")
+	}
+}
