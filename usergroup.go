@@ -62,7 +62,7 @@ func (g UserGroups) Create(userGroup *UserGroup) error {
 		return fmt.Errorf("permissions must be specified when creating a usergroup")
 	}
 
-	return g.crudUserGroup("POST", baseUserGroupPath, userGroup)
+	return basicCrud(g.client, "POST", baseUserGroupPath, userGroup, nil)
 }
 
 // Gets a specific UserGroup by ID
@@ -72,7 +72,8 @@ func (g UserGroups) Get(userGroup *UserGroup) error {
 		return fmt.Errorf("usergroup ID field is not set")
 	}
 
-	return g.crudUserGroup("GET", fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup)
+	return basicCrud(g.client, "GET",
+		fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup, nil)
 }
 
 // Find returns all UsersGroups filtered by the given search conditions.
@@ -114,7 +115,8 @@ func (g UserGroups) Update(userGroup *UserGroup) error {
 		return fmt.Errorf("usergroup ID must be specified")
 	}
 
-	return g.crudUserGroup("PUT", fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup)
+	return basicCrud(g.client, "PUT",
+		fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup, nil)
 }
 
 // Adds the specified users to the group
@@ -140,7 +142,8 @@ func (g UserGroups) Delete(userGroup *UserGroup) error {
 		return fmt.Errorf("usergroup ID must be specified")
 	}
 
-	err := g.crudUserGroup("DELETE", fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup)
+	err := basicCrud(g.client, "DELETE",
+		fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup, nil)
 	if err != nil {
 		return err
 	}
@@ -156,7 +159,8 @@ func (g UserGroups) updateUserGroupUsers(users *[]string, id *string, endpoint s
 		return err
 	}
 
-	req, err := g.client.NewRequest("POST", fmt.Sprintf("%s/%s/%s", baseUserGroupPath, *id, endpoint), nil, payload)
+	req, err := g.client.NewRequest("POST",
+		fmt.Sprintf("%s/%s/%s", baseUserGroupPath, *id, endpoint), nil, payload)
 	if err != nil {
 		return err
 	}
@@ -169,32 +173,4 @@ func (g UserGroups) updateUserGroupUsers(users *[]string, id *string, endpoint s
 
 	_, err = ioutil.ReadAll(resp)
 	return err
-}
-
-func (g UserGroups) crudUserGroup(method, path string, userGroup *UserGroup) error {
-	payload, err := json.Marshal(userGroup)
-	if err != nil {
-		return err
-	}
-	req, err := g.client.NewRequest(method, path, nil, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := g.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	body, err := ioutil.ReadAll(resp)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(body, &struct {
-		Response *UserGroup `json:"response"`
-	}{
-		Response: userGroup,
-	})
 }

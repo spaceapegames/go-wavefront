@@ -1,11 +1,7 @@
 package wavefront
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"testing"
@@ -24,21 +20,7 @@ type MockCrudDashboardClient struct {
 }
 
 func (m *MockDashboardClient) Do(req *http.Request) (io.ReadCloser, error) {
-	response, err := ioutil.ReadFile(fmt.Sprintf("./fixtures/paginated-dashboard-%d.json", m.InvokedCount))
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	body, _ := ioutil.ReadAll(req.Body)
-	search := SearchParams{}
-	err = json.Unmarshal(body, &search)
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	if search.Offset != search.Limit*m.InvokedCount {
-		m.T.Errorf("offset, expected %d, got %d", search.Limit*m.InvokedCount, search.Offset)
-	}
-	m.InvokedCount++
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	return testPaginatedDo(m.T, req, "./fixtures/paginated-dashboard-%d.json", &m.InvokedCount)
 }
 
 func TestDashboards_PaginatedFind(t *testing.T) {
@@ -74,20 +56,7 @@ func TestDashboards_PaginatedFind(t *testing.T) {
 }
 
 func (m *MockCrudDashboardClient) Do(req *http.Request) (io.ReadCloser, error) {
-	response, err := ioutil.ReadFile("./fixtures/create-dashboard-response.json")
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	if req.Method != m.method {
-		m.T.Errorf("request method expected '%s' got '%s'", m.method, req.Method)
-	}
-	body, _ := ioutil.ReadAll(req.Body)
-	dashboard := Dashboard{}
-	err = json.Unmarshal(body, &dashboard)
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	return testDo(m.T, req, "./fixtures/create-dashboard-response.json", m.method, Dashboard{})
 }
 
 func TestDashboards_CreateUpdateDeleteDashboard(t *testing.T) {
@@ -119,9 +88,7 @@ func TestDashboards_CreateUpdateDeleteDashboard(t *testing.T) {
 	a.client.(*MockCrudDashboardClient).method = "POST"
 
 	a.Create(&dashboard)
-	if dashboard.ID != "api-example" {
-		t.Errorf("dashboard ID expected api-example, got %s", dashboard.ID)
-	}
+	assertEqual(t, "api-example", dashboard.ID)
 
 	a.client.(*MockCrudDashboardClient).method = "PUT"
 	if err := a.Update(&dashboard); err != nil {
@@ -129,12 +96,9 @@ func TestDashboards_CreateUpdateDeleteDashboard(t *testing.T) {
 	}
 
 	a.client.(*MockCrudDashboardClient).method = "DELETE"
-	if err := a.Delete(&dashboard); err != nil {
+	if err := a.Delete(&dashboard, true); err != nil {
 		t.Error(err)
 	}
 
-	if dashboard.ID != "" {
-		t.Error("expected dashboard ID to be reset after deletion")
-	}
-
+	assertEqual(t, "", dashboard.ID)
 }

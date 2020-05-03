@@ -1,0 +1,134 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "items": [
+      {
+        "forceSave": false,
+        "name": "gcp-example-integrations",
+        "id": "12345678-1234-5678-9101-12345678910111",
+        "service": "GCPBILLING",
+        "inTrash": false,
+        "updaterId": "test@example.com",
+        "creatorId": "test@example.com",
+        "lastReceivedDataPointMs": 1586971817024,
+        "lastMetricCount": 100,
+        "gcpBilling": {
+          "gcpApiKey": "saved_api_key",
+          "gcpJsonKey": "{\"project_id\": \"gcp-example\"}",
+          "projectId": "gcp-example"
+        },
+        "disabled": false,
+        "lastProcessorId": "12345678-1234-5678-9101-12345678910111",
+        "lastProcessingTimestamp": 1586971820363,
+        "createdEpochMillis": 1541180421550,
+        "updatedEpochMillis": 1541180421550,
+        "serviceRefreshRateInMins": 5,
+        "deleted": false
+      },
+      {
+        "forceSave": false,
+        "name": "AWS - Example account",
+        "id": "12345678-1234-5678-9101-12345678910111",
+        "service": "CLOUDWATCH",
+        "inTrash": false,
+        "updaterId": "example",
+        "creatorId": "test@example.com",
+        "lastErrorEvent": {
+          "name": "Example Error: AWS - Example account",
+          "annotations": {
+            "severity": "warn",
+            "errorMessage": "Cannot access cloudwatch with given credentials",
+            "credentialsId": "12345678-1234-5678-9101-12345678910111",
+            "type": "credentials-error",
+            "service": "CLOUDWATCH"
+          },
+          "id": "1498265661556:Credentials Error: AWS - Example account:0",
+          "table": "example",
+          "startTime": 1498265661556,
+          "canDelete": false,
+          "canClose": false,
+          "creatorType": [
+            "SYSTEM"
+          ],
+          "hosts": [],
+          "updaterId": "System Event",
+          "creatorId": "System Event",
+          "runningState": "ONGOING"
+        },
+        "lastReceivedDataPointMs": 1497392604551,
+        "lastMetricCount": 100,
+        "cloudWatch": {
+          "metricFilterRegex": "^aws.(billing).*$",
+          "baseCredentials": {
+            "roleArn": "arn:aws:iam::123456789012:role/example-arn"
+          },
+          "instanceSelectionTags": {},
+          "volumeSelectionTags": {}
+        },
+        "disabled": true,
+        "lastProcessorId": "12345678-1234-5678-9101-12345678910111",
+        "lastProcessingTimestamp": 1586971821015,
+        "createdEpochMillis": 1490059168272,
+        "updatedEpochMillis": 1498265661534,
+        "deleted": false
+      },
+      {
+        "forceSave": false,
+        "name": "AWS - Wavefront Example",
+        "id": "12345678-1234-5678-9101-12345678910111",
+        "service": "CLOUDTRAIL",
+        "inTrash": false,
+        "updaterId": "test@example.com",
+        "creatorId": "test@example.com",
+        "lastReceivedDataPointMs": 1586971825387,
+        "lastMetricCount": 100,
+        "cloudTrail": {
+          "region": "us-west-2",
+          "prefix": "",
+          "baseCredentials": {
+            "roleArn": "arn:aws:iam::123456789012:role/example-arn"
+          },
+          "bucketName": "example-cloudtrails"
+        },
+        "disabled": false,
+        "lastProcessorId": "12345678-1234-5678-9101-12345678910111",
+        "lastProcessingTimestamp": 1586971843050,
+        "createdEpochMillis": 1520879897808,
+        "updatedEpochMillis": 1520879897808,
+        "deleted": false
+      },
+      {
+        "forceSave": false,
+        "name": "example-gcp",
+        "id": "12345678-1234-5678-9101-12345678910111",
+        "service": "GCP",
+        "inTrash": false,
+        "updaterId": "test@example.com",
+        "creatorId": "test@example.com",
+        "lastReceivedDataPointMs": 1586971830554,
+        "lastMetricCount": 100,
+        "gcp": {
+          "metricFilterRegex": "",
+          "gcpJsonKey": "{\"project_id\": \"example-gcp\"}",
+          "projectId": "example-gcp",
+          "categoriesToFetch": []
+        },
+        "disabled": false,
+        "lastProcessorId": "12345678-1234-5678-9101-12345678910111",
+        "lastProcessingTimestamp": 1586971831796,
+        "createdEpochMillis": 1540479748735,
+        "updatedEpochMillis": 1540479748735,
+        "serviceRefreshRateInMins": 5,
+        "deleted": false
+      }
+    ],
+    "offset": 0,
+    "limit": 100,
+    "totalItems": 4,
+    "moreItems": false
+  }
+}

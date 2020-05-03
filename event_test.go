@@ -23,22 +23,12 @@ type MockCrudEventClient struct {
 }
 
 func (m *MockEventClient) Do(req *http.Request) (io.ReadCloser, error) {
-	body, _ := ioutil.ReadAll(req.Body)
-	search := SearchParams{}
-	err := json.Unmarshal(body, &search)
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	if search.TimeRange.EndTime != 1498723080000 && search.TimeRange.StartTime != 1498719480000 {
-		m.T.Errorf("expected time range 1498719480000 - 1498723080000, got %d - %d",
-			search.TimeRange.StartTime, search.TimeRange.EndTime,
-		)
-	}
-	response, err := ioutil.ReadFile("./fixtures/search-event-response.json")
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	search := &SearchParams{}
+	resp, err := testDo(m.T, req, "./fixtures/search-event-response.json", "POST", search)
+
+	assertEqual(m.T, int64(1498719480000), search.TimeRange.StartTime)
+	assertEqual(m.T, int64(1498723080000), search.TimeRange.EndTime)
+	return resp, err
 }
 
 func TestEvents_Find(t *testing.T) {
@@ -61,18 +51,11 @@ func TestEvents_Find(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(events) != 3 {
-		t.Errorf("expected 3 events, got %d", len(events))
-	}
-
-	if *events[0].ID != "1498664617084:Alert Fired: Service Errors" {
-		t.Errorf("expected first event ID '1498664617084:Alert Fired: Service Errors', got %s", *events[0].ID)
-	}
-
-	if events[0].Severity != "warn" || events[0].Type != "alert-detail" || events[0].Details != "some details" {
-		t.Errorf("unexpected annotations on event")
-	}
-
+	assertEqual(t, 3, len(events))
+	assertEqual(t, "1498664617084:Alert Fired: Service Errors", *events[0].ID)
+	assertEqual(t, "warn", events[0].Severity)
+	assertEqual(t, "alert-detail", events[0].Type)
+	assertEqual(t, "some details", events[0].Details)
 }
 
 func (m *MockCrudEventClient) Do(req *http.Request) (io.ReadCloser, error) {
@@ -121,9 +104,7 @@ func TestEvents_CreateUpdateDeleteEvent(t *testing.T) {
 	e.client.(*MockCrudEventClient).method = "POST"
 
 	e.Create(&event)
-	if *event.ID != "1234" {
-		t.Errorf("event ID expected 1234, got %s", *event.ID)
-	}
+	assertEqual(t, "1234", *event.ID)
 
 	e.client.(*MockCrudEventClient).method = "PUT"
 	if err := e.Update(&event); err != nil {

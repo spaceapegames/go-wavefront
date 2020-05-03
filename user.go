@@ -171,7 +171,8 @@ func (u Users) Delete(user *User) error {
 		return fmt.Errorf("user ID field is not set")
 	}
 
-	req, err := u.client.NewRequest("DELETE", fmt.Sprintf("%s/%s", baseUserPath, *user.ID), nil, nil)
+	req, err := u.client.NewRequest("DELETE",
+		fmt.Sprintf("%s/%s", baseUserPath, *user.ID), nil, nil)
 	if err != nil {
 		return err
 	}

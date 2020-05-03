@@ -3,7 +3,6 @@ package wavefront
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"time"
 )
 
@@ -37,6 +36,9 @@ type Event struct {
 
 	// Instantaneous, if true, creates a point-in-time Event (i.e. with no duration)
 	Instantaneous bool `json:"isEphemeral"`
+
+	// Annotations on the event
+	Annotations map[string]string `json:"annotations"`
 }
 
 // Events is used to perform event-related operations against the Wavefront API
@@ -63,6 +65,7 @@ func (e *Event) UnmarshalJSON(b []byte) error {
 	e.Severity = temp.Annotations["severity"]
 	e.Type = temp.Annotations["type"]
 	e.Details = temp.Annotations["details"]
+	e.Annotations = temp.Annotations
 
 	return nil
 }
@@ -138,14 +141,14 @@ func (e Events) FindByID(id string) (*Event, error) {
 
 // Create is used to create an Event in Wavefront.
 // If successful, the ID field of the event will be populated.
-func (a Events) Create(event *Event) error {
+func (e Events) Create(event *Event) error {
 	if event.StartTime == 0 {
 		event.StartTime = time.Now().Unix() * 1000
 	}
 	if event.Instantaneous == true {
 		event.EndTime = event.StartTime + 1
 	}
-	return a.crudEvent("POST", baseEventPath, event)
+	return basicCrud(e.client, "POST", baseEventPath, event, nil)
 }
 
 // Update is used to update an existing Event.
@@ -155,7 +158,7 @@ func (e Events) Update(event *Event) error {
 		return fmt.Errorf("event id field not set")
 	}
 
-	return e.crudEvent("PUT", fmt.Sprintf("%s/%s", baseEventPath, *event.ID), event)
+	return basicCrud(e.client, "PUT", fmt.Sprintf("%s/%s", baseEventPath, *event.ID), event, nil)
 
 }
 
@@ -165,7 +168,7 @@ func (e Events) Close(event *Event) error {
 		return fmt.Errorf("event id field not set")
 	}
 
-	return e.crudEvent("POST", fmt.Sprintf("%s/%s/close", baseEventPath, *event.ID), event)
+	return basicCrud(e.client, "POST", fmt.Sprintf("%s/%s/close", baseEventPath, *event.ID), event, nil)
 }
 
 // Delete is used to delete an existing Event.
@@ -175,7 +178,7 @@ func (e Events) Delete(event *Event) error {
 		return fmt.Errorf("event id field not set")
 	}
 
-	err := e.crudEvent("DELETE", fmt.Sprintf("%s/%s", baseEventPath, *event.ID), event)
+	err := basicCrud(e.client, "DELETE", fmt.Sprintf("%s/%s", baseEventPath, *event.ID), event, nil)
 	if err != nil {
 		return err
 	}
@@ -184,32 +187,4 @@ func (e Events) Delete(event *Event) error {
 	event.ID = nil
 	return nil
 
-}
-
-func (e Events) crudEvent(method, path string, event *Event) error {
-	payload, err := json.Marshal(event)
-	if err != nil {
-		return err
-	}
-	req, err := e.client.NewRequest(method, path, nil, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := e.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	body, err := ioutil.ReadAll(resp)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(body, &struct {
-		Response *Event `json:"response"`
-	}{
-		Response: event,
-	})
 }

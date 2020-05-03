@@ -1,10 +1,7 @@
 package wavefront
 
 import (
-	"bytes"
-	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"testing"
@@ -22,18 +19,7 @@ type MockCrudUserClient struct {
 }
 
 func (m *MockUserClient) Do(req *http.Request) (io.ReadCloser, error) {
-	body, _ := ioutil.ReadAll(req.Body)
-	search := SearchParams{}
-	err := json.Unmarshal(body, &search)
-	if err != nil {
-		m.T.Fatal(err)
-	}
-
-	response, err := ioutil.ReadFile("./fixtures/search-user-response.json")
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	return testDo(m.T, req, "./fixtures/search-user-response.json", "POST", &SearchParams{})
 }
 
 func TestUsers_Find(t *testing.T) {
@@ -55,13 +41,8 @@ func TestUsers_Find(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(users) != 2 {
-		t.Errorf("expected two users returned, got %d", len(users))
-	}
-
-	if *users[0].ID != "thatoneperson@example.com" {
-		t.Errorf("expected first user to be someone@example.com, got %s", *users[0].ID)
-	}
+	assertEqual(t, 2, len(users))
+	assertEqual(t, "thatoneperson@example.com", *users[0].ID)
 
 	permissions := []string{
 		AGENT_MANAGEMENT,
@@ -94,23 +75,7 @@ func TestUsers_Find(t *testing.T) {
 }
 
 func (m *MockCrudUserClient) Do(req *http.Request) (io.ReadCloser, error) {
-	response, err := ioutil.ReadFile("./fixtures/crud-user-response.json")
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	if req.Method != m.method {
-		m.T.Errorf("request method expected '%s' got '%s'", m.method, req.Method)
-	}
-	// the delete call is sent with zero body in the request
-	if req.Body != nil {
-		body, _ := ioutil.ReadAll(req.Body)
-		user := User{}
-		err = json.Unmarshal(body, &user)
-		if err != nil {
-			m.T.Fatal(err)
-		}
-	}
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	return testDo(m.T, req, "./fixtures/crud-user-response.json", m.method, &User{})
 }
 
 func TestUsers_CreateUpdateDelete(t *testing.T) {
@@ -145,20 +110,14 @@ func TestUsers_CreateUpdateDelete(t *testing.T) {
 
 	newUser.EmailAddress = emailAddress
 	var _ = u.Create(newUser, user, true)
-	if *user.ID != emailAddress {
-		t.Errorf("expected ID of %s, got %s", emailAddress, *user.ID)
-	}
+	assertEqual(t, emailAddress, *user.ID)
 
 	u.client.(*MockCrudUserClient).method = "PUT"
 	user.ID = &emailAddress
 	var _ = u.Update(user)
-	if len(user.Permissions) != 1 {
-		t.Errorf("expected only a single permission on user, got %d", len(user.Permissions))
-	}
+	assertEqual(t, 1, len(user.Permissions))
 
 	u.client.(*MockCrudUserClient).method = "DELETE"
 	var _ = u.Delete(user)
-	if *user.ID != "" {
-		t.Errorf("expected user ID to be blank got %s", *user.ID)
-	}
+	assertEqual(t, "", *user.ID)
 }

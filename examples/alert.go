@@ -63,7 +63,7 @@ func main() {
 	}
 
 	// Delete the Alert
-	err = alerts.Delete(a)
+	err = alerts.Delete(a, true)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -182,7 +182,7 @@ func main() {
 	}
 
 	// Delete the Threshold Alert
-	err = alerts.Delete(mta)
+	err = alerts.Delete(mta, true)
 	if err != nil {
 		log.Fatal(err)
 	}

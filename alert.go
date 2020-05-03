@@ -3,7 +3,7 @@ package wavefront
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"strconv"
 )
 
 const (
@@ -72,6 +72,15 @@ type Alert struct {
 
 	FailingHostLabelPairs       []SourceLabelPair `json:"failingHostLabelPairs,omitempty"`
 	InMaintenanceHostLabelPairs []SourceLabelPair `json:"inMaintenanceHostLabelPairs,omitempty"`
+
+	// The interval between checks for this alert, in minutes
+	CheckingFrequencyInMinutes int `json:"processRateMinutes,omitempty"`
+
+	// Real-Time Alerting, evaluate the alert strictly on ingested data without accounting for delays
+	EvaluateRealtimeData bool `json:"evaluateRealtimeData,omitempty"`
+
+	// Include obsolete metrics in alert query
+	IncludeObsoleteMetrics bool `json:"includeObsoleteMetrics,omitempty"`
 }
 
 type SourceLabelPair struct {
@@ -129,7 +138,7 @@ func (a Alerts) Get(alert *Alert) error {
 		return fmt.Errorf("alert id field is not set")
 	}
 
-	return a.crudAlert("GET", fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID), alert)
+	return basicCrud(a.client, "GET", fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID), alert, nil)
 }
 
 // Find returns all alerts filtered by the given search conditions.
@@ -166,7 +175,7 @@ func (a Alerts) Find(filter []*SearchCondition) ([]*Alert, error) {
 // Create is used to create an Alert in Wavefront.
 // If successful, the ID field of the alert will be populated.
 func (a Alerts) Create(alert *Alert) error {
-	return a.crudAlert("POST", baseAlertPath, alert)
+	return basicCrud(a.client, "POST", baseAlertPath, alert, nil)
 }
 
 // Update is used to update an existing Alert.
@@ -176,18 +185,22 @@ func (a Alerts) Update(alert *Alert) error {
 		return fmt.Errorf("alert id field not set")
 	}
 
-	return a.crudAlert("PUT", fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID), alert)
+	return basicCrud(a.client, "PUT", fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID), alert, nil)
 
 }
 
 // Delete is used to delete an existing Alert.
 // The ID field of the alert must be populated
-func (a Alerts) Delete(alert *Alert) error {
+func (a Alerts) Delete(alert *Alert, skipTrash bool) error {
 	if alert.ID == nil {
 		return fmt.Errorf("alert id field not set")
 	}
 
-	err := a.crudAlert("DELETE", fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID), alert)
+	params := &map[string]string{
+		"skipTrash": strconv.FormatBool(skipTrash),
+	}
+
+	err := basicCrud(a.client, "DELETE", fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID), alert, params)
 	if err != nil {
 		return err
 	}
@@ -203,33 +216,4 @@ func (a Alerts) Delete(alert *Alert) error {
 // an empty []string on canModify will set the value to the owner of the token issuing the API call
 func (a Alerts) SetACL(id string, canView, canModify []string) error {
 	return putEntityACL(id, canView, canModify, baseAlertPath, a.client)
-}
-
-func (a Alerts) crudAlert(method, path string, alert *Alert) error {
-	payload, err := json.Marshal(alert)
-	if err != nil {
-		return err
-	}
-	req, err := a.client.NewRequest(method, path, nil, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := a.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	body, err := ioutil.ReadAll(resp)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(body, &struct {
-		Response *Alert `json:"response"`
-	}{
-		Response: alert,
-	})
-
 }

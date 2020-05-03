@@ -3,7 +3,6 @@ package wavefront
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 type ExternalLink struct {
@@ -64,7 +63,7 @@ func (e ExternalLinks) Get(link *ExternalLink) error {
 		return fmt.Errorf("id must be specified")
 	}
 
-	return e.crudExtLinks("GET", fmt.Sprintf("%s/%s", baseExtLinkPath, *link.ID), link)
+	return basicCrud(e.client, "GET", fmt.Sprintf("%s/%s", baseExtLinkPath, *link.ID), link, nil)
 }
 
 func (e ExternalLinks) Create(link *ExternalLink) error {
@@ -72,7 +71,7 @@ func (e ExternalLinks) Create(link *ExternalLink) error {
 		return fmt.Errorf("externa link name, description, and template must be specified")
 	}
 
-	return e.crudExtLinks("POST", baseExtLinkPath, link)
+	return basicCrud(e.client, "POST", baseExtLinkPath, link, nil)
 }
 
 func (e ExternalLinks) Update(link *ExternalLink) error {
@@ -80,7 +79,7 @@ func (e ExternalLinks) Update(link *ExternalLink) error {
 		return fmt.Errorf("id must be specified")
 	}
 
-	return e.crudExtLinks("PUT", fmt.Sprintf("%s/%s", baseExtLinkPath, *link.ID), link)
+	return basicCrud(e.client, "PUT", fmt.Sprintf("%s/%s", baseExtLinkPath, *link.ID), link, nil)
 }
 
 func (e ExternalLinks) Delete(link *ExternalLink) error {
@@ -88,7 +87,7 @@ func (e ExternalLinks) Delete(link *ExternalLink) error {
 		return fmt.Errorf("id must be specified")
 	}
 
-	err := e.crudExtLinks("DELETE", fmt.Sprintf("%s/%s", baseExtLinkPath, *link.ID), link)
+	err := basicCrud(e.client, "DELETE", fmt.Sprintf("%s/%s", baseExtLinkPath, *link.ID), link, nil)
 	if err != nil {
 		return err
 	}
@@ -96,33 +95,4 @@ func (e ExternalLinks) Delete(link *ExternalLink) error {
 	// Clear out the id to prevent re-submission
 	*link.ID = ""
 	return nil
-}
-
-func (e ExternalLinks) crudExtLinks(method, path string, extLink *ExternalLink) error {
-	payload, err := json.Marshal(extLink)
-	if err != nil {
-		return err
-	}
-
-	request, err := e.client.NewRequest(method, path, nil, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := e.client.Do(request)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	body, err := ioutil.ReadAll(resp)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(body, &struct {
-		Response *ExternalLink `json:"response"`
-	}{
-		Response: extLink,
-	})
 }

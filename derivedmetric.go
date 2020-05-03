@@ -3,7 +3,7 @@ package wavefront
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"strconv"
 )
 
 type DerivedMetric struct {
@@ -53,7 +53,8 @@ func (dm DerivedMetrics) Get(metric *DerivedMetric) error {
 	if *metric.ID == "" {
 		return fmt.Errorf("id must be specified")
 	}
-	return dm.crudDerivedMetrics("GET", fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID), metric)
+	return basicCrud(dm.client, "GET",
+		fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID), metric, nil)
 }
 
 // Find returns all DerivedMetrics filtered by the given search conditions.
@@ -93,7 +94,7 @@ func (dm DerivedMetrics) Create(metric *DerivedMetric) error {
 		return fmt.Errorf("name, query, and minutes must be specified to create a derived metric")
 	}
 
-	return dm.crudDerivedMetrics("POST", baseDerivedMetricsPath, metric)
+	return basicCrud(dm.client, "POST", baseDerivedMetricsPath, metric, nil)
 }
 
 // Update a DerivedMetric all fields are optional except for ID
@@ -102,46 +103,25 @@ func (dm DerivedMetrics) Update(metric *DerivedMetric) error {
 		return fmt.Errorf("id must be specified")
 	}
 
-	return dm.crudDerivedMetrics("PUT", fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID), metric)
+	return basicCrud(dm.client, "PUT",
+		fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID), metric, nil)
 }
 
 // Delete a DerivedMetric all fields are optional except for ID
-func (dm DerivedMetrics) Delete(metric *DerivedMetric) error {
+func (dm DerivedMetrics) Delete(metric *DerivedMetric, skipTrash bool) error {
 	if *metric.ID == "" {
 		return fmt.Errorf("id must be specified")
 	}
-	err := dm.crudDerivedMetrics("DELETE", fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID), metric)
+
+	params := map[string]string{
+		"skipTrash": strconv.FormatBool(skipTrash),
+	}
+
+	err := basicCrud(dm.client, "DELETE",
+		fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID), metric, &params)
 	if err != nil {
 		return err
 	}
 	*metric.ID = ""
 	return nil
-}
-
-func (dm DerivedMetrics) crudDerivedMetrics(method, path string, metric *DerivedMetric) error {
-	payload, err := json.Marshal(metric)
-	if err != nil {
-		return err
-	}
-	req, err := dm.client.NewRequest(method, path, nil, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := dm.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	body, err := ioutil.ReadAll(resp)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(body, &struct {
-		Response *DerivedMetric
-	}{
-		Response: metric,
-	})
 }

@@ -1,6 +1,37 @@
 # Changelog
 
-Changelog for go-wavefront.
+Changelog for go-wavefront-management-api.
+
+## [1.8.0]
+
+*Add Support for CloudIntegrations*   
+ - CloudWatch
+ - CloudTrail
+ - EC2
+ - GCP
+ - GCPBilling
+ - NewRelic
+ - AppDynamics
+ - Tesla
+ - Azure
+ - Azure Activity Log
+  
+*Add Support for Advanced Alert settings*
+
+- CheckingFrequencyInMinutes
+- EvaluateRealtimeData
+- IncludeObsoleteMetrics
+
+*Common client operations refactored into centralized location*  
+*Added support for skipTrash*
+
+- Alerts
+- Dashboards
+- DerivedMetrics
+- CloudIntegrations
+
+*Fixed some failing tests*  
+*Add Annotations field to Events*
 
 ## [1.7.3]
 

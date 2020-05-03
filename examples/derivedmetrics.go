@@ -50,7 +50,7 @@ func main() {
 	time.Sleep(time.Second * 60)
 
 	// Delete the DerivedMetric
-	err = derivedMetrics.Delete(dm)
+	err = derivedMetrics.Delete(dm, true)
 	if err != nil {
 		log.Fatal(err)
 	}

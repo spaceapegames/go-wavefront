@@ -3,7 +3,6 @@ package wavefront
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 // Target represents a Wavefront Alert Target, for routing notifications
@@ -88,7 +87,7 @@ func (t Targets) Get(target *Target) error {
 		return fmt.Errorf("target id field is not set")
 	}
 
-	return t.crudTarget("GET", fmt.Sprintf("%s/%s", baseTargetPath, *target.ID), target)
+	return basicCrud(t.client, "GET", fmt.Sprintf("%s/%s", baseTargetPath, *target.ID), target, nil)
 }
 
 // Find returns all targets filtered by the given search conditions.
@@ -125,7 +124,7 @@ func (t Targets) Find(filter []*SearchCondition) ([]*Target, error) {
 // Create is used to create a Target in Wavefront.
 // If successful, the ID field of the target will be populated.
 func (t Targets) Create(target *Target) error {
-	return t.crudTarget("POST", baseTargetPath, target)
+	return basicCrud(t.client, "POST", baseTargetPath, target, nil)
 }
 
 // Update is used to update an existing Target.
@@ -135,7 +134,7 @@ func (t Targets) Update(target *Target) error {
 		return fmt.Errorf("target id field not set")
 	}
 
-	return t.crudTarget("PUT", fmt.Sprintf("%s/%s", baseTargetPath, *target.ID), target)
+	return basicCrud(t.client, "PUT", fmt.Sprintf("%s/%s", baseTargetPath, *target.ID), target, nil)
 
 }
 
@@ -146,7 +145,7 @@ func (t Targets) Delete(target *Target) error {
 		return fmt.Errorf("target id field not set")
 	}
 
-	err := t.crudTarget("DELETE", fmt.Sprintf("%s/%s", baseTargetPath, *target.ID), target)
+	err := basicCrud(t.client, "DELETE", fmt.Sprintf("%s/%s", baseTargetPath, *target.ID), target, nil)
 	if err != nil {
 		return err
 	}
@@ -155,32 +154,4 @@ func (t Targets) Delete(target *Target) error {
 	target.ID = nil
 	return nil
 
-}
-
-func (t Targets) crudTarget(method, path string, target *Target) error {
-	payload, err := json.Marshal(target)
-	if err != nil {
-		return err
-	}
-	req, err := t.client.NewRequest(method, path, nil, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := t.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	body, err := ioutil.ReadAll(resp)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(body, &struct {
-		Response *Target `json:"response"`
-	}{
-		Response: target,
-	})
 }

@@ -104,7 +104,7 @@ func main() {
 	}
 
 	// Delete the Dashboard
-	err = dashboards.Delete(d)
+	err = dashboards.Delete(d, true)
 	if err != nil {
 		log.Fatal(err)
 	}

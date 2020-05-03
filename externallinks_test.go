@@ -1,10 +1,7 @@
 package wavefront
 
 import (
-	"bytes"
-	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"testing"
@@ -22,39 +19,11 @@ type MockCrudExternalLinksClient struct {
 }
 
 func (e MockExternalLinksClient) Do(req *http.Request) (io.ReadCloser, error) {
-	body, _ := ioutil.ReadAll(req.Body)
-	search := SearchParams{}
-	err := json.Unmarshal(body, &search)
-	if err != nil {
-		e.T.Fatal(err)
-	}
-
-	response, err := ioutil.ReadFile("./fixtures/search-extlinks-response.json")
-	if err != nil {
-		e.T.Fatal(err)
-	}
-
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	return testDo(e.T, req, "./fixtures/search-extlinks-response.json", "POST", &SearchParams{})
 }
 
 func (e MockCrudExternalLinksClient) Do(req *http.Request) (io.ReadCloser, error) {
-	response, err := ioutil.ReadFile("./fixtures/crud-extlink-response.json")
-	if err != nil {
-		e.T.Fatal(err)
-	}
-
-	if req.Method != e.method {
-		e.T.Errorf("request method expected '%s' got '%s'", e.method, req.Method)
-	}
-
-	body, _ := ioutil.ReadAll(req.Body)
-	link := ExternalLink{}
-	err = json.Unmarshal(body, &link)
-	if err != nil {
-		e.T.Fatal(err)
-	}
-
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	return testDo(e.T, req, "./fixtures/crud-extlink-response.json", e.method, &ExternalLink{})
 }
 
 func TestExternalLinks_Find(t *testing.T) {
@@ -76,13 +45,8 @@ func TestExternalLinks_Find(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(externalLinks) != 1 {
-		t.Errorf("expected one ExternalLink returned, got %d", len(externalLinks))
-	}
-
-	if *externalLinks[0].ID != "someid" {
-		t.Errorf("expected first ExternalLink id to be someid, got %s", *externalLinks[0].ID)
-	}
+	assertEqual(t, 1, len(externalLinks))
+	assertEqual(t, "someid", *externalLinks[0].ID)
 }
 
 func TestExternalLinks_CreateUpdateDelete(t *testing.T) {
@@ -113,9 +77,7 @@ func TestExternalLinks_CreateUpdateDelete(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if externalLink.SourceFilterRegex != ".*" {
-		t.Errorf("expected to find a Source Filter Regex of '*', got %s", externalLink.SourceFilterRegex)
-	}
+	assertEqual(t, ".*", externalLink.SourceFilterRegex)
 
 	e.client.(*MockCrudExternalLinksClient).method = "GET"
 	var _ = e.Get(externalLink)
@@ -126,8 +88,5 @@ func TestExternalLinks_CreateUpdateDelete(t *testing.T) {
 	e.client.(*MockCrudExternalLinksClient).method = "DELETE"
 	var _ = e.Delete(externalLink)
 
-	if *externalLink.ID != "" {
-		t.Errorf("exected ExternalLink ID to be blank, got %s", *externalLink.ID)
-	}
-
+	assertEqual(t, "", *externalLink.ID)
 }

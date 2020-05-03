@@ -1,8 +1,6 @@
 package wavefront
 
 import (
-	"bytes"
-	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -22,11 +20,7 @@ type MockCrudTargetClient struct {
 }
 
 func (m *MockTargetClient) Do(req *http.Request) (io.ReadCloser, error) {
-	response, err := ioutil.ReadFile("./fixtures/list-targets.json")
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	return testDo(m.T, req, "./fixtures/list-targets.json", "POST", &SearchParams{})
 }
 
 func TestTargets_Find(t *testing.T) {
@@ -47,30 +41,12 @@ func TestTargets_Find(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(targets) != 2 {
-		t.Errorf("list target response, expected 2, got %d", len(targets))
-	}
-
-	if targets[0].Method != "WEBHOOK" {
-		t.Errorf("expected target method to be WEBHOOK, got %s", targets[0].Method)
-	}
+	assertEqual(t, 2, len(targets))
+	assertEqual(t, "WEBHOOK", targets[0].Method)
 }
 
 func (m *MockCrudTargetClient) Do(req *http.Request) (io.ReadCloser, error) {
-	response, err := ioutil.ReadFile("./fixtures/create-target-response.json")
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	if req.Method != m.method {
-		m.T.Errorf("request method expected '%s' got '%s'", m.method, req.Method)
-	}
-	body, _ := ioutil.ReadAll(req.Body)
-	target := Target{}
-	err = json.Unmarshal(body, &target)
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	return testDo(m.T, req, "./fixtures/create-target-response.json", m.method, &Target{})
 }
 
 func TestTargets_CreateUpdateDeleteTarget(t *testing.T) {
@@ -115,11 +91,8 @@ func TestTargets_CreateUpdateDeleteTarget(t *testing.T) {
 	}
 
 	a.client.(*MockCrudTargetClient).method = "POST"
-
 	a.Create(&target)
-	if *target.ID != "7" {
-		t.Errorf("target ID expected 7, got %s", *target.ID)
-	}
+	assertEqual(t, "7", *target.ID)
 
 	a.client.(*MockCrudTargetClient).method = "PUT"
 	if err := a.Update(&target); err != nil {

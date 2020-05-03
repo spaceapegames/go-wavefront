@@ -1,0 +1,33 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "forceSave": false,
+    "name": "AWS -- Example",
+    "id": "12345678-1234-5678-9101-12345678910111",
+    "service": "CLOUDWATCH",
+    "inTrash": false,
+    "updaterId": "test@example.com",
+    "creatorId": "test@example.com",
+    "lastReceivedDataPointMs": 1586973323482,
+    "lastMetricCount": 100,
+    "cloudWatch": {
+      "metricFilterRegex": "^aws.(ecs|rds|billing|instance|efs|datasync).*)$",
+      "baseCredentials": {
+        "roleArn": "arn:aws:iam::123456789012:role/example-arn"
+      },
+      "instanceSelectionTags": {},
+      "volumeSelectionTags": {},
+      "pointTagFilterRegex": "",
+      "namespaces": []
+    },
+    "disabled": false,
+    "createdEpochMillis": 1520313596640,
+    "updatedEpochMillis": 1579300331603,
+    "serviceRefreshRateInMins": 5,
+    "deleted": false
+  }
+}

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"math"
 	"math/rand"
 	"net/http"
 	"net/http/httputil"
@@ -48,6 +47,9 @@ type Client struct {
 	// https://example.wavefront.com/api/v2
 	BaseURL *url.URL
 
+	// The maximum amount of time we will wait
+	MaxRetryDurationInMS int
+
 	// httpClient is the client that will be used to make requests against the API.
 	httpClient *http.Client
 
@@ -71,7 +73,9 @@ func NewClient(config *Config) (*Client, error) {
 				TLSNextProto: map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
 			},
 		},
-		debug: false,
+		// 5s * 1000ms
+		MaxRetryDurationInMS: 5 * 1000,
+		debug:                false,
 	}
 
 	// ENABLE HTTP Proxy
@@ -142,7 +146,7 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 	}
 
 	retries := 0
-	maxRetries := 4
+	maxRetries := 10
 	var buf []byte
 	var err error
 	if req.Body != nil {
@@ -150,6 +154,8 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 		if err != nil {
 			return nil, err
 		}
+		// reset the body since we read it already
+		req.Body = ioutil.NopCloser(bytes.NewReader(buf))
 	}
 
 	for {
@@ -165,14 +171,19 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 		// 203 -> Accepted but payload has been modified  via transforming proxy
 		// 204 -> No Content
 		if !(resp.StatusCode >= 200 && resp.StatusCode <= 204) {
-			// Exponential backoff / Retry logic...
-			if retries <= maxRetries {
+			// back off and retry on 406 only
+			if retries <= maxRetries && resp.StatusCode == 406 {
 				retries++
 				// replay the buffer back into the body for retry
 				if req.Body != nil {
 					req.Body = ioutil.NopCloser(bytes.NewReader(buf))
 				}
-				time.Sleep(getSleepTime(retries))
+				sleepTime := c.getSleepTime(retries)
+				if c.debug {
+					fmt.Printf("[DEBUG] retry '%d' of '%d', sleep sleepiing for %dms", retries, maxRetries,
+						sleepTime.Milliseconds())
+				}
+				time.Sleep(*sleepTime)
 				continue
 			}
 			body, err := ioutil.ReadAll(resp.Body)
@@ -186,17 +197,16 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 	}
 }
 
-func getSleepTime(retries int) time.Duration {
-	slot := int((math.Pow(2, float64(retries)) - 1) / 2)
-	rand.Seed(time.Now().UTC().UnixNano())
-	var slotChoice int
-	if slotChoice = 0; slot > 0 {
-		slotChoice = rand.Intn(slot)
+func (c *Client) getSleepTime(retries int) *time.Duration {
+	defaultSleep := time.Duration(c.MaxRetryDurationInMS) * time.Millisecond
+	// Add some jitter, add 500ms * our retry, convert to MS
+	jitter := time.Duration(rand.Int63n(50)+50) * time.Millisecond
+	duration := time.Duration(500*retries) * time.Millisecond
+	sleep := duration + jitter
+	if sleep >= defaultSleep {
+		return &defaultSleep
 	}
-	// Add some jitter, add 100ms * our random slot choice, convert to MS
-	jitter := rand.Intn(50) + 50
-	sleep := (time.Duration(jitter) + time.Duration(100.0*slotChoice)) * time.Millisecond
-	return sleep
+	return &sleep
 }
 
 // Debug enables dumping http request objects to stdout

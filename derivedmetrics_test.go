@@ -1,10 +1,7 @@
 package wavefront
 
 import (
-	"bytes"
-	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"testing"
@@ -22,36 +19,11 @@ type MockCrudDerivedMetricsClient struct {
 }
 
 func (m *MockDerivedMetricsClient) Do(req *http.Request) (io.ReadCloser, error) {
-	body, _ := ioutil.ReadAll(req.Body)
-	search := SearchParams{}
-	err := json.Unmarshal(body, &search)
-	if err != nil {
-		m.T.Fatal(err)
-	}
-
-	response, err := ioutil.ReadFile("./fixtures/search-derivedmetrics-response.json")
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	return testDo(m.T, req, "./fixtures/search-derivedmetrics-response.json", "POST", &SearchParams{})
 }
 
 func (m *MockCrudDerivedMetricsClient) Do(req *http.Request) (io.ReadCloser, error) {
-	response, err := ioutil.ReadFile("./fixtures/crud-derivedmetric-response.json")
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	if req.Method != m.method {
-		m.T.Errorf("request method expected '%s' got '%s'", m.method, req.Method)
-	}
-
-	body, _ := ioutil.ReadAll(req.Body)
-	derivedMetrics := DerivedMetric{}
-	err = json.Unmarshal(body, &derivedMetrics)
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	return testDo(m.T, req, "./fixtures/crud-derivedmetric-response.json", m.method, &DerivedMetric{})
 }
 
 func TestDerivedMetrics_Find(t *testing.T) {
@@ -73,13 +45,8 @@ func TestDerivedMetrics_Find(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(derivedMetrics) != 1 {
-		t.Errorf("expected to find one derived metric, got %d", len(derivedMetrics))
-	}
-
-	if *derivedMetrics[0].ID != "1234567891011" {
-		t.Errorf("expected first id to be 1234567891011, got %s", "1234567891011")
-	}
+	assertEqual(t, 1, len(derivedMetrics))
+	assertEqual(t, "1234567891011", *derivedMetrics[0].ID)
 }
 
 func TestDerivedMetrics_CRUD(t *testing.T) {
@@ -108,22 +75,16 @@ func TestDerivedMetrics_CRUD(t *testing.T) {
 	derivedMetric.Minutes = 10
 
 	var _ = d.Create(derivedMetric)
-	if *derivedMetric.ID != "1234567891011" {
-		t.Errorf("expected id returned from create to be 1234567891011, got %s", "1234567891011")
-	}
+	assertEqual(t, "1234567891011", *derivedMetric.ID)
 
 	d.client.(*MockCrudDerivedMetricsClient).method = "GET"
 	_ = d.Get(derivedMetric)
-	if derivedMetric.Name != "example" {
-		t.Errorf("expected to get derived metric with name example, got %s", derivedMetric.Name)
-	}
+	assertEqual(t, "example", derivedMetric.Name)
 
 	d.client.(*MockCrudDerivedMetricsClient).method = "PUT"
 	_ = d.Update(derivedMetric)
 
 	d.client.(*MockCrudDerivedMetricsClient).method = "DELETE"
-	_ = d.Delete(derivedMetric)
-	if *derivedMetric.ID != "" {
-		t.Errorf("expected id to be empty, got %s", *derivedMetric.ID)
-	}
+	_ = d.Delete(derivedMetric, true)
+	assertEqual(t, "", *derivedMetric.ID)
 }

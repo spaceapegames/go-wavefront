@@ -3,7 +3,7 @@ package wavefront
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"strconv"
 )
 
 // Dashboard represents a single Wavefront Dashboard
@@ -88,7 +88,8 @@ type ParameterDetail struct {
 	// TagKey Only required for a DynamicFieldType of TAG_KEY
 	TagKey string `json:"tagKey,omitempty"`
 
-	// DynamicFieldType (TAG_KEY, MATCHING_SOURCE_TAG, SOURCE_TAG, SOURCE, METRIC_NAME) Only required for a Parameter type of Dynamic.
+	// DynamicFieldType (TAG_KEY, MATCHING_SOURCE_TAG, SOURCE_TAG, SOURCE, METRIC_NAME)
+	// Only required for a Parameter type of Dynamic.
 	DynamicFieldType string `json:"dynamicFieldType,omitempty"`
 }
 
@@ -244,7 +245,7 @@ const baseDashboardPath = "/api/v2/dashboard"
 
 // UnmarshalJSON is a custom JSON unmarshaller for an Dashboard, used in order to
 // populate the Tags field in a more intuitive fashion
-func (a *Dashboard) UnmarshalJSON(b []byte) error {
+func (d *Dashboard) UnmarshalJSON(b []byte) error {
 	type tags struct {
 		CustomerTags []string `json:"customerTags,omitempty"`
 	}
@@ -253,16 +254,16 @@ func (a *Dashboard) UnmarshalJSON(b []byte) error {
 		Tags tags `json:"tags,omitempty"`
 		*dashboard
 	}{
-		dashboard: (*dashboard)(a),
+		dashboard: (*dashboard)(d),
 	}
 	if err := json.Unmarshal(b, &temp); err != nil {
 		return err
 	}
-	a.Tags = temp.Tags.CustomerTags
+	d.Tags = temp.Tags.CustomerTags
 	return nil
 }
 
-func (a *Dashboard) MarshalJSON() ([]byte, error) {
+func (d *Dashboard) MarshalJSON() ([]byte, error) {
 	type tags struct {
 		CustomerTags []string `json:"customerTags,omitempty"`
 	}
@@ -271,8 +272,8 @@ func (a *Dashboard) MarshalJSON() ([]byte, error) {
 		Tags *tags `json:"tags,omitempty"`
 		*dashboard
 	}{
-		Tags:      &tags{CustomerTags: a.Tags},
-		dashboard: (*dashboard)(a),
+		Tags:      &tags{CustomerTags: d.Tags},
+		dashboard: (*dashboard)(d),
 	})
 }
 
@@ -283,9 +284,9 @@ func (c *Client) Dashboards() *Dashboards {
 
 // Find returns all Dashboards filtered by the given search conditions.
 // If filter is nil, all Dashboards are returned.
-func (a Dashboards) Find(filter []*SearchCondition) ([]*Dashboard, error) {
+func (d Dashboards) Find(filter []*SearchCondition) ([]*Dashboard, error) {
 	search := &Search{
-		client: a.client,
+		client: d.client,
 		Type:   "dashboard",
 		Params: &SearchParams{
 			Conditions: filter,
@@ -314,39 +315,46 @@ func (a Dashboards) Find(filter []*SearchCondition) ([]*Dashboard, error) {
 
 // Create is used to create an Dashboard in Wavefront.
 // If successful, the ID field of the Dashboard will be populated.
-func (a Dashboards) Create(dashboard *Dashboard) error {
-	return a.crudDashboard("POST", baseDashboardPath, dashboard)
+func (d Dashboards) Create(dashboard *Dashboard) error {
+	return basicCrud(d.client, "POST", baseDashboardPath, dashboard, nil)
 }
 
 // Update is used to update an existing Dashboard.
 // The ID field of the Dashboard must be populated
-func (a Dashboards) Update(dashboard *Dashboard) error {
+func (d Dashboards) Update(dashboard *Dashboard) error {
 	if dashboard.ID == "" {
 		return fmt.Errorf("dashboard id field not set")
 	}
 
-	return a.crudDashboard("PUT", fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard)
+	return basicCrud(d.client, "PUT",
+		fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard, nil)
 
 }
 
 // Get is used to retrieve an existing Dashboard by ID.
 // The ID field must be provided
-func (a Dashboards) Get(dashboard *Dashboard) error {
+func (d Dashboards) Get(dashboard *Dashboard) error {
 	if dashboard.ID == "" {
 		return fmt.Errorf("dashboard id field is not set")
 	}
 
-	return a.crudDashboard("GET", fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard)
+	return basicCrud(d.client, "GET",
+		fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard, nil)
 }
 
 // Delete is used to delete an existing Dashboard.
 // The ID field of the Dashboard must be populated
-func (a Dashboards) Delete(dashboard *Dashboard) error {
+func (d Dashboards) Delete(dashboard *Dashboard, skipTrash bool) error {
 	if dashboard.ID == "" {
 		return fmt.Errorf("dashboard id field not set")
 	}
 
-	err := a.crudDashboard("DELETE", fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard)
+	params := map[string]string{
+		"skipTrash": strconv.FormatBool(skipTrash),
+	}
+
+	err := basicCrud(d.client, "DELETE",
+		fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard, &params)
 	if err != nil {
 		return err
 	}
@@ -359,35 +367,6 @@ func (a Dashboards) Delete(dashboard *Dashboard) error {
 // Sets the ACL on the dashboard with the supplied list of IDs for canView and canModify
 // an empty []string on canView will remove all values set
 // an empty []string on canModify will set the value to the owner of the token issuing the API call
-func (a Dashboards) SetACL(id string, canView, canModify []string) error {
-	return putEntityACL(id, canView, canModify, baseDashboardPath, a.client)
-}
-
-func (a Dashboards) crudDashboard(method, path string, dashboard *Dashboard) error {
-	payload, err := json.Marshal(dashboard)
-	if err != nil {
-		return err
-	}
-	req, err := a.client.NewRequest(method, path, nil, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := a.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	body, err := ioutil.ReadAll(resp)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(body, &struct {
-		Response *Dashboard `json:"response"`
-	}{
-		Response: dashboard,
-	})
-
+func (d Dashboards) SetACL(id string, canView, canModify []string) error {
+	return putEntityACL(id, canView, canModify, baseDashboardPath, d.client)
 }

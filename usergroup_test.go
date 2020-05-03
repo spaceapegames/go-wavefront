@@ -22,18 +22,7 @@ type MockCrudUserGroupClient struct {
 }
 
 func (m *MockUserGroupClient) Do(req *http.Request) (io.ReadCloser, error) {
-	body, _ := ioutil.ReadAll(req.Body)
-	search := SearchParams{}
-	err := json.Unmarshal(body, &search)
-	if err != nil {
-		m.T.Fatal(err)
-	}
-
-	response, err := ioutil.ReadFile("./fixtures/search-usergroup-response.json")
-	if err != nil {
-		m.T.Fatal(err)
-	}
-	return ioutil.NopCloser(bytes.NewReader(response)), nil
+	return testDo(m.T, req, "./fixtures/search-usergroup-response.json", "POST", &SearchParams{})
 }
 
 func TestUserGroups_Find(t *testing.T) {
@@ -55,13 +44,8 @@ func TestUserGroups_Find(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(userGroups) != 1 {
-		t.Errorf("expected one UserGroup returned, got %d", len(userGroups))
-	}
-
-	if *userGroups[0].ID != "12345678-1234-5678-9977-123456789111" {
-		t.Errorf("expected first UserGroup id to be 12345678-1234-5678-9977-123456789111, got %s", *userGroups[0].ID)
-	}
+	assertEqual(t, 1, len(userGroups))
+	assertEqual(t, "12345678-1234-5678-9977-123456789111", *userGroups[0].ID)
 }
 
 func (m *MockCrudUserGroupClient) Do(req *http.Request) (io.ReadCloser, error) {
@@ -123,9 +107,7 @@ func Test_CreatReadUpdateDelete(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if *userGroup.ID != "12345678-1234-5678-9977-123456789111" {
-		t.Errorf("expected UserGroup ID of 12345678-1234-5678-9977-123456789111, got %s", *userGroup.ID)
-	}
+	assertEqual(t, "12345678-1234-5678-9977-123456789111", *userGroup.ID)
 
 	g.client.(*MockCrudUserGroupClient).method = "PUT"
 	var _ = g.Update(userGroup)
@@ -139,7 +121,5 @@ func Test_CreatReadUpdateDelete(t *testing.T) {
 
 	g.client.(*MockCrudUserGroupClient).method = "DELETE"
 	var _ = g.Delete(userGroup)
-	if *userGroup.ID != "" {
-		t.Errorf("expected UserGroup ID to be blank, got %s", *userGroup.ID)
-	}
+	assertEqual(t, "", *userGroup.ID)
 }
