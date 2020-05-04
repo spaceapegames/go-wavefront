@@ -1,6 +1,8 @@
 # Changelog
 
 Changelog for go-wavefront-management-api.
+## [1.8.1]
+*Fixes dashboard taggging after creation by adding SetTags functionality*
 
 ## [1.8.0]
 
