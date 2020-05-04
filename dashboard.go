@@ -3,6 +3,7 @@ package wavefront
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"strconv"
 )
 
@@ -361,6 +362,31 @@ func (d Dashboards) Delete(dashboard *Dashboard, skipTrash bool) error {
 
 	//reset the ID field so deletion is not attempted again
 	dashboard.ID = ""
+	return nil
+}
+
+// Set Tags is used to set the tags on an existing dashboard
+func (d Dashboards) SetTags(id string, tags []string) error {
+	payload, err := json.Marshal(tags)
+	if err != nil {
+		return err
+	}
+	req, err := d.client.NewRequest("POST",
+		fmt.Sprintf("%s/%s/tag", baseDashboardPath, id), nil, payload)
+	if err != nil {
+		return err
+	}
+
+	resp, err := d.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Close()
+
+	_, err = ioutil.ReadAll(resp)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
