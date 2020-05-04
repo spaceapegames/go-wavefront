@@ -180,8 +180,8 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 				}
 				sleepTime := c.getSleepTime(retries)
 				if c.debug {
-					fmt.Printf("[DEBUG] retry '%d' of '%d', sleep sleepiing for %dms", retries, maxRetries,
-						sleepTime.Milliseconds())
+					fmt.Printf("[DEBUG] retry '%d' of '%d', sleep sleepiing for %s", retries, maxRetries,
+						sleepTime.String())
 				}
 				time.Sleep(*sleepTime)
 				continue
