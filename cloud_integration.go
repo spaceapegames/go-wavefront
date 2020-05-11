@@ -188,7 +188,7 @@ type AppDynamicsConfiguration struct {
 	EnableServiceEndpointMetrics bool `json:"enableServiceEndpointMetrics,omitempty"`
 
 	// List of regular expressions that a application name must match (case-insensitively) in order to be ingested
-	AppFilterRegex []string `json:"appFilterRegex,omitempty"`
+	AppFilterRegex []string `json:"appFilterRegex"`
 }
 type TeslaConfiguration struct {
 	// Email address for the Tesla account login
