@@ -1,6 +1,11 @@
 # Changelog
 
 Changelog for go-wavefront-management-api.
+
+## [1.9.0]
+
+*Adds support for roles* 
+
 ## [1.8.1]
 *Fixes dashboard taggging after creation by adding SetTags functionality*
 
