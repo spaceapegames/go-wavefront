@@ -9,7 +9,13 @@ import (
 // automatically marshals the data back to the appropriate concrete type
 // Expects the response to always be a json object containing at least a `response` struct
 func basicCrud(client Wavefronter, method, path string, t interface{}, params *map[string]string) error {
-	payload, err := json.Marshal(t)
+	return crudWithPayload(client, method, path, t, t, params)
+}
+
+// Performs a crud with the given payload
+// automatically marshals the expected e back into the provided interface
+func crudWithPayload(client Wavefronter, method, path string, p interface{}, e interface{}, params *map[string]string) error {
+	payload, err := json.Marshal(p)
 	if err != nil {
 		return err
 	}
@@ -31,6 +37,6 @@ func basicCrud(client Wavefronter, method, path string, t interface{}, params *m
 	return json.Unmarshal(body, &struct {
 		Response interface{} `json:"response"`
 	}{
-		Response: t,
+		Response: e,
 	})
 }

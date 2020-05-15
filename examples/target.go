@@ -43,7 +43,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Get an alert by ID
+	// Get an target by ID
 	err = targets.Get(&wavefront.Target{ID: target.ID})
 	if err != nil {
 		log.Fatal(err)

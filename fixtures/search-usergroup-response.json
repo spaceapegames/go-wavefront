@@ -10,13 +10,10 @@
         "userCount": 253,
         "properties": {
           "nameEditable": false,
-          "permissionsEditable": true,
+          "permissionsEditable": false,
           "usersEditable": false
         },
         "name": "Everyone",
-        "permissions": [
-          "derived_metrics_management"
-        ],
         "id": "12345678-1234-5678-9977-123456789111",
         "customer": "testing",
         "description": "System group which contains all users",

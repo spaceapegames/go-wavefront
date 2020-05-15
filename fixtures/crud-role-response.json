@@ -1,0 +1,34 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "sampleLinkedGroups": [
+      {
+        "id": "12345678-1234-aaaa-bbbb-123456789101",
+        "name": "Example Group",
+        "permissions": [],
+        "customer": "test",
+        "description": "Example Group Description"
+      }
+    ],
+    "linkedGroupsCount": 1,
+    "sampleLinkedAccounts": [
+      "example@wavefront.com"
+    ],
+    "linkedAccountsCount": 1,
+    "name": "Example Role",
+    "permissions": [
+      "agent_management",
+      "derived_metrics_management",
+      "alerts_management"
+    ],
+    "id": "12345678-1234-cccc-dddd-123456789101",
+    "description": "Example Role",
+    "customer": "test",
+    "lastUpdatedMs": 1589487296608,
+    "lastUpdatedAccountId": "example@wavefront.com"
+  }
+}

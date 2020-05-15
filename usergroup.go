@@ -13,11 +13,11 @@ type UserGroup struct {
 	// Name of the user group
 	Name string `json:"name,omitempty"`
 
-	// Permission(s) assigned to the user group
-	Permissions []string `json:"permissions,omitempty"`
-
 	// Customer
 	Customer string `json:"customer,omitempty"`
+
+	// Roles assigned to the group
+	Roles []Role
 
 	// Users that are members of the group
 	Users []string `json:"users,omitempty"`
@@ -41,6 +41,8 @@ type UserGroupPropertiesDTO struct {
 	PermissionsEditable bool `json:"permissionsEditable"`
 
 	UsersEditable bool `json:"usersEditable"`
+
+	RolesEditable bool `json:"rolesEditable"`
 }
 
 const baseUserGroupPath = "/api/v2/usergroup"
@@ -57,9 +59,6 @@ func (c *Client) UserGroups() *UserGroups {
 func (g UserGroups) Create(userGroup *UserGroup) error {
 	if userGroup.Name == "" {
 		return fmt.Errorf("name must be specified when creating a usergroup")
-	}
-	if len(userGroup.Permissions) == 0 {
-		return fmt.Errorf("permissions must be specified when creating a usergroup")
 	}
 
 	return basicCrud(g.client, "POST", baseUserGroupPath, userGroup, nil)

@@ -98,13 +98,8 @@ func Test_CreatReadUpdateDelete(t *testing.T) {
 	}
 
 	userGroup.Name = "testing"
-	if err := g.Create(userGroup); err == nil {
-		t.Errorf("expected to receive error for missing permissions")
-	}
-
-	userGroup.Permissions = []string{ALERTS_MANAGEMENT}
 	if err := g.Create(userGroup); err != nil {
-		t.Fatal(err)
+		t.Errorf("error creating user group. %s", err)
 	}
 
 	assertEqual(t, "12345678-1234-5678-9977-123456789111", *userGroup.ID)

@@ -10,9 +10,6 @@
     ],
     "userCount": 1,
     "name": "testing",
-    "permissions": [
-      "alerts_management"
-    ],
     "id": "12345678-1234-5678-9977-123456789111",
     "customer": "testing",
     "description": "testing API calls",

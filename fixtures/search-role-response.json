@@ -1,0 +1,35 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "items": [
+      {
+        "linkedGroupsCount": 1,
+        "linkedAccountsCount": 1,
+        "name": "Example Role",
+        "permissions": [
+          "agent_management",
+          "derived_metrics_management",
+          "alerts_management"
+        ],
+        "id": "12345678-1234-cccc-dddd-123456789101",
+        "customer": "test",
+        "description": "Example Role",
+        "lastUpdatedMs": 1589487296608,
+        "lastUpdatedAccountId": "example@wavefront.com"
+      }
+    ],
+    "offset": 0,
+    "limit": 100,
+    "totalItems": 1,
+    "moreItems": false,
+    "sort": {
+      "ascending": false,
+      "field": "default",
+      "default": true
+    }
+  }
+}
