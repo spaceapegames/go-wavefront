@@ -70,6 +70,7 @@ func NewClient(config *Config) (*Client, error) {
 		BaseURL: baseURL,
 		httpClient: &http.Client{
 			Transport: &http.Transport{
+				Proxy:        http.ProxyFromEnvironment,
 				TLSNextProto: map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
 			},
 		},
@@ -82,7 +83,8 @@ func NewClient(config *Config) (*Client, error) {
 	if config.HttpProxy != "" {
 		proxyUrl, _ := url.Parse(config.HttpProxy)
 		c.httpClient.Transport = &http.Transport{
-			Proxy: http.ProxyURL(proxyUrl),
+			Proxy:        http.ProxyURL(proxyUrl),
+			TLSNextProto: map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
 		}
 	}
 
