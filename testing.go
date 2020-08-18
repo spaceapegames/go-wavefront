@@ -22,7 +22,7 @@ func testDo(t *testing.T, req *http.Request, fixture, method string, iface inter
 	assertEqual(t, method, req.Method)
 	if req.Body != nil {
 		body, _ := ioutil.ReadAll(req.Body)
-		err = json.Unmarshal(body, &iface)
+		err = json.Unmarshal(body, iface)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -36,7 +36,7 @@ func testDo(t *testing.T, req *http.Request, fixture, method string, iface inter
 // tMarshal is the destination type we need marshal data into from the response body of the fixture
 func testPaginatedDo(t *testing.T, req *http.Request, fixture string, invokedCount *int) (io.ReadCloser, error) {
 	search := SearchParams{}
-	resp, err := testDo(t, req, fmt.Sprintf(fixture, *invokedCount), "POST", search)
+	resp, err := testDo(t, req, fmt.Sprintf(fixture, *invokedCount), "POST", &search)
 	assertEqual(t, search.Limit*(*invokedCount), search.Offset)
 	*invokedCount++
 	return resp, err

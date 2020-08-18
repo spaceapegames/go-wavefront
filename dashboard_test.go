@@ -56,7 +56,7 @@ func TestDashboards_PaginatedFind(t *testing.T) {
 }
 
 func (m *MockCrudDashboardClient) Do(req *http.Request) (io.ReadCloser, error) {
-	return testDo(m.T, req, "./fixtures/create-dashboard-response.json", m.method, Dashboard{})
+	return testDo(m.T, req, "./fixtures/create-dashboard-response.json", m.method, &Dashboard{})
 }
 
 func TestDashboards_CreateUpdateDeleteDashboard(t *testing.T) {

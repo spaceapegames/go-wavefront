@@ -25,12 +25,12 @@ type MockCloudIntegrationClientExtId struct {
 }
 
 func (m *MockCloudIntegrationClient) Do(req *http.Request) (io.ReadCloser, error) {
-	return testDo(m.T, req, "./fixtures/search-cloud-integrations-response.json", "POST", SearchParams{})
+	return testDo(m.T, req, "./fixtures/search-cloud-integrations-response.json", "POST", &SearchParams{})
 }
 
 func (m *MockCloudIntegrationClientExtId) Do(req *http.Request) (io.ReadCloser, error) {
-	testType := ""
-	return testDo(m.T, req, "./fixtures/aws-ext-id-cloud-integrations-response.json", m.method, testType)
+	var testType string
+	return testDo(m.T, req, "./fixtures/aws-ext-id-cloud-integrations-response.json", m.method, &testType)
 }
 
 func (m *MockCrudCloudIntegrationClient) Do(req *http.Request) (io.ReadCloser, error) {

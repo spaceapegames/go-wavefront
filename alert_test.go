@@ -56,7 +56,7 @@ func TestAlerts_PaginatedFind(t *testing.T) {
 }
 
 func (m *MockCrudAlertClient) Do(req *http.Request) (io.ReadCloser, error) {
-	return testDo(m.T, req, "./fixtures/create-alert-response.json", m.method, Alert{})
+	return testDo(m.T, req, "./fixtures/create-alert-response.json", m.method, &Alert{})
 }
 
 func TestAlerts_CreateUpdateDeleteAlert(t *testing.T) {
