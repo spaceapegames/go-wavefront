@@ -1,12 +1,16 @@
 package wavefront
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestClientGet(t *testing.T) {
@@ -135,4 +139,127 @@ func TestClientPost(t *testing.T) {
 	}
 	output, _ := ioutil.ReadAll(resp)
 	fmt.Println(string(output))
+}
+
+type testPointType struct {
+	X int `json:"x"`
+	Y int `json:"y"`
+}
+
+type fakeWavefronter struct {
+	newRequestError error
+	method          string
+	path            string
+	params          map[string]string
+	body            string
+	doError         error
+	response        string
+}
+
+func (f *fakeWavefronter) NewRequest(method, path string, params *map[string]string, body []byte) (*http.Request, error) {
+	f.method = method
+	f.path = path
+	if params != nil {
+		f.params = make(map[string]string, len(*params))
+		for k, v := range *params {
+			f.params[k] = v
+		}
+	} else {
+		f.params = nil
+	}
+	if body != nil {
+		f.body = string(body)
+	} else {
+		f.body = ""
+	}
+	return nil, f.newRequestError
+}
+
+func (f *fakeWavefronter) Do(req *http.Request) (io.ReadCloser, error) {
+	if f.doError != nil {
+		return nil, f.doError
+	}
+	result := ioutil.NopCloser(strings.NewReader(f.response))
+	return result, nil
+}
+
+var (
+	doRestError = errors.New("A REST error.")
+)
+
+func TestDoRest_NewRequestError(t *testing.T) {
+	assert := assert.New(t)
+	fake := &fakeWavefronter{newRequestError: doRestError}
+	err := doRest(
+		"DELETE",
+		"/a/rest/path",
+		fake)
+	assert.Equal(doRestError, err)
+}
+
+func TestDoRest_DoError(t *testing.T) {
+	assert := assert.New(t)
+	fake := &fakeWavefronter{doError: doRestError}
+	err := doRest(
+		"DELETE",
+		"/a/rest/path",
+		fake)
+	assert.Equal(doRestError, err)
+}
+
+func TestDoRest_NoOptions(t *testing.T) {
+	assert := assert.New(t)
+	fake := &fakeWavefronter{response: "Some response."}
+	err := doRest(
+		"DELETE",
+		"/a/rest/path",
+		fake)
+	assert.Nil(err)
+	assert.Equal("DELETE", fake.method)
+	assert.Equal("/a/rest/path", fake.path)
+	assert.Nil(fake.params)
+	assert.Empty(fake.body)
+}
+
+func TestDoRest_UnexpectedResponse(t *testing.T) {
+	assert := assert.New(t)
+	fake := &fakeWavefronter{response: "A bad response."}
+	var result testPointType
+	err := doRest(
+		"POST",
+		"/a/rest/path",
+		fake,
+		doOutput(&result))
+	assert.NotNil(err)
+}
+
+func TestDoRest(t *testing.T) {
+	responseStr := `
+{
+  "status": {
+      "code": 200,
+      "message": "OK"
+  },
+  "response": {
+    "x": 42,
+    "y": 63
+  }
+}`
+	bodyStr := `{"x":3,"y":5}`
+	assert := assert.New(t)
+	fake := &fakeWavefronter{response: responseStr}
+	var result testPointType
+	err := doRest(
+		"POST",
+		"/a/rest/path",
+		fake,
+		doInput(&testPointType{X: 3, Y: 5}),
+		doOutput(&result),
+		doParams(map[string]string{"email": "true"}))
+	assert.Nil(err)
+	assert.Equal("POST", fake.method)
+	assert.Equal("/a/rest/path", fake.path)
+	assert.Equal(map[string]string{"email": "true"}, fake.params)
+	assert.Equal(bodyStr, fake.body)
+	assert.Equal(testPointType{X: 42, Y: 63}, result)
 }

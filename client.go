@@ -5,6 +5,7 @@ package wavefront
 import (
 	"bytes"
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -134,6 +135,28 @@ func (c Client) NewRequest(method, path string, params *map[string]string, body 
 	return req, nil
 }
 
+type restError struct {
+	error
+	statusCode int
+}
+
+func newRestError(err error, statusCode int) error {
+	return &restError{error: err, statusCode: statusCode}
+}
+
+func httpStatusCode(err error) int {
+	re, ok := err.(*restError)
+	if !ok {
+		return 0
+	}
+	return re.statusCode
+}
+
+// NotFound returns true if err is because the resource doesn't exist.
+func NotFound(err error) bool {
+	return httpStatusCode(err) == 404
+}
+
 // Do executes a request against the Wavefront API.
 // The response body is returned if the request is successful, and should
 // be closed by the requester.
@@ -191,9 +214,15 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 			body, err := ioutil.ReadAll(resp.Body)
 			resp.Body.Close()
 			if err != nil {
-				return nil, fmt.Errorf("server returned %s\n", resp.Status)
+				re := newRestError(
+					fmt.Errorf("server returned %s\n", resp.Status),
+					resp.StatusCode)
+				return nil, re
 			}
-			return nil, fmt.Errorf("server returned %s\n%s\n", resp.Status, string(body))
+			re := newRestError(
+				fmt.Errorf("server returned %s\n%s\n", resp.Status, string(body)),
+				resp.StatusCode)
+			return nil, re
 		}
 		return resp.Body, nil
 	}
@@ -214,4 +243,102 @@ func (c *Client) getSleepTime(retries int) *time.Duration {
 // Debug enables dumping http request objects to stdout
 func (c *Client) Debug(enable bool) {
 	c.debug = enable
+}
+
+// jsonResponseWrapper facilitates reading a json response. Often responses have 2
+// stanzas, a "status" stanza and a "response" stanza. Often we are only interested
+// in the contents of the "response" stanza. responsePtr points to a struct to be
+// populated with the contents of the "response" stanza. jsonResponseWrapper returns a
+// pointer to an anonymous struct representing both the "status" stanza and the
+// "response" stanza. Passing the result of jsonResponseWrapper to json.Unmarshal()
+// causes the responsePtr struct to be populated with the contents of the "response"
+// stanza.
+//
+// For example: json.Unmarshal(responseBody, jsonResponseWrapper(&user))
+func jsonResponseWrapper(responsePtr interface{}) interface{} {
+	return &struct {
+		Response interface{} `json:"response"`
+	}{
+		Response: responsePtr,
+	}
+}
+
+type doSettings struct {
+	inPtr  interface{}
+	outPtr interface{}
+	params map[string]string
+}
+
+type doOption func(d *doSettings)
+
+func (d *doSettings) applyOptions(options []doOption) {
+	for _, option := range options {
+		option(d)
+	}
+}
+
+// doInput specifies that the rest API call should use the struct pointed to by
+// ptr as the body.
+func doInput(ptr interface{}) doOption {
+	return func(d *doSettings) {
+		d.inPtr = ptr
+	}
+}
+
+// doOutput specifies that the result of the rest API call should be stored
+// in the struct pointed to by ptr.
+func doOutput(ptr interface{}) doOption {
+	return func(d *doSettings) {
+		d.outPtr = ptr
+	}
+}
+
+// doParams specifies that the given query parameters should be used with
+// the rest URL.
+func doParams(params map[string]string) doOption {
+	return func(d *doSettings) {
+		d.params = params
+	}
+}
+
+// doRest does a wavefront REST API call.
+// method is "GET", "POST", "PUT", or "DELETE"
+// url is the Rest URL.
+// client is the client object.
+// options is a var arg list of options for the Rest API call:
+// To pass myStruct as the body of the REST API call, pass doInput(&myStruct);
+// To store the result of the REST API call in result, pass doOutput(&result);
+func doRest(
+	method string,
+	url string,
+	client Wavefronter,
+	options ...doOption) (err error) {
+	var settings doSettings
+	settings.applyOptions(options)
+	var payload []byte
+	if settings.inPtr != nil {
+		payload, err = json.Marshal(settings.inPtr)
+		if err != nil {
+			return
+		}
+	}
+	var req *http.Request
+	if len(settings.params) == 0 {
+		req, err = client.NewRequest(method, url, nil, payload)
+	} else {
+		req, err = client.NewRequest(method, url, &settings.params, payload)
+	}
+	if err != nil {
+		return
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return
+	}
+	defer resp.Close()
+	if settings.outPtr != nil {
+		decoder := json.NewDecoder(resp)
+		return decoder.Decode(jsonResponseWrapper(settings.outPtr))
+	}
+	return nil
 }
