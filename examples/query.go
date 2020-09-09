@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"time"
 
 	"github.com/WavefrontHQ/go-wavefront-management-api"
 )
@@ -29,7 +28,7 @@ func main() {
 	))
 
 	// Set the query period to be one day instead of one hour
-	query.SetStartTime(int64(time.Duration.Hours(24) * 60 * 60))
+	query.SetStartTime(24 * 60 * 60)
 
 	// Execute carries out the query
 	result, err := query.Execute()

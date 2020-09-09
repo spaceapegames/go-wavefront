@@ -209,7 +209,7 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 					fmt.Printf("[DEBUG] retry '%d' of '%d', sleep sleepiing for %s", retries, maxRetries,
 						sleepTime.String())
 				}
-				time.Sleep(*sleepTime)
+				time.Sleep(sleepTime)
 				continue
 			}
 			body, err := ioutil.ReadAll(resp.Body)
@@ -229,16 +229,16 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 	}
 }
 
-func (c *Client) getSleepTime(retries int) *time.Duration {
+func (c *Client) getSleepTime(retries int) time.Duration {
 	defaultSleep := time.Duration(c.MaxRetryDurationInMS) * time.Millisecond
 	// Add some jitter, add 500ms * our retry, convert to MS
 	jitter := time.Duration(rand.Int63n(50)+50) * time.Millisecond
 	duration := time.Duration(500*retries) * time.Millisecond
 	sleep := duration + jitter
 	if sleep >= defaultSleep {
-		return &defaultSleep
+		return defaultSleep
 	}
-	return &sleep
+	return sleep
 }
 
 // Debug enables dumping http request objects to stdout
