@@ -3,7 +3,6 @@ package wavefront
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 type NewUserRequest struct {
@@ -81,7 +80,12 @@ func (u Users) Get(user *User) error {
 		return fmt.Errorf("user ID field is not set")
 	}
 
-	return u.updateUser("GET", fmt.Sprintf("%s/%s", baseUserPath, *user.ID), nil, user)
+	return doRest(
+		"GET",
+		fmt.Sprintf("%s/%s", baseUserPath, *user.ID),
+		u.client,
+		doOutput(user),
+		doDirectResponse())
 }
 
 // Find returns all Users filtered by the given search conditions.
@@ -126,32 +130,13 @@ func (u Users) Create(newUser *NewUserRequest, user *User, sendEmail bool) error
 	params := map[string]string{
 		"sendEmail": fmt.Sprintf("%t", sendEmail),
 	}
-
-	payload, err := json.Marshal(newUser)
-	if err != nil {
-		return err
-	}
-	req, err := u.client.NewRequest("POST", baseUserPath, &params, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := u.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	body, err := ioutil.ReadAll(resp)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(body, &struct {
-		Response *User `json:"response"`
-	}{
-		Response: user,
-	})
+	return doRest(
+		"POST",
+		baseUserPath,
+		u.client,
+		doParams(params),
+		doInput(newUser),
+		doOutput(user))
 }
 
 // Supports specifying the credential
@@ -160,8 +145,18 @@ func (u Users) Update(user *User) error {
 	if *user.ID == "" {
 		return fmt.Errorf("user ID field is not set")
 	}
-
-	return u.updateUser("PUT", fmt.Sprintf("%s/%s", baseUserPath, *user.ID), nil, user)
+	var updatedUser User
+	err := doRest(
+		"PUT",
+		fmt.Sprintf("%s/%s", baseUserPath, *user.ID),
+		u.client,
+		doInput(user),
+		doOutput(&updatedUser))
+	if err != nil {
+		return err
+	}
+	*user = updatedUser
+	return nil
 }
 
 // Deletes the specified user
@@ -171,44 +166,16 @@ func (u Users) Delete(user *User) error {
 		return fmt.Errorf("user ID field is not set")
 	}
 
-	req, err := u.client.NewRequest("DELETE",
-		fmt.Sprintf("%s/%s", baseUserPath, *user.ID), nil, nil)
+	err := doRest(
+		"DELETE",
+		fmt.Sprintf("%s/%s", baseUserPath, *user.ID),
+		u.client)
 	if err != nil {
 		return err
 	}
-
-	resp, err := u.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	*user.ID = ""
+	empty := ""
+	user.ID = &empty
 	return nil
-}
-
-func (u Users) updateUser(method, path string, params *map[string]string, user *User) error {
-	payload, err := json.Marshal(user)
-	if err != nil {
-		return err
-	}
-	req, err := u.client.NewRequest(method, path, params, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := u.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	body, err := ioutil.ReadAll(resp)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(body, &user)
 }
 
 // During a GET operation or returned AFTER a POST/PUT/DELETE we receive a complete UserGroup struct

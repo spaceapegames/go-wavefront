@@ -249,13 +249,18 @@ func TestDoRest(t *testing.T) {
 	assert := assert.New(t)
 	fake := &fakeWavefronter{response: responseStr}
 	var result testPointType
+	params := map[string]string{"email": "true"}
+	paramOption := doParams(params)
+
+	// Test that mutating the map doesn't affect our option
+	params["extra"] = "big"
 	err := doRest(
 		"POST",
 		"/a/rest/path",
 		fake,
 		doInput(&testPointType{X: 3, Y: 5}),
 		doOutput(&result),
-		doParams(map[string]string{"email": "true"}))
+		paramOption)
 	assert.Nil(err)
 	assert.Equal("POST", fake.method)
 	assert.Equal("/a/rest/path", fake.path)
@@ -275,4 +280,25 @@ func TestConfigDefensiveCopy(t *testing.T) {
 	assert.NotSame(config, client.Config)
 	assert.Equal("somehost.wavefront.com", client.Config.Address)
 	assert.Equal("123456789", client.Config.Token)
+}
+
+func TestDoRest_DirectResponse(t *testing.T) {
+	responseStr := `
+{
+  "x": 42,
+  "y": 63
+}`
+	assert := assert.New(t)
+	fake := &fakeWavefronter{response: responseStr}
+	var result testPointType
+	err := doRest(
+		"GET",
+		"/a/rest/path",
+		fake,
+		doOutput(&result),
+		doDirectResponse())
+	assert.Nil(err)
+	assert.Equal("GET", fake.method)
+	assert.Equal("/a/rest/path", fake.path)
+	assert.Equal(testPointType{X: 42, Y: 63}, result)
 }

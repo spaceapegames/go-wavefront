@@ -265,9 +265,10 @@ func jsonResponseWrapper(responsePtr interface{}) interface{} {
 }
 
 type doSettings struct {
-	inPtr  interface{}
-	outPtr interface{}
-	params map[string]string
+	inPtr          interface{}
+	outPtr         interface{}
+	params         map[string]string
+	directResponse bool
 }
 
 type doOption func(d *doSettings)
@@ -294,11 +295,23 @@ func doOutput(ptr interface{}) doOption {
 	}
 }
 
+// doDirectResponse is only used with doOutput. doDirectResponse specifies that
+// the rest API result does not have a "Status" and "Response" stanza
+func doDirectResponse() doOption {
+	return func(d *doSettings) {
+		d.directResponse = true
+	}
+}
+
 // doParams specifies that the given query parameters should be used with
 // the rest URL.
 func doParams(params map[string]string) doOption {
+	paramsCopy := make(map[string]string, len(params))
+	for k, v := range params {
+		paramsCopy[k] = v
+	}
 	return func(d *doSettings) {
-		d.params = params
+		d.params = paramsCopy
 	}
 }
 
@@ -339,6 +352,9 @@ func doRest(
 	defer resp.Close()
 	if settings.outPtr != nil {
 		decoder := json.NewDecoder(resp)
+		if settings.directResponse {
+			return decoder.Decode(settings.outPtr)
+		}
 		return decoder.Decode(jsonResponseWrapper(settings.outPtr))
 	}
 	return nil
