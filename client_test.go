@@ -263,3 +263,16 @@ func TestDoRest(t *testing.T) {
 	assert.Equal(bodyStr, fake.body)
 	assert.Equal(testPointType{X: 42, Y: 63}, result)
 }
+
+func TestConfigDefensiveCopy(t *testing.T) {
+	assert := assert.New(t)
+	config := &Config{
+		Address:       "somehost.wavefront.com",
+		Token:         "123456789",
+		SkipTLSVerify: true,
+	}
+	client, _ := NewClient(config)
+	assert.NotSame(config, client.Config)
+	assert.Equal("somehost.wavefront.com", client.Config.Address)
+	assert.Equal("123456789", client.Config.Token)
+}

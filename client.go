@@ -67,7 +67,8 @@ func NewClient(config *Config) (*Client, error) {
 
 	// need to disable http/2 as it doesn't play nicely with nginx
 	// to do so we set TLSNextProto to an empty, non-nil map
-	c := &Client{Config: config,
+	configCopy := *config
+	c := &Client{Config: &configCopy,
 		BaseURL: baseURL,
 		httpClient: &http.Client{
 			Transport: &http.Transport{
