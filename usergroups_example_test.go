@@ -1,4 +1,4 @@
-package main
+package wavefront_test
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/WavefrontHQ/go-wavefront-management-api"
 )
 
-func main() {
+func ExampleUserGroups() {
 	config := &wavefront.Config{
 		Address: "test.wavefront.com",
 		Token:   "xxxx-xxxx-xxxx-xxxx-xxxx",
@@ -22,9 +22,6 @@ func main() {
 	// Which populates a User object upon success
 	ug := &wavefront.UserGroup{
 		Name: "Alert Users",
-		Permissions: []string{
-			wavefront.ALERTS_MANAGEMENT,
-		},
 		Users: []string{
 			"someone@example.com",
 		},
@@ -40,8 +37,7 @@ func main() {
 	// The ID field is now set, so we can update/delete the UserGroup
 	fmt.Println("user group ID is", *ug.ID)
 
-	// Change to 10 minutes
-	ug.Permissions = append(ug.Permissions, wavefront.DERIVED_METRICS_MANAGEMENT)
+	ug.Name = "Alert Users Rename"
 
 	// Update the User
 	err = userGroups.Update(ug)

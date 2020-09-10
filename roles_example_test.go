@@ -1,4 +1,4 @@
-package main
+package wavefront_test
 
 import (
 	"log"
@@ -6,7 +6,7 @@ import (
 	"github.com/WavefrontHQ/go-wavefront-management-api"
 )
 
-func main() {
+func ExampleRoles() {
 	config := &wavefront.Config{
 		Address: "test.wavefront.com",
 		Token:   "xxxx-xxxx-xxxx-xxxx-xxxx",

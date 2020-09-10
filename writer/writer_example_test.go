@@ -1,4 +1,4 @@
-package main
+package wavefront_test
 
 import (
 	"os"
@@ -7,7 +7,7 @@ import (
 	wavefront "github.com/WavefrontHQ/go-wavefront-management-api/writer"
 )
 
-func main() {
+func ExampleWriter() {
 	// create a Writer with the source = hostname and
 	// with all metrics exhibiting the tag environment=staging
 	tags := []*wavefront.PointTag{
