@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+
+	asserts "github.com/stretchr/testify/assert"
 )
 
 type MockUserClient struct {
@@ -76,6 +78,29 @@ func TestUsers_Find(t *testing.T) {
 
 func (m *MockCrudUserClient) Do(req *http.Request) (io.ReadCloser, error) {
 	return testDo(m.T, req, "./fixtures/crud-user-response.json", m.method, &User{})
+}
+
+func TestUsers_NilID(t *testing.T) {
+	assert := asserts.New(t)
+	baseurl, _ := url.Parse("http://testing.wavefront.com")
+	u := &Users{
+		client: &MockCrudUserClient{
+			Client: Client{
+				Config:     &Config{Token: "1234-5678-9977"},
+				BaseURL:    baseurl,
+				httpClient: http.DefaultClient,
+				debug:      true,
+			},
+			T:      t,
+			method: "PUT",
+		},
+	}
+	var user User
+	assert.NotNil(u.Update(&user))
+	u.client.(*MockCrudUserClient).method = "GET"
+	assert.NotNil(u.Get(&user))
+	u.client.(*MockCrudUserClient).method = "DELETE"
+	assert.NotNil(u.Delete(&user))
 }
 
 func TestUsers_CreateUpdateDelete(t *testing.T) {

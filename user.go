@@ -76,7 +76,7 @@ func (c *Client) Users() *Users {
 // Get is used to retrieve an existing User by ID.
 // The identifier field must be specified
 func (u Users) Get(user *User) error {
-	if *user.ID == "" {
+	if user.ID == nil || *user.ID == "" {
 		return fmt.Errorf("user ID field is not set")
 	}
 
@@ -142,7 +142,7 @@ func (u Users) Create(newUser *NewUserRequest, user *User, sendEmail bool) error
 // Supports specifying the credential
 // The identifier field must be specified
 func (u Users) Update(user *User) error {
-	if *user.ID == "" {
+	if user.ID == nil || *user.ID == "" {
 		return fmt.Errorf("user ID field is not set")
 	}
 	var updatedUser User
@@ -162,7 +162,7 @@ func (u Users) Update(user *User) error {
 // Deletes the specified user
 // The ID field must be specified
 func (u Users) Delete(user *User) error {
-	if *user.ID == "" {
+	if user.ID == nil || *user.ID == "" {
 		return fmt.Errorf("user ID field is not set")
 	}
 
