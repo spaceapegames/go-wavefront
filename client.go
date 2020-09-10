@@ -112,17 +112,17 @@ func (c Client) NewRequest(method, path string, params *map[string]string, body 
 		return nil, err
 	}
 
-	url := c.BaseURL.ResolveReference(rel)
+	currentUrl := c.BaseURL.ResolveReference(rel)
 
 	if params != nil {
-		q := url.Query()
+		q := currentUrl.Query()
 		for k, v := range *params {
 			q.Set(k, v)
 		}
-		url.RawQuery = q.Encode()
+		currentUrl.RawQuery = q.Encode()
 	}
 
-	req, err := http.NewRequest(method, url.String(), nil)
+	req, err := http.NewRequest(method, currentUrl.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +213,7 @@ func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 				continue
 			}
 			body, err := ioutil.ReadAll(resp.Body)
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			if err != nil {
 				re := newRestError(
 					fmt.Errorf("server returned %s\n", resp.Status),

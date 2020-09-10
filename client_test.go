@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	asserts "github.com/stretchr/testify/assert"
 )
 
 func TestClientGet(t *testing.T) {
@@ -21,7 +21,9 @@ func TestClientGet(t *testing.T) {
 	}
 
 	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.ParseForm()
+		if err := r.ParseForm(); err != nil {
+			t.Fatalf("Error parsing form: %v", err)
+		}
 
 		if r.URL.Path != "/api/v2/test/thing" {
 			t.Errorf("request path, expected /api/v2/test/thing, got %s", r.URL.Path)
@@ -77,7 +79,9 @@ func TestClientPost(t *testing.T) {
 	body := []byte(`{ "some" : "json" }`)
 
 	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.ParseForm()
+		if err := r.ParseForm(); err != nil {
+			t.Fatalf("Error parsing form: %v", err)
+		}
 
 		if r.URL.Path != "/api/v2/test/thing" {
 			t.Errorf("request path, expected /api/v2/test/thing, got %s", r.URL.Path)
@@ -175,7 +179,7 @@ func (f *fakeWavefronter) NewRequest(method, path string, params *map[string]str
 	return nil, f.newRequestError
 }
 
-func (f *fakeWavefronter) Do(req *http.Request) (io.ReadCloser, error) {
+func (f *fakeWavefronter) Do(_ *http.Request) (io.ReadCloser, error) {
 	if f.doError != nil {
 		return nil, f.doError
 	}
@@ -184,11 +188,11 @@ func (f *fakeWavefronter) Do(req *http.Request) (io.ReadCloser, error) {
 }
 
 var (
-	doRestError = errors.New("A REST error.")
+	doRestError = errors.New("a REST error")
 )
 
 func TestDoRest_NewRequestError(t *testing.T) {
-	assert := assert.New(t)
+	assert := asserts.New(t)
 	fake := &fakeWavefronter{newRequestError: doRestError}
 	err := doRest(
 		"DELETE",
@@ -198,7 +202,7 @@ func TestDoRest_NewRequestError(t *testing.T) {
 }
 
 func TestDoRest_DoError(t *testing.T) {
-	assert := assert.New(t)
+	assert := asserts.New(t)
 	fake := &fakeWavefronter{doError: doRestError}
 	err := doRest(
 		"DELETE",
@@ -208,7 +212,7 @@ func TestDoRest_DoError(t *testing.T) {
 }
 
 func TestDoRest_NoOptions(t *testing.T) {
-	assert := assert.New(t)
+	assert := asserts.New(t)
 	fake := &fakeWavefronter{response: "Some response."}
 	err := doRest(
 		"DELETE",
@@ -222,7 +226,7 @@ func TestDoRest_NoOptions(t *testing.T) {
 }
 
 func TestDoRest_UnexpectedResponse(t *testing.T) {
-	assert := assert.New(t)
+	assert := asserts.New(t)
 	fake := &fakeWavefronter{response: "A bad response."}
 	var result testPointType
 	err := doRest(
@@ -246,7 +250,7 @@ func TestDoRest(t *testing.T) {
   }
 }`
 	bodyStr := `{"x":3,"y":5}`
-	assert := assert.New(t)
+	assert := asserts.New(t)
 	fake := &fakeWavefronter{response: responseStr}
 	var result testPointType
 	params := map[string]string{"email": "true"}
@@ -270,7 +274,7 @@ func TestDoRest(t *testing.T) {
 }
 
 func TestConfigDefensiveCopy(t *testing.T) {
-	assert := assert.New(t)
+	assert := asserts.New(t)
 	config := &Config{
 		Address:       "somehost.wavefront.com",
 		Token:         "123456789",
@@ -288,7 +292,7 @@ func TestDoRest_DirectResponse(t *testing.T) {
   "x": 42,
   "y": 63
 }`
-	assert := assert.New(t)
+	assert := asserts.New(t)
 	fake := &fakeWavefronter{response: responseStr}
 	var result testPointType
 	err := doRest(
