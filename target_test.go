@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+
+	asserts "github.com/stretchr/testify/assert"
 )
 
 type MockTargetClient struct {
@@ -50,6 +52,7 @@ func (m *MockCrudTargetClient) Do(req *http.Request) (io.ReadCloser, error) {
 }
 
 func TestTargets_CreateUpdateDeleteTarget(t *testing.T) {
+	assert := asserts.New(t)
 	baseurl, _ := url.Parse("http://testing.wavefront.com")
 	a := &Targets{
 		client: &MockCrudTargetClient{
@@ -86,26 +89,17 @@ func TestTargets_CreateUpdateDeleteTarget(t *testing.T) {
 		Template: string(tmpl),
 	}
 
-	if err := a.Update(&target); err == nil {
-		t.Errorf("expected target update to error with no ID")
-	}
+	// Update should fail as no ID is set
+	assert.Error(a.Update(&target))
 
 	a.client.(*MockCrudTargetClient).method = "POST"
-	a.Create(&target)
-	assertEqual(t, "7", *target.ID)
+	assert.NoError(a.Create(&target))
+	assert.Equal("7", *target.ID)
 
 	a.client.(*MockCrudTargetClient).method = "PUT"
-	if err := a.Update(&target); err != nil {
-		t.Error(err)
-	}
+	assert.NoError(a.Update(&target))
 
 	a.client.(*MockCrudTargetClient).method = "DELETE"
-	if err := a.Delete(&target); err != nil {
-		t.Error(err)
-	}
-
-	if target.ID != nil {
-		t.Error("expected target ID to be reset after deletion")
-	}
-
+	assert.NoError(a.Delete(&target))
+	assert.Nil(target.ID)
 }

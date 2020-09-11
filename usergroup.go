@@ -88,7 +88,7 @@ func (g UserGroups) Find(filter []*SearchCondition) ([]*UserGroup, error) {
 
 	var results []*UserGroup
 	moreItems := true
-	for moreItems == true {
+	for moreItems {
 		resp, err := search.Execute()
 		if err != nil {
 			return nil, err

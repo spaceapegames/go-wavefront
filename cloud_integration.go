@@ -258,7 +258,7 @@ func (ci CloudIntegrations) Find(filter []*SearchCondition) ([]*CloudIntegration
 
 	var results []*CloudIntegration
 	moreItems := true
-	for moreItems == true {
+	for moreItems {
 		resp, err := search.Execute()
 		if err != nil {
 			return nil, err
@@ -318,7 +318,7 @@ func (ci CloudIntegrations) Update(cloudIntegration *CloudIntegration) error {
 // If successful, the ID field will be populated
 func (ci CloudIntegrations) Create(cloudIntegration *CloudIntegration) error {
 	return basicCrud(ci.client, "POST",
-		fmt.Sprintf("%s", baseCloudIntegrationPath), cloudIntegration, nil)
+		baseCloudIntegrationPath, cloudIntegration, nil)
 }
 
 // Creates an AWS ExternalID for use in AWS IAM Roles

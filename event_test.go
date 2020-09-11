@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"testing"
 	"time"
+
+	asserts "github.com/stretchr/testify/assert"
 )
 
 type MockEventClient struct {
@@ -76,6 +78,7 @@ func (m *MockCrudEventClient) Do(req *http.Request) (io.ReadCloser, error) {
 }
 
 func TestEvents_CreateUpdateDeleteEvent(t *testing.T) {
+	assert := asserts.New(t)
 	baseurl, _ := url.Parse("http://testing.wavefront.com")
 	e := &Events{
 		client: &MockCrudEventClient{
@@ -97,32 +100,22 @@ func TestEvents_CreateUpdateDeleteEvent(t *testing.T) {
 		Severity:  "warn",
 	}
 
-	if err := e.Update(&event); err == nil {
-		t.Errorf("expected event update to error with no ID")
-	}
+	// Update should fail because no ID is set
+	assert.Error(e.Update(&event))
 
 	e.client.(*MockCrudEventClient).method = "POST"
 
-	e.Create(&event)
-	assertEqual(t, "1234", *event.ID)
+	assert.NoError(e.Create(&event))
+	assert.Equal("1234", *event.ID)
 
 	e.client.(*MockCrudEventClient).method = "PUT"
-	if err := e.Update(&event); err != nil {
-		t.Error(err)
-	}
+	assert.NoError(e.Update(&event))
 
 	e.client.(*MockCrudEventClient).method = "POST"
-	if err := e.Close(&event); err != nil {
-		t.Error(err)
-	}
+	assert.NoError(e.Close(&event))
 
 	e.client.(*MockCrudEventClient).method = "DELETE"
-	if err := e.Delete(&event); err != nil {
-		t.Error(err)
-	}
+	assert.NoError(e.Delete(&event))
 
-	if event.ID != nil {
-		t.Errorf("expected event ID to be reset after deletion")
-	}
-
+	assert.Nil(event.ID)
 }

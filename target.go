@@ -103,7 +103,7 @@ func (t Targets) Find(filter []*SearchCondition) ([]*Target, error) {
 
 	var results []*Target
 	moreItems := true
-	for moreItems == true {
+	for moreItems {
 		resp, err := search.Execute()
 		if err != nil {
 			return nil, err

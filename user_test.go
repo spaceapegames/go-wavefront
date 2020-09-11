@@ -96,11 +96,11 @@ func TestUsers_NilID(t *testing.T) {
 		},
 	}
 	var user User
-	assert.NotNil(u.Update(&user))
+	assert.Error(u.Update(&user))
 	u.client.(*MockCrudUserClient).method = "GET"
-	assert.NotNil(u.Get(&user))
+	assert.Error(u.Get(&user))
 	u.client.(*MockCrudUserClient).method = "DELETE"
-	assert.NotNil(u.Delete(&user))
+	assert.Error(u.Delete(&user))
 }
 
 func TestUsers_CreateUpdateDelete(t *testing.T) {

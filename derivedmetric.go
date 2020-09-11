@@ -70,7 +70,7 @@ func (dm DerivedMetrics) Find(filter []*SearchCondition) ([]*DerivedMetric, erro
 
 	var results []*DerivedMetric
 	moreItems := true
-	for moreItems == true {
+	for moreItems {
 		resp, err := search.Execute()
 		if err != nil {
 			return nil, err

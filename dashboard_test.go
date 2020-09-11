@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+
+	asserts "github.com/stretchr/testify/assert"
 )
 
 type MockDashboardClient struct {
@@ -24,6 +26,7 @@ func (m *MockDashboardClient) Do(req *http.Request) (io.ReadCloser, error) {
 }
 
 func TestDashboards_PaginatedFind(t *testing.T) {
+	assert := asserts.New(t)
 	baseurl, _ := url.Parse("http://testing.wavefront.com")
 	a := &Dashboards{
 		client: &MockDashboardClient{
@@ -41,18 +44,9 @@ func TestDashboards_PaginatedFind(t *testing.T) {
 		t.Fatal(err)
 	}
 	invoked := ((a.client).(*MockDashboardClient)).InvokedCount
-	if invoked != 2 {
-		t.Errorf("paginated search, expected 2, got %d", invoked)
-	}
-
-	if dashboards[0].Name != "test 1" {
-		t.Errorf("dashboard name incorrect: %s", dashboards[0].Name)
-	}
-
-	if len(dashboards[0].Tags) != 2 {
-		t.Errorf("dashboard tags, expected 2, got %d", len(dashboards[0].Tags))
-	}
-
+	assert.Equal(2, invoked)
+	assert.Equal("test 1", dashboards[0].Name)
+	assert.Len(dashboards[0].Tags, 2)
 }
 
 func (m *MockCrudDashboardClient) Do(req *http.Request) (io.ReadCloser, error) {
@@ -60,6 +54,7 @@ func (m *MockCrudDashboardClient) Do(req *http.Request) (io.ReadCloser, error) {
 }
 
 func TestDashboards_CreateUpdateDeleteDashboard(t *testing.T) {
+	assert := asserts.New(t)
 	baseurl, _ := url.Parse("http://testing.wavefront.com")
 	a := &Dashboards{
 		client: &MockCrudDashboardClient{
@@ -81,24 +76,19 @@ func TestDashboards_CreateUpdateDeleteDashboard(t *testing.T) {
 		Url:         "api-example",
 	}
 
-	if err := a.Update(&dashboard); err == nil {
-		t.Errorf("expected dashboard update to error with no ID")
-	}
+	// Update should fail because no ID is set
+	assert.Error(a.Update(&dashboard))
 
 	a.client.(*MockCrudDashboardClient).method = "POST"
 
-	a.Create(&dashboard)
-	assertEqual(t, "api-example", dashboard.ID)
+	assert.NoError(a.Create(&dashboard))
+	assert.Equal("api-example", dashboard.ID)
 
 	a.client.(*MockCrudDashboardClient).method = "PUT"
-	if err := a.Update(&dashboard); err != nil {
-		t.Error(err)
-	}
+	assert.NoError(a.Update(&dashboard))
 
 	a.client.(*MockCrudDashboardClient).method = "DELETE"
-	if err := a.Delete(&dashboard, true); err != nil {
-		t.Error(err)
-	}
+	assert.NoError(a.Delete(&dashboard, true))
 
-	assertEqual(t, "", dashboard.ID)
+	assert.Equal("", dashboard.ID)
 }

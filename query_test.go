@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"testing"
 	"time"
+
+	asserts "github.com/stretchr/testify/assert"
 )
 
 type MockWavefrontClient struct {
@@ -23,6 +25,7 @@ func (m MockWavefrontClient) Do(req *http.Request) (io.ReadCloser, error) {
 }
 
 func TestQuery(t *testing.T) {
+	assert := asserts.New(t)
 	query := "dudndun"
 	baseurl, _ := url.Parse("http://testing.wavefront.com")
 	q := &Query{
@@ -46,7 +49,7 @@ func TestQuery(t *testing.T) {
 	}
 
 	q.SetEndTime(time.Now())
-	q.SetStartTime(LastDay)
+	assert.NoError(q.SetStartTime(LastDay))
 	end, _ = strconv.Atoi(q.Params.EndTime)
 	start, _ = strconv.Atoi(q.Params.StartTime)
 	if end-start != LastDay {

@@ -41,7 +41,7 @@ func (r Roles) Find(filter []*SearchCondition) ([]*Role, error) {
 
 	var results []*Role
 	moreItems := true
-	for moreItems == true {
+	for moreItems {
 		resp, err := search.Execute()
 		if err != nil {
 			return nil, err

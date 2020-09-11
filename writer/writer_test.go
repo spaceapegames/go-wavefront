@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"testing"
+
+	asserts "github.com/stretchr/testify/assert"
 )
 
 type dummyConn struct{}
@@ -11,8 +13,7 @@ type dummyConn struct{}
 var b bytes.Buffer
 
 func (d dummyConn) Write(p []byte) (int, error) {
-	fmt.Fprintf(&b, string(p))
-	return 0, nil
+	return fmt.Fprint(&b, string(p))
 }
 
 func (d dummyConn) Close() error {
@@ -20,7 +21,7 @@ func (d dummyConn) Close() error {
 }
 
 func TestWriteMetrics(t *testing.T) {
-
+	assert := asserts.New(t)
 	w := &Writer{
 		conn:      dummyConn{},
 		source:    "myHost1",
@@ -58,12 +59,12 @@ func TestWriteMetrics(t *testing.T) {
 	}
 
 	w.SetPointTags([]*PointTag{
-		&PointTag{Key: "some",
+		{Key: "some",
 			Value: "tag",
 		},
 	})
 
-	w.Write(NewMetric("my.cool.test", 7077))
+	assert.NoError(w.Write(NewMetric("my.cool.test", 7077)))
 	out, err := b.ReadBytes('\n')
 	if err != nil {
 		t.Error(err)
@@ -74,7 +75,7 @@ func TestWriteMetrics(t *testing.T) {
 	}
 
 	w.SetSource("anotherHost")
-	w.Write(NewMetric("my.cool.test", 7077))
+	assert.NoError(w.Write(NewMetric("my.cool.test", 7077)))
 	out, err = b.ReadBytes('\n')
 	if err != nil {
 		t.Error(err)

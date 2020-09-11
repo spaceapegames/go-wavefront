@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+
+	asserts "github.com/stretchr/testify/assert"
 )
 
 type MockAlertClient struct {
@@ -24,6 +26,7 @@ func (m *MockAlertClient) Do(req *http.Request) (io.ReadCloser, error) {
 }
 
 func TestAlerts_PaginatedFind(t *testing.T) {
+	assert := asserts.New(t)
 	baseurl, _ := url.Parse("http://testing.wavefront.com")
 	a := &Alerts{
 		client: &MockAlertClient{
@@ -41,18 +44,10 @@ func TestAlerts_PaginatedFind(t *testing.T) {
 		t.Fatal(err)
 	}
 	invoked := ((a.client).(*MockAlertClient)).InvokedCount
-	if invoked != 2 {
-		t.Errorf("paginated search, expected 2, got %d", invoked)
-	}
+	assert.Equal(2, invoked)
 
-	if alerts[0].Name != "Excessive consumption of inodes" {
-		t.Errorf("alert name incorrect: %s", alerts[0].Name)
-	}
-
-	if len(alerts[0].Tags) != 2 {
-		t.Errorf("alert tags, expected 2, got %d", len(alerts[0].Tags))
-	}
-
+	assert.Equal("Excessive consumption of inodes", alerts[0].Name)
+	assert.Len(alerts[0].Tags, 2)
 }
 
 func (m *MockCrudAlertClient) Do(req *http.Request) (io.ReadCloser, error) {
@@ -60,6 +55,7 @@ func (m *MockCrudAlertClient) Do(req *http.Request) (io.ReadCloser, error) {
 }
 
 func TestAlerts_CreateUpdateDeleteAlert(t *testing.T) {
+	assert := asserts.New(t)
 	baseurl, _ := url.Parse("http://testing.wavefront.com")
 	a := &Alerts{
 		client: &MockCrudAlertClient{
@@ -86,32 +82,23 @@ func TestAlerts_CreateUpdateDeleteAlert(t *testing.T) {
 		Tags:                []string{"mytag1", "mytag2"},
 	}
 
-	if err := a.Update(&alert); err == nil {
-		t.Errorf("expected alert update to error with no ID")
-	}
+	// Update should fail because no ID is set
+	assert.Error(a.Update(&alert))
 
 	a.client.(*MockCrudAlertClient).method = "POST"
-
-	a.Create(&alert)
-	assertEqual(t, "1234", *alert.ID)
+	assert.NoError(a.Create(&alert))
+	assert.Equal("1234", *alert.ID)
 
 	a.client.(*MockCrudAlertClient).method = "PUT"
-	if err := a.Update(&alert); err != nil {
-		t.Error(err)
-	}
+	assert.NoError(a.Update(&alert))
 
 	a.client.(*MockCrudAlertClient).method = "DELETE"
-	if err := a.Delete(&alert, true); err != nil {
-		t.Error(err)
-	}
-
-	if alert.ID != nil {
-		t.Error("expected alert ID to be reset after deletion")
-	}
-
+	assert.NoError(a.Delete(&alert, true))
+	assert.Nil(alert.ID)
 }
 
 func TestMultiThresholdAlerts_CreateUpdateDeleteAlert(t *testing.T) {
+	assert := asserts.New(t)
 	baseurl, _ := url.Parse("http://testing.wavefront.com")
 	a := &Alerts{
 		client: &MockCrudAlertClient{
@@ -144,27 +131,17 @@ func TestMultiThresholdAlerts_CreateUpdateDeleteAlert(t *testing.T) {
 		Tags:                []string{"mytag1", "mytag2"},
 	}
 
-	if err := a.Update(&alert); err == nil {
-		t.Errorf("expected alert update to error with no ID")
-	}
+	// Update should fail because no ID is set
+	assert.Error(a.Update(&alert))
 
 	a.client.(*MockCrudAlertClient).method = "POST"
-
-	a.Create(&alert)
-	assertEqual(t, "1234", *alert.ID)
+	assert.NoError(a.Create(&alert))
+	assert.Equal("1234", *alert.ID)
 
 	a.client.(*MockCrudAlertClient).method = "PUT"
-	if err := a.Update(&alert); err != nil {
-		t.Error(err)
-	}
+	assert.NoError(a.Update(&alert))
 
 	a.client.(*MockCrudAlertClient).method = "DELETE"
-	if err := a.Delete(&alert, true); err != nil {
-		t.Error(err)
-	}
-
-	if alert.ID != nil {
-		t.Error("expected alert ID to be reset after deletion")
-	}
-
+	assert.NoError(a.Delete(&alert, true))
+	assert.Nil(alert.ID)
 }

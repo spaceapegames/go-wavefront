@@ -296,7 +296,7 @@ func (d Dashboards) Find(filter []*SearchCondition) ([]*Dashboard, error) {
 
 	var results []*Dashboard
 	moreItems := true
-	for moreItems == true {
+	for moreItems {
 		resp, err := search.Execute()
 		if err != nil {
 			return nil, err

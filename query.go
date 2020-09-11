@@ -185,8 +185,10 @@ func (q *Query) Execute() (*QueryResponse, error) {
 	}
 
 	// 'rewind' the raw response
-	queryResp.RawResponse.Seek(0, 0)
-
+	_, err = queryResp.RawResponse.Seek(0, 0)
+	if err != nil {
+		return nil, err
+	}
 	return queryResp, nil
 }
 

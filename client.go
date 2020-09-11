@@ -91,7 +91,7 @@ func NewClient(config *Config) (*Client, error) {
 	}
 
 	//For testing ONLY
-	if config.SkipTLSVerify == true {
+	if config.SkipTLSVerify {
 		tr := &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
@@ -163,7 +163,7 @@ func NotFound(err error) bool {
 // be closed by the requester.
 func (c Client) Do(req *http.Request) (io.ReadCloser, error) {
 
-	if c.debug == true {
+	if c.debug {
 		d, err := httputil.DumpRequestOut(req, true)
 		if err != nil {
 			return nil, err

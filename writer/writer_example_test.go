@@ -1,6 +1,7 @@
 package wavefront_test
 
 import (
+	"log"
 	"os"
 	"time"
 
@@ -28,7 +29,10 @@ func ExampleWriter() {
 	defer wf.Close()
 
 	// write a simple metric (timestamp now)
-	wf.Write(wavefront.NewMetric("something.very.good.count", 33))
+	err := wf.Write(wavefront.NewMetric("something.very.good.count", 33))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// for more control over the metric (e.g. setting the timestamp and decimal places)
 	m := wavefront.Metric{
@@ -36,5 +40,8 @@ func ExampleWriter() {
 		Timestamp: time.Now().Unix() - 60*1000,
 		Precision: 2,
 	}
-	wf.Write(m.Update(35.07))
+	err = wf.Write(m.Update(35.07))
+	if err != nil {
+		log.Fatal(err)
+	}
 }

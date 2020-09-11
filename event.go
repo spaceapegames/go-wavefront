@@ -145,7 +145,7 @@ func (e Events) Create(event *Event) error {
 	if event.StartTime == 0 {
 		event.StartTime = time.Now().Unix() * 1000
 	}
-	if event.Instantaneous == true {
+	if event.Instantaneous {
 		event.EndTime = event.StartTime + 1
 	}
 	return basicCrud(e.client, "POST", baseEventPath, event, nil)

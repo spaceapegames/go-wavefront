@@ -49,7 +49,7 @@ func TestClientGet(t *testing.T) {
 	defer srv.Close()
 
 	client, err := NewClient(&Config{
-		Address:       strings.TrimLeft(srv.URL, "https://"),
+		Address:       strings.TrimPrefix(srv.URL, "https://"),
 		Token:         "123456789",
 		SkipTLSVerify: true,
 	})
@@ -124,7 +124,7 @@ func TestClientPost(t *testing.T) {
 	defer srv.Close()
 
 	client, err := NewClient(&Config{
-		Address:       strings.TrimLeft(srv.URL, "https://"),
+		Address:       strings.TrimPrefix(srv.URL, "https://"),
 		Token:         "123456789",
 		SkipTLSVerify: true,
 	})
@@ -218,7 +218,7 @@ func TestDoRest_NoOptions(t *testing.T) {
 		"DELETE",
 		"/a/rest/path",
 		fake)
-	assert.Nil(err)
+	assert.NoError(err)
 	assert.Equal("DELETE", fake.method)
 	assert.Equal("/a/rest/path", fake.path)
 	assert.Nil(fake.params)
@@ -234,7 +234,7 @@ func TestDoRest_UnexpectedResponse(t *testing.T) {
 		"/a/rest/path",
 		fake,
 		doOutput(&result))
-	assert.NotNil(err)
+	assert.Error(err)
 }
 
 func TestDoRest(t *testing.T) {
@@ -265,7 +265,7 @@ func TestDoRest(t *testing.T) {
 		doInput(&testPointType{X: 3, Y: 5}),
 		doOutput(&result),
 		paramOption)
-	assert.Nil(err)
+	assert.NoError(err)
 	assert.Equal("POST", fake.method)
 	assert.Equal("/a/rest/path", fake.path)
 	assert.Equal(map[string]string{"email": "true"}, fake.params)
@@ -301,7 +301,7 @@ func TestDoRest_DirectResponse(t *testing.T) {
 		fake,
 		doOutput(&result),
 		doDirectResponse())
-	assert.Nil(err)
+	assert.NoError(err)
 	assert.Equal("GET", fake.method)
 	assert.Equal("/a/rest/path", fake.path)
 	assert.Equal(testPointType{X: 42, Y: 63}, result)

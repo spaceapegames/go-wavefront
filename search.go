@@ -136,7 +136,7 @@ func (s *Search) Execute() (*SearchResponse, error) {
 	}
 
 	path := baseSearchPath + "/" + s.Type
-	if s.Deleted == true {
+	if s.Deleted {
 		path += "/deleted"
 	}
 	req, err := s.client.NewRequest("POST", path, nil, payload)
@@ -163,14 +163,16 @@ func (s *Search) Execute() (*SearchResponse, error) {
 		return nil, err
 	}
 
-	if searchResp.Response.MoreItems == true {
+	if searchResp.Response.MoreItems {
 		searchResp.NextOffset = s.Params.Offset + s.Params.Limit
 	} else {
 		searchResp.NextOffset = 0
 	}
 
 	// 'rewind' the raw response
-	searchResp.RawResponse.Seek(0, 0)
-
+	_, err = searchResp.RawResponse.Seek(0, 0)
+	if err != nil {
+		return nil, err
+	}
 	return searchResp, nil
 }

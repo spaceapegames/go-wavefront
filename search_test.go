@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+
+	asserts "github.com/stretchr/testify/assert"
 )
 
 type MockSearchClient struct {
@@ -37,6 +39,7 @@ func (m MockSearchClient) Do(req *http.Request) (io.ReadCloser, error) {
 }
 
 func TestSearch(t *testing.T) {
+	assert := asserts.New(t)
 	sc := &SearchCondition{
 		Key:            "tags",
 		Value:          "myTag",
@@ -88,5 +91,6 @@ func TestSearch(t *testing.T) {
 	// check deleted path appended
 	s.Deleted = true
 	((s.client).(*MockSearchClient)).isDeleted = true
-	s.Execute()
+	_, err = s.Execute()
+	assert.NoError(err)
 }

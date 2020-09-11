@@ -2,11 +2,9 @@ package wavefront_test
 
 import (
 	"fmt"
+	"github.com/WavefrontHQ/go-wavefront-management-api"
 	"io/ioutil"
 	"log"
-	"strings"
-
-	"github.com/WavefrontHQ/go-wavefront-management-api"
 )
 
 func ExampleAlerts() {
@@ -133,17 +131,16 @@ func ExampleAlerts() {
 
 	fmt.Println("alert targets created")
 
-	var strA, strB, strC strings.Builder
-	fmt.Fprintf(&strA, "target:%s", *targetA.ID)
-	fmt.Fprintf(&strB, "target:%s", *targetB.ID)
-	fmt.Fprintf(&strC, "target:%s", *targetC.ID)
+	strA := fmt.Sprintf("target:%s", *targetA.ID)
+	strB := fmt.Sprintf("target:%s", *targetB.ID)
+	strC := fmt.Sprintf("target:%s", *targetC.ID)
 
 	mta := &wavefront.Alert{
 		Name:      "My First Threshold Alert",
 		AlertType: "THRESHOLD",
 		Targets: map[string]string{
-			"smoke": strA.String(),
-			"warn":  strB.String(),
+			"smoke": strA,
+			"warn":  strB,
 		},
 		Conditions: map[string]string{
 			"smoke": "ts(servers.cpu.usage) > 70",
@@ -175,7 +172,7 @@ func ExampleAlerts() {
 	}
 
 	// Update the Threshold Alert
-	mta.Targets["smoke"] = strC.String()
+	mta.Targets["smoke"] = strC
 	err = alerts.Update(mta)
 	if err != nil {
 		log.Fatal(err)

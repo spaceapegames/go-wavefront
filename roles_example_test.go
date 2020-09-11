@@ -48,32 +48,30 @@ func ExampleRoles() {
 	}
 	// Remove an assignee
 	err = roles.RemoveAssignees([]string{"user@example.com"}, &role)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	// Revoke a permission
 	err = roles.RevokePermission(wavefront.ALERTS_MANAGEMENT, []*wavefront.Role{&role})
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	// Grant a permission
 	err = roles.GrantPermission(wavefront.EVENTS_MANAGEMENT, []*wavefront.Role{&role})
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	// Get an target by ID
 	err = roles.Get(&wavefront.Role{ID: role.ID})
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	// The ID field is now set, so we can update or delete the Target
 	role.Description = "new description"
 	err = roles.Update(&role)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	err = roles.Delete(&role)
 	if err != nil {
 		log.Fatal(err)

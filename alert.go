@@ -154,7 +154,7 @@ func (a Alerts) Find(filter []*SearchCondition) ([]*Alert, error) {
 
 	var results []*Alert
 	moreItems := true
-	for moreItems == true {
+	for moreItems {
 		resp, err := search.Execute()
 		if err != nil {
 			return nil, err
