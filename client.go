@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"reflect"
 	"time"
 )
 
@@ -352,10 +353,29 @@ func doRest(
 	defer resp.Close()
 	if settings.outPtr != nil {
 		decoder := json.NewDecoder(resp)
+		pointToZeroValue(settings.outPtr)
 		if settings.directResponse {
 			return decoder.Decode(settings.outPtr)
 		}
 		return decoder.Decode(jsonResponseWrapper(settings.outPtr))
 	}
 	return nil
+}
+
+// pointToZeroValue makes what ptr points to be the zero value. This helps to
+// ensure that the assignment operator with JSON structs works as expected.
+// When the go json package unmarshalls, it modifies slices and maps within a
+// struct in place which breaks assigning one struct to another using the
+// assignment operator. The way to fix this is to set the struct to its zero
+// value before unmarshalling to it. Since the zero value has no allocated
+// slices or maps, the json library will allocate new slices and maps rather
+// than modifying existing ones in place which is what we need for the
+// assignment operator to work as expected.
+func pointToZeroValue(ptr interface{}) {
+	if reflect.TypeOf(ptr).Kind() != reflect.Ptr {
+		// Skip if we don't have a pointer
+		return
+	}
+	val := reflect.ValueOf(ptr).Elem()
+	val.Set(reflect.Zero(val.Type()))
 }

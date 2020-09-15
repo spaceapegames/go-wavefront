@@ -145,18 +145,12 @@ func (u Users) Update(user *User) error {
 	if user.ID == nil || *user.ID == "" {
 		return fmt.Errorf("user ID field is not set")
 	}
-	var updatedUser User
-	err := doRest(
+	return doRest(
 		"PUT",
 		fmt.Sprintf("%s/%s", baseUserPath, *user.ID),
 		u.client,
 		doInput(user),
-		doOutput(&updatedUser))
-	if err != nil {
-		return err
-	}
-	*user = updatedUser
-	return nil
+		doOutput(user))
 }
 
 // Deletes the specified user

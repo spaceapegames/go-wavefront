@@ -306,3 +306,56 @@ func TestDoRest_DirectResponse(t *testing.T) {
 	assert.Equal("/a/rest/path", fake.path)
 	assert.Equal(testPointType{X: 42, Y: 63}, result)
 }
+
+type testPrimeStructType struct {
+	Primes []int `json:"primes"`
+}
+
+func TestDoRest_SafeModify(t *testing.T) {
+	responseStr := `
+{
+    "primes": [2, 3, 5]
+}`
+	assert := asserts.New(t)
+	fake := &fakeWavefronter{response: responseStr}
+	result := testPrimeStructType{Primes: []int{0, 1, 2, 3, 4}}
+	original := result
+	assert.NoError(doRest(
+		"GET",
+		"/a/rest/path",
+		fake,
+		doOutput(&result),
+		doDirectResponse()))
+	assert.Equal([]int{2, 3, 5}, result.Primes)
+
+	// doRest should modify result in such a way that the slice from the
+	// shallow copy remains intact
+	assert.Equal([]int{0, 1, 2, 3, 4}, original.Primes)
+}
+
+func TestDoRest_SafeModifyResponse(t *testing.T) {
+	responseStr := `
+{
+  "status": {
+      "code": 200,
+      "message": "OK"
+  },
+  "response": {
+    "primes": [2, 3, 5]
+  }
+}`
+	assert := asserts.New(t)
+	fake := &fakeWavefronter{response: responseStr}
+	result := testPrimeStructType{Primes: []int{0, 1, 2, 3, 4}}
+	original := result
+	assert.NoError(doRest(
+		"GET",
+		"/a/rest/path",
+		fake,
+		doOutput(&result)))
+	assert.Equal([]int{2, 3, 5}, result.Primes)
+
+	// doRest should modify result in such a way that the slice from the
+	// shallow copy remains intact
+	assert.Equal([]int{0, 1, 2, 3, 4}, original.Primes)
+}
