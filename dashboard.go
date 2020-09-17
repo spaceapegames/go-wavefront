@@ -160,7 +160,7 @@ type Source struct {
 	Disabled bool `json:"disabled,omitempty"`
 
 	// ScatterPlotSource
-	ScatterPlotSource string `json:"scatterPlotSource"`
+	ScatterPlotSource string `json:"scatterPlotSource,omitempty"`
 
 	// QuerybuilderEnabled
 	QuerybuilderEnabled bool `json:"querybuilderEnabled"`
