@@ -69,6 +69,12 @@
                         "*": {
                           "destination": "/dashboards/test-url"
                         }
+                      },
+                      "dashboardLayout": {
+                        "x": 0,
+                        "y": 0,
+                        "h": 5,
+                        "w": 12
                       }
                     },
                     "summarization": "MEAN"

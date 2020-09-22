@@ -242,6 +242,7 @@ type Dashboards struct {
 
 type ChartAttributes struct {
 	DashboardLinks DashboardLinks `json:"dashboardLinks,omitempty"`
+	DashboardLayout DashboardLayout `json:"dashboardLayout,omitempty"`
 }
 
 type DashboardLinks struct {
@@ -250,6 +251,13 @@ type DashboardLinks struct {
 
 type DashboardLink struct {
 	Destination string `json:"destination,omitempty"`
+}
+
+type DashboardLayout struct {
+	X int `json:"x,omitempty"`
+	Y int `json:"y,omitempty"`
+	H int `json:"h,omitempty"`
+	W int `json:"w,omitempty"`
 }
 
 const baseDashboardPath = "/api/v2/dashboard"
