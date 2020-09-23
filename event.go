@@ -148,7 +148,12 @@ func (e Events) Create(event *Event) error {
 	if event.Instantaneous {
 		event.EndTime = event.StartTime + 1
 	}
-	return basicCrud(e.client, "POST", baseEventPath, event, nil)
+	return doRest(
+		"POST",
+		baseEventPath,
+		e.client,
+		doInput(event),
+		doOutput(event))
 }
 
 // Update is used to update an existing Event.
@@ -158,8 +163,12 @@ func (e Events) Update(event *Event) error {
 		return fmt.Errorf("event id field not set")
 	}
 
-	return basicCrud(e.client, "PUT", fmt.Sprintf("%s/%s", baseEventPath, *event.ID), event, nil)
-
+	return doRest(
+		"PUT",
+		fmt.Sprintf("%s/%s", baseEventPath, *event.ID),
+		e.client,
+		doInput(event),
+		doOutput(event))
 }
 
 // Close is used to close an existing Event
@@ -168,7 +177,12 @@ func (e Events) Close(event *Event) error {
 		return fmt.Errorf("event id field not set")
 	}
 
-	return basicCrud(e.client, "POST", fmt.Sprintf("%s/%s/close", baseEventPath, *event.ID), event, nil)
+	return doRest(
+		"POST",
+		fmt.Sprintf("%s/%s/close", baseEventPath, *event.ID),
+		e.client,
+		doOutput(event),
+	)
 }
 
 // Delete is used to delete an existing Event.
@@ -178,7 +192,10 @@ func (e Events) Delete(event *Event) error {
 		return fmt.Errorf("event id field not set")
 	}
 
-	err := basicCrud(e.client, "DELETE", fmt.Sprintf("%s/%s", baseEventPath, *event.ID), event, nil)
+	err := doRest(
+		"DELETE",
+		fmt.Sprintf("%s/%s", baseEventPath, *event.ID),
+		e.client)
 	if err != nil {
 		return err
 	}

@@ -3,7 +3,6 @@ package wavefront
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 type UserGroup struct {
@@ -61,18 +60,26 @@ func (g UserGroups) Create(userGroup *UserGroup) error {
 		return fmt.Errorf("name must be specified when creating a usergroup")
 	}
 
-	return basicCrud(g.client, "POST", baseUserGroupPath, userGroup, nil)
+	return doRest(
+		"POST",
+		baseUserGroupPath,
+		g.client,
+		doInput(userGroup),
+		doOutput(userGroup))
 }
 
 // Gets a specific UserGroup by ID
 // The ID field must be specified
 func (g UserGroups) Get(userGroup *UserGroup) error {
-	if *userGroup.ID == "" {
+	if userGroup.ID == nil || *userGroup.ID == "" {
 		return fmt.Errorf("usergroup ID field is not set")
 	}
 
-	return basicCrud(g.client, "GET",
-		fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup, nil)
+	return doRest(
+		"GET",
+		fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID),
+		g.client,
+		doOutput(userGroup))
 }
 
 // Find returns all UsersGroups filtered by the given search conditions.
@@ -110,12 +117,16 @@ func (g UserGroups) Find(filter []*SearchCondition) ([]*UserGroup, error) {
 // To update the users in a group use AddUsers and RemoveUsers
 // The ID field must be specified
 func (g UserGroups) Update(userGroup *UserGroup) error {
-	if *userGroup.ID == "" {
+	if userGroup.ID == nil || *userGroup.ID == "" {
 		return fmt.Errorf("usergroup ID must be specified")
 	}
 
-	return basicCrud(g.client, "PUT",
-		fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup, nil)
+	return doRest(
+		"PUT",
+		fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID),
+		g.client,
+		doInput(userGroup),
+		doOutput(userGroup))
 }
 
 // Adds the specified users to the group
@@ -141,35 +152,24 @@ func (g UserGroups) Delete(userGroup *UserGroup) error {
 		return fmt.Errorf("usergroup ID must be specified")
 	}
 
-	err := basicCrud(g.client, "DELETE",
-		fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID), userGroup, nil)
+	err := doRest(
+		"DELETE",
+		fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID),
+		g.client)
 	if err != nil {
 		return err
 	}
 
 	// Clear the ID so that we do not accidentally re-submit
-	*userGroup.ID = ""
+	empty := ""
+	userGroup.ID = &empty
 	return nil
 }
 
 func (g UserGroups) updateUserGroupUsers(users *[]string, id *string, endpoint string) error {
-	payload, err := json.Marshal(users)
-	if err != nil {
-		return err
-	}
-
-	req, err := g.client.NewRequest("POST",
-		fmt.Sprintf("%s/%s/%s", baseUserGroupPath, *id, endpoint), nil, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := g.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	_, err = ioutil.ReadAll(resp)
-	return err
+	return doRest(
+		"POST",
+		fmt.Sprintf("%s/%s/%s", baseUserGroupPath, *id, endpoint),
+		g.client,
+		doInput(users))
 }

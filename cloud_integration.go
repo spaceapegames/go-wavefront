@@ -282,8 +282,11 @@ func (ci CloudIntegrations) Get(cloudIntegration *CloudIntegration) error {
 	if cloudIntegration.Id == "" {
 		return fmt.Errorf("cloud integration id must be specified")
 	}
-	return basicCrud(ci.client, "GET",
-		fmt.Sprintf("%s/%s", baseCloudIntegrationPath, cloudIntegration.Id), cloudIntegration, nil)
+	return doRest(
+		"GET",
+		fmt.Sprintf("%s/%s", baseCloudIntegrationPath, cloudIntegration.Id),
+		ci.client,
+		doOutput(cloudIntegration))
 }
 
 // Deletes a given CloudIntegration and sets the ID of the object to ""
@@ -293,12 +296,15 @@ func (ci CloudIntegrations) Delete(cloudIntegration *CloudIntegration, skipTrash
 		return fmt.Errorf("cloud integration id must be specified")
 	}
 
-	params := &map[string]string{
+	params := map[string]string{
 		"skipTrash": strconv.FormatBool(skipTrash),
 	}
 
-	err := basicCrud(ci.client, "DELETE",
-		fmt.Sprintf("%s/%s", baseCloudIntegrationPath, cloudIntegration.Id), cloudIntegration, params)
+	err := doRest(
+		"DELETE",
+		fmt.Sprintf("%s/%s", baseCloudIntegrationPath, cloudIntegration.Id),
+		ci.client,
+		doParams(params))
 	if err == nil {
 		cloudIntegration.Id = ""
 	}
@@ -310,29 +316,42 @@ func (ci CloudIntegrations) Update(cloudIntegration *CloudIntegration) error {
 	if cloudIntegration.Id == "" {
 		return fmt.Errorf("cloud integration id must be specified")
 	}
-	return basicCrud(ci.client, "PUT",
-		fmt.Sprintf("%s/%s", baseCloudIntegrationPath, cloudIntegration.Id), cloudIntegration, nil)
+	return doRest(
+		"PUT",
+		fmt.Sprintf("%s/%s", baseCloudIntegrationPath, cloudIntegration.Id),
+		ci.client,
+		doInput(cloudIntegration),
+		doOutput(cloudIntegration))
 }
 
 // Creates a CloudIntegration in Wavefront
 // If successful, the ID field will be populated
 func (ci CloudIntegrations) Create(cloudIntegration *CloudIntegration) error {
-	return basicCrud(ci.client, "POST",
-		baseCloudIntegrationPath, cloudIntegration, nil)
+	return doRest(
+		"POST",
+		baseCloudIntegrationPath,
+		ci.client,
+		doInput(cloudIntegration),
+		doOutput(cloudIntegration))
 }
 
 // Creates an AWS ExternalID for use in AWS IAM Roles
 func (ci CloudIntegrations) CreateAwsExternalID() (string, error) {
 	externalId := ""
-	err := basicCrud(ci.client, "POST",
-		fmt.Sprintf("%s/awsExternalId", baseCloudIntegrationPath), &externalId, nil)
+	err := doRest(
+		"POST",
+		fmt.Sprintf("%s/awsExternalId", baseCloudIntegrationPath),
+		ci.client,
+		doOutput(&externalId))
 	return externalId, err
 }
 
 // Deletes an AWS ExternalID
 func (ci CloudIntegrations) DeleteAwsExternalID(externalId *string) error {
-	err := basicCrud(ci.client, "DELETE",
-		fmt.Sprintf("%s/awsExternalId/%s", baseCloudIntegrationPath, *externalId), nil, nil)
+	err := doRest(
+		"DELETE",
+		fmt.Sprintf("%s/awsExternalId/%s", baseCloudIntegrationPath, *externalId),
+		ci.client)
 	if err == nil {
 		*externalId = ""
 	}
@@ -341,6 +360,8 @@ func (ci CloudIntegrations) DeleteAwsExternalID(externalId *string) error {
 
 // Verifies an AWS ExternalID exists
 func (ci CloudIntegrations) VerifyAwsExternalID(externalId string) error {
-	return basicCrud(ci.client, "GET",
-		fmt.Sprintf("%s/awsExternalId/%s", baseCloudIntegrationPath, externalId), nil, nil)
+	return doRest(
+		"GET",
+		fmt.Sprintf("%s/awsExternalId/%s", baseCloudIntegrationPath, externalId),
+		ci.client)
 }

@@ -58,19 +58,21 @@ func (m *MockCrudUserGroupClient) Do(req *http.Request) (io.ReadCloser, error) {
 		m.T.Errorf("request expected %s method, got %s", m.method, req.Method)
 	}
 
-	body, _ := ioutil.ReadAll(req.Body)
+	if req.Body != nil {
+		body, _ := ioutil.ReadAll(req.Body)
 
-	// The calls for adding/removing users only transmit an array of strings
-	// Not an actual UserGroup object.
-	var addRemoveBody []string
-	if err := json.Unmarshal(body, &addRemoveBody); err == nil {
-		return ioutil.NopCloser(bytes.NewReader(resp)), nil
-	}
+		// The calls for adding/removing users only transmit an array of strings
+		// Not an actual UserGroup object.
+		var addRemoveBody []string
+		if err := json.Unmarshal(body, &addRemoveBody); err == nil {
+			return ioutil.NopCloser(bytes.NewReader(resp)), nil
+		}
 
-	userGroup := UserGroup{}
-	err = json.Unmarshal(body, &userGroup)
-	if err != nil {
-		m.T.Fatal(err)
+		userGroup := UserGroup{}
+		err = json.Unmarshal(body, &userGroup)
+		if err != nil {
+			m.T.Fatal(err)
+		}
 	}
 
 	return ioutil.NopCloser(bytes.NewReader(resp)), nil

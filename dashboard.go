@@ -3,7 +3,6 @@ package wavefront
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"strconv"
 )
 
@@ -317,7 +316,12 @@ func (d Dashboards) Find(filter []*SearchCondition) ([]*Dashboard, error) {
 // Create is used to create an Dashboard in Wavefront.
 // If successful, the ID field of the Dashboard will be populated.
 func (d Dashboards) Create(dashboard *Dashboard) error {
-	return basicCrud(d.client, "POST", baseDashboardPath, dashboard, nil)
+	return doRest(
+		"POST",
+		baseDashboardPath,
+		d.client,
+		doInput(dashboard),
+		doOutput(dashboard))
 }
 
 // Update is used to update an existing Dashboard.
@@ -327,9 +331,12 @@ func (d Dashboards) Update(dashboard *Dashboard) error {
 		return fmt.Errorf("dashboard id field not set")
 	}
 
-	return basicCrud(d.client, "PUT",
-		fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard, nil)
-
+	return doRest(
+		"PUT",
+		fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID),
+		d.client,
+		doInput(dashboard),
+		doOutput(dashboard))
 }
 
 // Get is used to retrieve an existing Dashboard by ID.
@@ -339,8 +346,11 @@ func (d Dashboards) Get(dashboard *Dashboard) error {
 		return fmt.Errorf("dashboard id field is not set")
 	}
 
-	return basicCrud(d.client, "GET",
-		fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard, nil)
+	return doRest(
+		"GET",
+		fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID),
+		d.client,
+		doOutput(dashboard))
 }
 
 // Delete is used to delete an existing Dashboard.
@@ -354,8 +364,11 @@ func (d Dashboards) Delete(dashboard *Dashboard, skipTrash bool) error {
 		"skipTrash": strconv.FormatBool(skipTrash),
 	}
 
-	err := basicCrud(d.client, "DELETE",
-		fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID), dashboard, &params)
+	err := doRest(
+		"DELETE",
+		fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID),
+		d.client,
+		doParams(params))
 	if err != nil {
 		return err
 	}
@@ -367,27 +380,11 @@ func (d Dashboards) Delete(dashboard *Dashboard, skipTrash bool) error {
 
 // Set Tags is used to set the tags on an existing dashboard
 func (d Dashboards) SetTags(id string, tags []string) error {
-	payload, err := json.Marshal(tags)
-	if err != nil {
-		return err
-	}
-	req, err := d.client.NewRequest("POST",
-		fmt.Sprintf("%s/%s/tag", baseDashboardPath, id), nil, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := d.client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	_, err = ioutil.ReadAll(resp)
-	if err != nil {
-		return err
-	}
-	return nil
+	return doRest(
+		"POST",
+		fmt.Sprintf("%s/%s/tag", baseDashboardPath, id),
+		d.client,
+		doInput(tags))
 }
 
 // Sets the ACL on the dashboard with the supplied list of IDs for canView and canModify

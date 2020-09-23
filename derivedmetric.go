@@ -50,11 +50,15 @@ func (c *Client) DerivedMetrics() *DerivedMetrics {
 // Get is used to retrieve an existing DerivedMetric by ID.
 // The ID field must be specified
 func (dm DerivedMetrics) Get(metric *DerivedMetric) error {
-	if *metric.ID == "" {
+	if metric.ID == nil || *metric.ID == "" {
 		return fmt.Errorf("id must be specified")
 	}
-	return basicCrud(dm.client, "GET",
-		fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID), metric, nil)
+
+	return doRest(
+		"GET",
+		fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID),
+		dm.client,
+		doOutput(metric))
 }
 
 // Find returns all DerivedMetrics filtered by the given search conditions.
@@ -94,22 +98,31 @@ func (dm DerivedMetrics) Create(metric *DerivedMetric) error {
 		return fmt.Errorf("name, query, and minutes must be specified to create a derived metric")
 	}
 
-	return basicCrud(dm.client, "POST", baseDerivedMetricsPath, metric, nil)
+	return doRest(
+		"POST",
+		baseDerivedMetricsPath,
+		dm.client,
+		doInput(metric),
+		doOutput(metric))
 }
 
 // Update a DerivedMetric all fields are optional except for ID
 func (dm DerivedMetrics) Update(metric *DerivedMetric) error {
-	if *metric.ID == "" {
+	if metric.ID == nil || *metric.ID == "" {
 		return fmt.Errorf("id must be specified")
 	}
 
-	return basicCrud(dm.client, "PUT",
-		fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID), metric, nil)
+	return doRest(
+		"PUT",
+		fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID),
+		dm.client,
+		doInput(metric),
+		doOutput(metric))
 }
 
 // Delete a DerivedMetric all fields are optional except for ID
 func (dm DerivedMetrics) Delete(metric *DerivedMetric, skipTrash bool) error {
-	if *metric.ID == "" {
+	if metric.ID == nil || *metric.ID == "" {
 		return fmt.Errorf("id must be specified")
 	}
 
@@ -117,11 +130,15 @@ func (dm DerivedMetrics) Delete(metric *DerivedMetric, skipTrash bool) error {
 		"skipTrash": strconv.FormatBool(skipTrash),
 	}
 
-	err := basicCrud(dm.client, "DELETE",
-		fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID), metric, &params)
+	err := doRest(
+		"DELETE",
+		fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID),
+		dm.client,
+		doParams(params))
 	if err != nil {
 		return err
 	}
-	*metric.ID = ""
+	empty := ""
+	metric.ID = &empty
 	return nil
 }

@@ -64,7 +64,12 @@ func (r Roles) Create(role *Role) error {
 		return fmt.Errorf("name must be specified while creating a role")
 	}
 
-	return basicCrud(r.client, "POST", baseRoleUrlPath, role, nil)
+	return doRest(
+		"POST",
+		baseRoleUrlPath,
+		r.client,
+		doInput(role),
+		doOutput(role))
 }
 
 // Get a specific Role for the given ID
@@ -74,7 +79,11 @@ func (r Roles) Get(role *Role) error {
 		return fmt.Errorf("the ID field must be specified")
 	}
 
-	return basicCrud(r.client, "GET", fmt.Sprintf("%s/%s", baseRoleUrlPath, role.ID), role, nil)
+	return doRest(
+		"GET",
+		fmt.Sprintf("%s/%s", baseRoleUrlPath, role.ID),
+		r.client,
+		doOutput(role))
 }
 
 // Update a specific Role for the given ID
@@ -84,7 +93,12 @@ func (r Roles) Update(role *Role) error {
 		return fmt.Errorf("the ID field must be specified")
 	}
 
-	return basicCrud(r.client, "PUT", fmt.Sprintf("%s/%s", baseRoleUrlPath, role.ID), role, nil)
+	return doRest(
+		"PUT",
+		fmt.Sprintf("%s/%s", baseRoleUrlPath, role.ID),
+		r.client,
+		doInput(role),
+		doOutput(role))
 }
 
 func (r Roles) Delete(role *Role) error {
@@ -92,56 +106,70 @@ func (r Roles) Delete(role *Role) error {
 		return fmt.Errorf("the ID field must be specified")
 	}
 
-	return basicCrud(r.client, "DELETE", fmt.Sprintf("%s/%s", baseRoleUrlPath, role.ID), role, nil)
+	return doRest(
+		"DELETE",
+		fmt.Sprintf("%s/%s", baseRoleUrlPath, role.ID),
+		r.client)
 }
 
 func (r Roles) AddAssignees(assignees []string, role *Role) error {
 	if role.ID == "" {
 		return fmt.Errorf("the ID field must be specified")
 	}
-	return crudWithPayload(r.client, "POST",
-		fmt.Sprintf("%s/%s/%s", baseRoleUrlPath, role.ID, "addAssignees"), assignees, role, nil)
+	return doRest(
+		"POST",
+		fmt.Sprintf("%s/%s/addAssignees", baseRoleUrlPath, role.ID),
+		r.client,
+		doInput(assignees),
+		doOutput(role))
 }
 
 func (r Roles) RemoveAssignees(assignees []string, role *Role) error {
 	if role.ID == "" {
 		return fmt.Errorf("the ID field must be specified")
 	}
-	return crudWithPayload(r.client, "POST",
-		fmt.Sprintf("%s/%s/%s", baseRoleUrlPath, role.ID, "removeAssignees"), assignees, role, nil)
+	return doRest(
+		"POST",
+		fmt.Sprintf("%s/%s/removeAssignees", baseRoleUrlPath, role.ID),
+		r.client,
+		doInput(assignees),
+		doOutput(role))
 }
 
 func (r Roles) GrantPermission(permission string, roles []*Role) error {
-	var roleIds []string
 	if len(roles) == 0 {
 		return fmt.Errorf("must specify at least one role to modify")
 	}
 
+	roleIds := make([]string, 0, len(roles))
 	for _, role := range roles {
 		if role.ID == "" {
 			return fmt.Errorf("the ID field must be specified")
 		}
 		roleIds = append(roleIds, role.ID)
 	}
-
-	return crudWithPayload(r.client, "POST",
-		fmt.Sprintf("%s/%s/%s", baseRoleUrlPath, "grant", permission), roleIds, roles, nil)
-
+	return doRest(
+		"POST",
+		fmt.Sprintf("%s/grant/%s", baseRoleUrlPath, permission),
+		r.client,
+		doInput(roleIds))
 }
 
 func (r Roles) RevokePermission(permission string, roles []*Role) error {
-	var roleIds []string
 	if len(roles) == 0 {
 		return fmt.Errorf("must specify at least one role to modify")
 	}
 
+	roleIds := make([]string, 0, len(roles))
 	for _, role := range roles {
 		if role.ID == "" {
 			return fmt.Errorf("the ID field must be specified")
 		}
 		roleIds = append(roleIds, role.ID)
 	}
-
-	return crudWithPayload(r.client, "POST",
-		fmt.Sprintf("%s/%s/%s", baseRoleUrlPath, "revoke", permission), roleIds, roles, nil)
+	return doRest(
+		"POST",
+		fmt.Sprintf("%s/%s/%s", baseRoleUrlPath, "revoke", permission),
+		r.client,
+		doInput(roleIds))
 }

@@ -138,7 +138,11 @@ func (a Alerts) Get(alert *Alert) error {
 		return fmt.Errorf("alert id field is not set")
 	}
 
-	return basicCrud(a.client, "GET", fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID), alert, nil)
+	return doRest(
+		"GET",
+		fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID),
+		a.client,
+		doOutput(alert))
 }
 
 // Find returns all alerts filtered by the given search conditions.
@@ -175,7 +179,12 @@ func (a Alerts) Find(filter []*SearchCondition) ([]*Alert, error) {
 // Create is used to create an Alert in Wavefront.
 // If successful, the ID field of the alert will be populated.
 func (a Alerts) Create(alert *Alert) error {
-	return basicCrud(a.client, "POST", baseAlertPath, alert, nil)
+	return doRest(
+		"POST",
+		baseAlertPath,
+		a.client,
+		doInput(alert),
+		doOutput(alert))
 }
 
 // Update is used to update an existing Alert.
@@ -185,8 +194,12 @@ func (a Alerts) Update(alert *Alert) error {
 		return fmt.Errorf("alert id field not set")
 	}
 
-	return basicCrud(a.client, "PUT", fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID), alert, nil)
-
+	return doRest(
+		"PUT",
+		fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID),
+		a.client,
+		doInput(alert),
+		doOutput(alert))
 }
 
 // Delete is used to delete an existing Alert.
@@ -196,11 +209,15 @@ func (a Alerts) Delete(alert *Alert, skipTrash bool) error {
 		return fmt.Errorf("alert id field not set")
 	}
 
-	params := &map[string]string{
+	params := map[string]string{
 		"skipTrash": strconv.FormatBool(skipTrash),
 	}
 
-	err := basicCrud(a.client, "DELETE", fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID), alert, params)
+	err := doRest(
+		"DELETE",
+		fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID),
+		a.client,
+		doParams(params))
 	if err != nil {
 		return err
 	}

@@ -83,11 +83,14 @@ func (c *Client) Targets() *Targets {
 // Get is used to retrieve an existing Target by ID.
 // The ID field must be provided
 func (t Targets) Get(target *Target) error {
-	if *target.ID == "" {
+	if target.ID == nil || *target.ID == "" {
 		return fmt.Errorf("target id field is not set")
 	}
-
-	return basicCrud(t.client, "GET", fmt.Sprintf("%s/%s", baseTargetPath, *target.ID), target, nil)
+	return doRest(
+		"GET",
+		fmt.Sprintf("%s/%s", baseTargetPath, *target.ID),
+		t.client,
+		doOutput(target))
 }
 
 // Find returns all targets filtered by the given search conditions.
@@ -124,7 +127,12 @@ func (t Targets) Find(filter []*SearchCondition) ([]*Target, error) {
 // Create is used to create a Target in Wavefront.
 // If successful, the ID field of the target will be populated.
 func (t Targets) Create(target *Target) error {
-	return basicCrud(t.client, "POST", baseTargetPath, target, nil)
+	return doRest(
+		"POST",
+		baseTargetPath,
+		t.client,
+		doInput(target),
+		doOutput(target))
 }
 
 // Update is used to update an existing Target.
@@ -134,8 +142,12 @@ func (t Targets) Update(target *Target) error {
 		return fmt.Errorf("target id field not set")
 	}
 
-	return basicCrud(t.client, "PUT", fmt.Sprintf("%s/%s", baseTargetPath, *target.ID), target, nil)
-
+	return doRest(
+		"PUT",
+		fmt.Sprintf("%s/%s", baseTargetPath, *target.ID),
+		t.client,
+		doInput(target),
+		doOutput(target))
 }
 
 // Delete is used to delete an existing Target.
@@ -145,7 +157,10 @@ func (t Targets) Delete(target *Target) error {
 		return fmt.Errorf("target id field not set")
 	}
 
-	err := basicCrud(t.client, "DELETE", fmt.Sprintf("%s/%s", baseTargetPath, *target.ID), target, nil)
+	err := doRest(
+		"DELETE",
+		fmt.Sprintf("%s/%s", baseTargetPath, *target.ID),
+		t.client)
 	if err != nil {
 		return err
 	}

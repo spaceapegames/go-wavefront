@@ -1,9 +1,7 @@
 package wavefront
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 type AccessControlList struct {
@@ -15,7 +13,7 @@ func putEntityACL(id string, canView []string, canModify []string, basePath stri
 	if id == "" {
 		return fmt.Errorf("id must not be empty")
 	}
-	payload, err := json.Marshal(&[]struct {
+	acls := []struct {
 		EntityID  string   `json:"entityId"`
 		ViewACL   []string `json:"viewAcl,omitempty"`
 		ModifyACL []string `json:"modifyAcl,omitempty"`
@@ -25,31 +23,10 @@ func putEntityACL(id string, canView []string, canModify []string, basePath stri
 			ViewACL:   canView,
 			ModifyACL: canModify,
 		},
-	})
-
-	if err != nil {
-		return err
 	}
-
-	req, err := client.NewRequest("PUT", fmt.Sprintf("%s/acl/set", basePath), nil, payload)
-	if err != nil {
-		return err
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	body, err := ioutil.ReadAll(resp)
-	if err != nil {
-		return err
-	}
-
-	if len(body) > 0 {
-		return fmt.Errorf("expected no response, got %s", string(body))
-	}
-
-	return nil
+	return doRest(
+		"PUT",
+		fmt.Sprintf("%s/acl/set", basePath),
+		client,
+		doInput(acls))
 }

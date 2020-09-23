@@ -68,11 +68,13 @@ func (m *MockCrudEventClient) Do(req *http.Request) (io.ReadCloser, error) {
 	if req.Method != m.method {
 		m.T.Errorf("request method expected '%s' got '%s'", m.method, req.Method)
 	}
-	body, _ := ioutil.ReadAll(req.Body)
-	event := Event{}
-	err = json.Unmarshal(body, &event)
-	if err != nil {
-		m.T.Fatal(err)
+	if req.Body != nil {
+		body, _ := ioutil.ReadAll(req.Body)
+		event := Event{}
+		err = json.Unmarshal(body, &event)
+		if err != nil {
+			m.T.Fatal(err)
+		}
 	}
 	return ioutil.NopCloser(bytes.NewReader(response)), nil
 }
