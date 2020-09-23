@@ -286,7 +286,7 @@ func (ci CloudIntegrations) Get(cloudIntegration *CloudIntegration) error {
 		"GET",
 		fmt.Sprintf("%s/%s", baseCloudIntegrationPath, cloudIntegration.Id),
 		ci.client,
-		doOutput(cloudIntegration))
+		doResponse(cloudIntegration))
 }
 
 // Deletes a given CloudIntegration and sets the ID of the object to ""
@@ -320,8 +320,8 @@ func (ci CloudIntegrations) Update(cloudIntegration *CloudIntegration) error {
 		"PUT",
 		fmt.Sprintf("%s/%s", baseCloudIntegrationPath, cloudIntegration.Id),
 		ci.client,
-		doInput(cloudIntegration),
-		doOutput(cloudIntegration))
+		doPayload(cloudIntegration),
+		doResponse(cloudIntegration))
 }
 
 // Creates a CloudIntegration in Wavefront
@@ -331,8 +331,8 @@ func (ci CloudIntegrations) Create(cloudIntegration *CloudIntegration) error {
 		"POST",
 		baseCloudIntegrationPath,
 		ci.client,
-		doInput(cloudIntegration),
-		doOutput(cloudIntegration))
+		doPayload(cloudIntegration),
+		doResponse(cloudIntegration))
 }
 
 // Creates an AWS ExternalID for use in AWS IAM Roles
@@ -342,7 +342,7 @@ func (ci CloudIntegrations) CreateAwsExternalID() (string, error) {
 		"POST",
 		fmt.Sprintf("%s/awsExternalId", baseCloudIntegrationPath),
 		ci.client,
-		doOutput(&externalId))
+		doResponse(&externalId))
 	return externalId, err
 }
 

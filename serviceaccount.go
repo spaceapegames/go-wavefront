@@ -104,7 +104,7 @@ func (s *ServiceAccounts) GetByID(id string) (
 		"GET",
 		fmt.Sprintf("%s/%s", saEndpoint, id),
 		s.client,
-		doOutput(&result))
+		doResponse(&result))
 	if err != nil {
 		return
 	}
@@ -120,8 +120,8 @@ func (s *ServiceAccounts) Create(options *ServiceAccountOptions) (
 		"POST",
 		saEndpoint,
 		s.client,
-		doInput(fixServiceAccountOptions(*options)),
-		doOutput(&result))
+		doPayload(fixServiceAccountOptions(*options)),
+		doResponse(&result))
 	if err != nil {
 		return
 	}
@@ -137,8 +137,8 @@ func (s *ServiceAccounts) Update(options *ServiceAccountOptions) (
 		"PUT",
 		fmt.Sprintf("%s/%s", saEndpoint, options.ID),
 		s.client,
-		doInput(fixServiceAccountOptions(*options)),
-		doOutput(&result))
+		doPayload(fixServiceAccountOptions(*options)),
+		doResponse(&result))
 	if err != nil {
 		return
 	}

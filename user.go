@@ -84,8 +84,7 @@ func (u Users) Get(user *User) error {
 		"GET",
 		fmt.Sprintf("%s/%s", baseUserPath, *user.ID),
 		u.client,
-		doOutput(user),
-		doDirectResponse())
+		doDirectResponse(user))
 }
 
 // Find returns all Users filtered by the given search conditions.
@@ -135,8 +134,8 @@ func (u Users) Create(newUser *NewUserRequest, user *User, sendEmail bool) error
 		baseUserPath,
 		u.client,
 		doParams(params),
-		doInput(newUser),
-		doOutput(user))
+		doPayload(newUser),
+		doResponse(user))
 }
 
 // Supports specifying the credential
@@ -149,8 +148,8 @@ func (u Users) Update(user *User) error {
 		"PUT",
 		fmt.Sprintf("%s/%s", baseUserPath, *user.ID),
 		u.client,
-		doInput(user),
-		doOutput(user))
+		doPayload(user),
+		doResponse(user))
 }
 
 // Deletes the specified user

@@ -142,7 +142,7 @@ func (a Alerts) Get(alert *Alert) error {
 		"GET",
 		fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID),
 		a.client,
-		doOutput(alert))
+		doResponse(alert))
 }
 
 // Find returns all alerts filtered by the given search conditions.
@@ -183,8 +183,8 @@ func (a Alerts) Create(alert *Alert) error {
 		"POST",
 		baseAlertPath,
 		a.client,
-		doInput(alert),
-		doOutput(alert))
+		doPayload(alert),
+		doResponse(alert))
 }
 
 // Update is used to update an existing Alert.
@@ -198,8 +198,8 @@ func (a Alerts) Update(alert *Alert) error {
 		"PUT",
 		fmt.Sprintf("%s/%s", baseAlertPath, *alert.ID),
 		a.client,
-		doInput(alert),
-		doOutput(alert))
+		doPayload(alert),
+		doResponse(alert))
 }
 
 // Delete is used to delete an existing Alert.

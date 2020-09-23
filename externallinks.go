@@ -67,7 +67,7 @@ func (e ExternalLinks) Get(link *ExternalLink) error {
 		"GET",
 		fmt.Sprintf("%s/%s", baseExtLinkPath, *link.ID),
 		e.client,
-		doOutput(link))
+		doResponse(link))
 }
 
 func (e ExternalLinks) Create(link *ExternalLink) error {
@@ -78,8 +78,8 @@ func (e ExternalLinks) Create(link *ExternalLink) error {
 		"POST",
 		baseExtLinkPath,
 		e.client,
-		doInput(link),
-		doOutput(link))
+		doPayload(link),
+		doResponse(link))
 }
 
 func (e ExternalLinks) Update(link *ExternalLink) error {
@@ -91,8 +91,8 @@ func (e ExternalLinks) Update(link *ExternalLink) error {
 		"PUT",
 		fmt.Sprintf("%s/%s", baseExtLinkPath, *link.ID),
 		e.client,
-		doInput(link),
-		doOutput(link))
+		doPayload(link),
+		doResponse(link))
 }
 
 func (e ExternalLinks) Delete(link *ExternalLink) error {

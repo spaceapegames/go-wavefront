@@ -64,8 +64,8 @@ func (g UserGroups) Create(userGroup *UserGroup) error {
 		"POST",
 		baseUserGroupPath,
 		g.client,
-		doInput(userGroup),
-		doOutput(userGroup))
+		doPayload(userGroup),
+		doResponse(userGroup))
 }
 
 // Gets a specific UserGroup by ID
@@ -79,7 +79,7 @@ func (g UserGroups) Get(userGroup *UserGroup) error {
 		"GET",
 		fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID),
 		g.client,
-		doOutput(userGroup))
+		doResponse(userGroup))
 }
 
 // Find returns all UsersGroups filtered by the given search conditions.
@@ -125,8 +125,8 @@ func (g UserGroups) Update(userGroup *UserGroup) error {
 		"PUT",
 		fmt.Sprintf("%s/%s", baseUserGroupPath, *userGroup.ID),
 		g.client,
-		doInput(userGroup),
-		doOutput(userGroup))
+		doPayload(userGroup),
+		doResponse(userGroup))
 }
 
 // Adds the specified users to the group
@@ -171,5 +171,5 @@ func (g UserGroups) updateUserGroupUsers(users *[]string, id *string, endpoint s
 		"POST",
 		fmt.Sprintf("%s/%s/%s", baseUserGroupPath, *id, endpoint),
 		g.client,
-		doInput(users))
+		doPayload(users))
 }

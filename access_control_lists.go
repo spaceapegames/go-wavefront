@@ -28,5 +28,5 @@ func putEntityACL(id string, canView []string, canModify []string, basePath stri
 		"PUT",
 		fmt.Sprintf("%s/acl/set", basePath),
 		client,
-		doInput(acls))
+		doPayload(acls))
 }

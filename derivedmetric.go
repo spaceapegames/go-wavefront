@@ -58,7 +58,7 @@ func (dm DerivedMetrics) Get(metric *DerivedMetric) error {
 		"GET",
 		fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID),
 		dm.client,
-		doOutput(metric))
+		doResponse(metric))
 }
 
 // Find returns all DerivedMetrics filtered by the given search conditions.
@@ -102,8 +102,8 @@ func (dm DerivedMetrics) Create(metric *DerivedMetric) error {
 		"POST",
 		baseDerivedMetricsPath,
 		dm.client,
-		doInput(metric),
-		doOutput(metric))
+		doPayload(metric),
+		doResponse(metric))
 }
 
 // Update a DerivedMetric all fields are optional except for ID
@@ -116,8 +116,8 @@ func (dm DerivedMetrics) Update(metric *DerivedMetric) error {
 		"PUT",
 		fmt.Sprintf("%s/%s", baseDerivedMetricsPath, *metric.ID),
 		dm.client,
-		doInput(metric),
-		doOutput(metric))
+		doPayload(metric),
+		doResponse(metric))
 }
 
 // Delete a DerivedMetric all fields are optional except for ID

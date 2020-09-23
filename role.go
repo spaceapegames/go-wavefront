@@ -68,8 +68,8 @@ func (r Roles) Create(role *Role) error {
 		"POST",
 		baseRoleUrlPath,
 		r.client,
-		doInput(role),
-		doOutput(role))
+		doPayload(role),
+		doResponse(role))
 }
 
 // Get a specific Role for the given ID
@@ -83,7 +83,7 @@ func (r Roles) Get(role *Role) error {
 		"GET",
 		fmt.Sprintf("%s/%s", baseRoleUrlPath, role.ID),
 		r.client,
-		doOutput(role))
+		doResponse(role))
 }
 
 // Update a specific Role for the given ID
@@ -97,8 +97,8 @@ func (r Roles) Update(role *Role) error {
 		"PUT",
 		fmt.Sprintf("%s/%s", baseRoleUrlPath, role.ID),
 		r.client,
-		doInput(role),
-		doOutput(role))
+		doPayload(role),
+		doResponse(role))
 }
 
 func (r Roles) Delete(role *Role) error {
@@ -120,8 +120,8 @@ func (r Roles) AddAssignees(assignees []string, role *Role) error {
 		"POST",
 		fmt.Sprintf("%s/%s/addAssignees", baseRoleUrlPath, role.ID),
 		r.client,
-		doInput(assignees),
-		doOutput(role))
+		doPayload(assignees),
+		doResponse(role))
 }
 
 func (r Roles) RemoveAssignees(assignees []string, role *Role) error {
@@ -132,8 +132,8 @@ func (r Roles) RemoveAssignees(assignees []string, role *Role) error {
 		"POST",
 		fmt.Sprintf("%s/%s/removeAssignees", baseRoleUrlPath, role.ID),
 		r.client,
-		doInput(assignees),
-		doOutput(role))
+		doPayload(assignees),
+		doResponse(role))
 }
 
 func (r Roles) GrantPermission(permission string, roles []*Role) error {
@@ -152,7 +152,7 @@ func (r Roles) GrantPermission(permission string, roles []*Role) error {
 		"POST",
 		fmt.Sprintf("%s/grant/%s", baseRoleUrlPath, permission),
 		r.client,
-		doInput(roleIds))
+		doPayload(roleIds))
 }
 
 func (r Roles) RevokePermission(permission string, roles []*Role) error {
@@ -171,5 +171,5 @@ func (r Roles) RevokePermission(permission string, roles []*Role) error {
 		"POST",
 		fmt.Sprintf("%s/%s/%s", baseRoleUrlPath, "revoke", permission),
 		r.client,
-		doInput(roleIds))
+		doPayload(roleIds))
 }

@@ -320,8 +320,8 @@ func (d Dashboards) Create(dashboard *Dashboard) error {
 		"POST",
 		baseDashboardPath,
 		d.client,
-		doInput(dashboard),
-		doOutput(dashboard))
+		doPayload(dashboard),
+		doResponse(dashboard))
 }
 
 // Update is used to update an existing Dashboard.
@@ -335,8 +335,8 @@ func (d Dashboards) Update(dashboard *Dashboard) error {
 		"PUT",
 		fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID),
 		d.client,
-		doInput(dashboard),
-		doOutput(dashboard))
+		doPayload(dashboard),
+		doResponse(dashboard))
 }
 
 // Get is used to retrieve an existing Dashboard by ID.
@@ -350,7 +350,7 @@ func (d Dashboards) Get(dashboard *Dashboard) error {
 		"GET",
 		fmt.Sprintf("%s/%s", baseDashboardPath, dashboard.ID),
 		d.client,
-		doOutput(dashboard))
+		doResponse(dashboard))
 }
 
 // Delete is used to delete an existing Dashboard.
@@ -384,7 +384,7 @@ func (d Dashboards) SetTags(id string, tags []string) error {
 		"POST",
 		fmt.Sprintf("%s/%s/tag", baseDashboardPath, id),
 		d.client,
-		doInput(tags))
+		doPayload(tags))
 }
 
 // Sets the ACL on the dashboard with the supplied list of IDs for canView and canModify

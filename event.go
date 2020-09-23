@@ -152,8 +152,8 @@ func (e Events) Create(event *Event) error {
 		"POST",
 		baseEventPath,
 		e.client,
-		doInput(event),
-		doOutput(event))
+		doPayload(event),
+		doResponse(event))
 }
 
 // Update is used to update an existing Event.
@@ -167,8 +167,8 @@ func (e Events) Update(event *Event) error {
 		"PUT",
 		fmt.Sprintf("%s/%s", baseEventPath, *event.ID),
 		e.client,
-		doInput(event),
-		doOutput(event))
+		doPayload(event),
+		doResponse(event))
 }
 
 // Close is used to close an existing Event
@@ -181,7 +181,7 @@ func (e Events) Close(event *Event) error {
 		"POST",
 		fmt.Sprintf("%s/%s/close", baseEventPath, *event.ID),
 		e.client,
-		doOutput(event),
+		doResponse(event),
 	)
 }
 

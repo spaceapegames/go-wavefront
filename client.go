@@ -266,8 +266,8 @@ func jsonResponseWrapper(responsePtr interface{}) interface{} {
 }
 
 type doSettings struct {
-	inPtr          interface{}
-	outPtr         interface{}
+	payloadPtr     interface{}
+	responsePtr    interface{}
 	params         map[string]string
 	directResponse bool
 }
@@ -280,26 +280,28 @@ func (d *doSettings) applyOptions(options []doOption) {
 	}
 }
 
-// doInput specifies that the rest API call should use the struct pointed to by
-// ptr as the body.
-func doInput(ptr interface{}) doOption {
+// doPayload specifies that the rest API call should use the struct pointed to
+// by ptr as the body.
+func doPayload(ptr interface{}) doOption {
 	return func(d *doSettings) {
-		d.inPtr = ptr
+		d.payloadPtr = ptr
 	}
 }
 
-// doOutput specifies that the result of the rest API call should be stored
+// doResponse specifies that the response of the rest API call should be stored
 // in the struct pointed to by ptr.
-func doOutput(ptr interface{}) doOption {
+func doResponse(ptr interface{}) doOption {
 	return func(d *doSettings) {
-		d.outPtr = ptr
+		d.responsePtr = ptr
+		d.directResponse = false
 	}
 }
 
-// doDirectResponse is only used with doOutput. doDirectResponse specifies that
-// the rest API result does not have a "Status" and "Response" stanza
-func doDirectResponse() doOption {
+// doDirectResponse is like doResponse but specifies that the rest API response
+// is direct and not wrapped within a "Response" stanza
+func doDirectResponse(ptr interface{}) doOption {
 	return func(d *doSettings) {
+		d.responsePtr = ptr
 		d.directResponse = true
 	}
 }
@@ -321,8 +323,8 @@ func doParams(params map[string]string) doOption {
 // url is the Rest URL.
 // client is the client object.
 // options is a var arg list of options for the Rest API call:
-// To pass myStruct as the body of the REST API call, pass doInput(&myStruct);
-// To store the result of the REST API call in result, pass doOutput(&result);
+// To use myStruct as the payload of the REST call, pass doPayload(&myStruct);
+// To store the response of the REST call in result, pass doResponse(&result);
 func doRest(
 	method string,
 	url string,
@@ -331,8 +333,8 @@ func doRest(
 	var settings doSettings
 	settings.applyOptions(options)
 	var payload []byte
-	if settings.inPtr != nil {
-		payload, err = json.Marshal(settings.inPtr)
+	if settings.payloadPtr != nil {
+		payload, err = json.Marshal(settings.payloadPtr)
 		if err != nil {
 			return
 		}
@@ -351,13 +353,13 @@ func doRest(
 		return
 	}
 	defer resp.Close()
-	if settings.outPtr != nil {
+	if settings.responsePtr != nil {
 		decoder := json.NewDecoder(resp)
-		pointToZeroValue(settings.outPtr)
+		pointToZeroValue(settings.responsePtr)
 		if settings.directResponse {
-			return decoder.Decode(settings.outPtr)
+			return decoder.Decode(settings.responsePtr)
 		}
-		return decoder.Decode(jsonResponseWrapper(settings.outPtr))
+		return decoder.Decode(jsonResponseWrapper(settings.responsePtr))
 	}
 	return nil
 }

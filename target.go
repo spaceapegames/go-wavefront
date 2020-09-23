@@ -90,7 +90,7 @@ func (t Targets) Get(target *Target) error {
 		"GET",
 		fmt.Sprintf("%s/%s", baseTargetPath, *target.ID),
 		t.client,
-		doOutput(target))
+		doResponse(target))
 }
 
 // Find returns all targets filtered by the given search conditions.
@@ -131,8 +131,8 @@ func (t Targets) Create(target *Target) error {
 		"POST",
 		baseTargetPath,
 		t.client,
-		doInput(target),
-		doOutput(target))
+		doPayload(target),
+		doResponse(target))
 }
 
 // Update is used to update an existing Target.
@@ -146,8 +146,8 @@ func (t Targets) Update(target *Target) error {
 		"PUT",
 		fmt.Sprintf("%s/%s", baseTargetPath, *target.ID),
 		t.client,
-		doInput(target),
-		doOutput(target))
+		doPayload(target),
+		doResponse(target))
 }
 
 // Delete is used to delete an existing Target.

@@ -55,8 +55,8 @@ func (s *Tokens) Create(
 		"POST",
 		fmt.Sprintf("%s/%s", tokenEndpoint, serviceAccountID),
 		s.client,
-		doInput(options),
-		doOutput(&result))
+		doPayload(options),
+		doResponse(&result))
 	if err != nil {
 		return
 	}
@@ -80,8 +80,8 @@ func (s *Tokens) Update(
 		"PUT",
 		fmt.Sprintf("%s/%s/%s", tokenEndpoint, serviceAccountID, options.ID),
 		s.client,
-		doInput(options),
-		doOutput(&result))
+		doPayload(options),
+		doResponse(&result))
 	if err != nil {
 		return
 	}

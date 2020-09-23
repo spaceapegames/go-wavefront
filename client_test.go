@@ -233,7 +233,7 @@ func TestDoRest_UnexpectedResponse(t *testing.T) {
 		"POST",
 		"/a/rest/path",
 		fake,
-		doOutput(&result))
+		doResponse(&result))
 	assert.Error(err)
 }
 
@@ -262,8 +262,8 @@ func TestDoRest(t *testing.T) {
 		"POST",
 		"/a/rest/path",
 		fake,
-		doInput(&testPointType{X: 3, Y: 5}),
-		doOutput(&result),
+		doPayload(&testPointType{X: 3, Y: 5}),
+		doResponse(&result),
 		paramOption)
 	assert.NoError(err)
 	assert.Equal("POST", fake.method)
@@ -299,8 +299,7 @@ func TestDoRest_DirectResponse(t *testing.T) {
 		"GET",
 		"/a/rest/path",
 		fake,
-		doOutput(&result),
-		doDirectResponse())
+		doDirectResponse(&result))
 	assert.NoError(err)
 	assert.Equal("GET", fake.method)
 	assert.Equal("/a/rest/path", fake.path)
@@ -324,8 +323,7 @@ func TestDoRest_SafeModify(t *testing.T) {
 		"GET",
 		"/a/rest/path",
 		fake,
-		doOutput(&result),
-		doDirectResponse()))
+		doDirectResponse(&result)))
 	assert.Equal([]int{2, 3, 5}, result.Primes)
 
 	// doRest should modify result in such a way that the slice from the
@@ -352,7 +350,7 @@ func TestDoRest_SafeModifyResponse(t *testing.T) {
 		"GET",
 		"/a/rest/path",
 		fake,
-		doOutput(&result)))
+		doResponse(&result)))
 	assert.Equal([]int{2, 3, 5}, result.Primes)
 
 	// doRest should modify result in such a way that the slice from the

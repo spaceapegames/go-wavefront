@@ -90,7 +90,7 @@ func (m *MaintenanceWindows) GetByID(id string) (
 		"GET",
 		fmt.Sprintf("%s/%s", maintenanceWindowEndpoint, id),
 		m.client,
-		doOutput(&result))
+		doResponse(&result))
 	if err != nil {
 		return
 	}
@@ -106,8 +106,8 @@ func (m *MaintenanceWindows) Create(options *MaintenanceWindowOptions) (
 		"POST",
 		maintenanceWindowEndpoint,
 		m.client,
-		doInput(options),
-		doOutput(&result))
+		doPayload(options),
+		doResponse(&result))
 	if err != nil {
 		return
 	}
@@ -124,8 +124,8 @@ func (m *MaintenanceWindows) Update(
 		"PUT",
 		fmt.Sprintf("%s/%s", maintenanceWindowEndpoint, id),
 		m.client,
-		doInput(conformOptionsForWavefrontAPI(*options)),
-		doOutput(&result))
+		doPayload(conformOptionsForWavefrontAPI(*options)),
+		doResponse(&result))
 	if err != nil {
 		return
 	}
