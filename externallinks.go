@@ -6,17 +6,18 @@ import (
 )
 
 type ExternalLink struct {
-	ID                    *string           `json:"id"`
+	ID                    *string           `json:"id,omitempty"`
 	Name                  string            `json:"name"`
 	Description           string            `json:"description"`
-	CreatorId             string            `json:"creatorId"`
-	UpdaterId             string            `json:"updaterId"`
-	UpdatedEpochMillis    int               `json:"updatedEpochMillis"`
-	CreatedEpochMillis    int               `json:"createdEpochMillis"`
+	CreatorId             string            `json:"creatorId,omitempty"`
+	UpdaterId             string            `json:"updaterId,omitempty"`
+	UpdatedEpochMillis    int               `json:"updatedEpochMillis,omitempty"`
+	CreatedEpochMillis    int               `json:"createdEpochMillis,omitempty"`
 	Template              string            `json:"template"`
 	MetricFilterRegex     string            `json:"metricFilterRegex,omitempty"`
-	SourceFilterRegex     string            `json:"SourceFilterRegex,omitempty"`
-	PointTagFilterRegexes map[string]string `json:"PointTagFilterRegexes,omitempty"`
+	SourceFilterRegex     string            `json:"sourceFilterRegex,omitempty"`
+	PointTagFilterRegexes map[string]string `json:"pointTagFilterRegexes,omitempty"`
+	IsLogIntegration      bool              `json:"isLogIntegration,omitempty"`
 }
 
 const baseExtLinkPath = "/api/v2/extlink"
