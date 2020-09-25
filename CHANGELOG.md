@@ -2,6 +2,17 @@
 
 Changelog for go-wavefront-management-api.
 
+## [1.12.0]
+
+*Add IsLogIntegration field to ExternalLink type*
+
+Bug fixes:
+- Fix json encoding / decoding of ExternalLink instances.
+
+Enhancements:
+- CRUD operations changed to be more efficient and to modify structs in ways
+that are compatible with the assignment operator.
+
 ## [1.11.0]
 
 *Add Support for Maintenance Windows*
