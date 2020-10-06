@@ -381,3 +381,55 @@ func pointToZeroValue(ptr interface{}) {
 	val := reflect.ValueOf(ptr).Elem()
 	val.Set(reflect.Zero(val.Type()))
 }
+
+// doSearch calls the search API
+// filter are the search conditions. typ is the type of resource to search for.
+// For dashboards its "dashboard" It is what follows /api/v2/search.
+// client is the wavefront client. slicePtr is a pointer to a slice. The
+// results are appended to this slice.
+func doSearch(
+	filter []*SearchCondition,
+	typ string,
+	client Wavefronter,
+	slicePtr interface{}) error {
+	resultValue := sliceValueFromP(slicePtr)
+	search := &Search{
+		client: client,
+		Type:   typ,
+		Params: &SearchParams{
+			Conditions: filter,
+		},
+	}
+	moreItems := true
+	for moreItems {
+		resp, err := search.Execute()
+		if err != nil {
+			return err
+		}
+		pageValuePtr := reflect.New(resultValue.Type())
+		err = json.Unmarshal(resp.Response.Items, pageValuePtr.Interface())
+		if err != nil {
+			return err
+		}
+		resultValue.Set(reflect.AppendSlice(resultValue, pageValuePtr.Elem()))
+		moreItems = resp.Response.MoreItems
+		search.Params.Offset = resp.NextOffset
+	}
+	return nil
+}
+
+const (
+	slicePtrPanicMessage = "a pointer to a slice is expected"
+)
+
+func sliceValueFromP(aSlicePointer interface{}) reflect.Value {
+	resultPtr := reflect.ValueOf(aSlicePointer)
+	if resultPtr.Kind() != reflect.Ptr {
+		panic(slicePtrPanicMessage)
+	}
+	result := resultPtr.Elem()
+	if result.Kind() != reflect.Slice {
+		panic(slicePtrPanicMessage)
+	}
+	return result
+}

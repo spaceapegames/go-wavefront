@@ -1,7 +1,6 @@
 package wavefront
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -95,33 +94,10 @@ func (t Targets) Get(target *Target) error {
 
 // Find returns all targets filtered by the given search conditions.
 // If filter is nil, all targets are returned.
-func (t Targets) Find(filter []*SearchCondition) ([]*Target, error) {
-	search := &Search{
-		client: t.client,
-		Type:   "notificant",
-		Params: &SearchParams{
-			Conditions: filter,
-		},
-	}
-
-	var results []*Target
-	moreItems := true
-	for moreItems {
-		resp, err := search.Execute()
-		if err != nil {
-			return nil, err
-		}
-		var tmpres []*Target
-		err = json.Unmarshal(resp.Response.Items, &tmpres)
-		if err != nil {
-			return nil, err
-		}
-		results = append(results, tmpres...)
-		moreItems = resp.Response.MoreItems
-		search.Params.Offset = resp.NextOffset
-	}
-
-	return results, nil
+func (t Targets) Find(filter []*SearchCondition) (
+	results []*Target, err error) {
+	err = doSearch(filter, "notificant", t.client, &results)
+	return
 }
 
 // Create is used to create a Target in Wavefront.

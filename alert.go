@@ -147,33 +147,9 @@ func (a Alerts) Get(alert *Alert) error {
 
 // Find returns all alerts filtered by the given search conditions.
 // If filter is nil, all alerts are returned.
-func (a Alerts) Find(filter []*SearchCondition) ([]*Alert, error) {
-	search := &Search{
-		client: a.client,
-		Type:   "alert",
-		Params: &SearchParams{
-			Conditions: filter,
-		},
-	}
-
-	var results []*Alert
-	moreItems := true
-	for moreItems {
-		resp, err := search.Execute()
-		if err != nil {
-			return nil, err
-		}
-		var tmpres []*Alert
-		err = json.Unmarshal(resp.Response.Items, &tmpres)
-		if err != nil {
-			return nil, err
-		}
-		results = append(results, tmpres...)
-		moreItems = resp.Response.MoreItems
-		search.Params.Offset = resp.NextOffset
-	}
-
-	return results, nil
+func (a Alerts) Find(filter []*SearchCondition) (alerts []*Alert, err error) {
+	err = doSearch(filter, "alert", a.client, &alerts)
+	return
 }
 
 // Create is used to create an Alert in Wavefront.

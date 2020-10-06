@@ -1,7 +1,6 @@
 package wavefront
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -30,33 +29,9 @@ func (c *Client) Roles() *Roles {
 	return &Roles{client: c}
 }
 
-func (r Roles) Find(filter []*SearchCondition) ([]*Role, error) {
-	search := &Search{
-		client: r.client,
-		Type:   "role",
-		Params: &SearchParams{
-			Conditions: filter,
-		},
-	}
-
-	var results []*Role
-	moreItems := true
-	for moreItems {
-		resp, err := search.Execute()
-		if err != nil {
-			return nil, err
-		}
-		var tmpres []*Role
-		err = json.Unmarshal(resp.Response.Items, &tmpres)
-		if err != nil {
-			return nil, err
-		}
-		results = append(results, tmpres...)
-		moreItems = resp.Response.MoreItems
-		search.Params.Offset = resp.NextOffset
-	}
-
-	return results, nil
+func (r Roles) Find(filter []*SearchCondition) (roles []*Role, err error) {
+	err = doSearch(filter, "role", r.client, &roles)
+	return
 }
 
 func (r Roles) Create(role *Role) error {

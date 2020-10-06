@@ -1,7 +1,6 @@
 package wavefront
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -30,33 +29,10 @@ func (c *Client) ExternalLinks() *ExternalLinks {
 	return &ExternalLinks{client: c}
 }
 
-func (e ExternalLinks) Find(conditions []*SearchCondition) ([]*ExternalLink, error) {
-	search := Search{
-		client: e.client,
-		Type:   "extlink",
-		Params: &SearchParams{
-			Conditions: conditions,
-		},
-	}
-
-	var results []*ExternalLink
-	moreItems := true
-	for moreItems {
-		resp, err := search.Execute()
-		if err != nil {
-			return nil, err
-		}
-		var tmpres []*ExternalLink
-		err = json.Unmarshal(resp.Response.Items, &tmpres)
-		if err != nil {
-			return nil, err
-		}
-		results = append(results, tmpres...)
-		moreItems = resp.Response.MoreItems
-		search.Params.Offset = resp.NextOffset
-	}
-
-	return results, nil
+func (e ExternalLinks) Find(conditions []*SearchCondition) (
+	results []*ExternalLink, err error) {
+	err = doSearch(conditions, "extlink", e.client, &results)
+	return
 }
 
 func (e ExternalLinks) Get(link *ExternalLink) error {

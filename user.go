@@ -90,33 +90,9 @@ func (u Users) Get(user *User) error {
 // Find returns all Users filtered by the given search conditions.
 // If filter is nil, all Users are returned.
 // UserGroups returned on the User from this call will be ID only
-func (u Users) Find(filter []*SearchCondition) ([]*User, error) {
-	search := &Search{
-		client: u.client,
-		Type:   "user",
-		Params: &SearchParams{
-			Conditions: filter,
-		},
-	}
-
-	var results []*User
-	moreItems := true
-	for moreItems {
-		resp, err := search.Execute()
-		if err != nil {
-			return nil, err
-		}
-		var tmpres []*User
-		err = json.Unmarshal(resp.Response.Items, &tmpres)
-		if err != nil {
-			return nil, err
-		}
-		results = append(results, tmpres...)
-		moreItems = resp.Response.MoreItems
-		search.Params.Offset = resp.NextOffset
-	}
-
-	return results, nil
+func (u Users) Find(filter []*SearchCondition) (users []*User, err error) {
+	err = doSearch(filter, "user", u.client, &users)
+	return
 }
 
 // Does not support specifying a credential

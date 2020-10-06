@@ -79,6 +79,14 @@ func (c *Client) MaintenanceWindows() *MaintenanceWindows {
 	return &MaintenanceWindows{client: c}
 }
 
+// Find returns all maintenance windows filtered by the given search conditions.
+// If filter is nil, all maintenance windows are returned.
+func (m *MaintenanceWindows) Find(filter []*SearchCondition) (
+	results []*MaintenanceWindow, err error) {
+	err = doSearch(filter, "maintenancewindow", m.client, &results)
+	return
+}
+
 // GetByID returns the MaintenanceWindow with given ID. If no such
 // MaintenanceWindow exists, GetByID returns an error. The caller can call
 // NotFound on err to determine whether or not the error is because the

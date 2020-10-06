@@ -1,7 +1,6 @@
 package wavefront
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 )
@@ -63,33 +62,10 @@ func (dm DerivedMetrics) Get(metric *DerivedMetric) error {
 
 // Find returns all DerivedMetrics filtered by the given search conditions.
 // If filter is nil, all DerivedMetrics are returned.
-func (dm DerivedMetrics) Find(filter []*SearchCondition) ([]*DerivedMetric, error) {
-	search := &Search{
-		client: dm.client,
-		Type:   "derivedmetric",
-		Params: &SearchParams{
-			Conditions: filter,
-		},
-	}
-
-	var results []*DerivedMetric
-	moreItems := true
-	for moreItems {
-		resp, err := search.Execute()
-		if err != nil {
-			return nil, err
-		}
-		var tmpres []*DerivedMetric
-		err = json.Unmarshal(resp.Response.Items, &tmpres)
-		if err != nil {
-			return nil, err
-		}
-		results = append(results, tmpres...)
-		moreItems = resp.Response.MoreItems
-		search.Params.Offset = resp.NextOffset
-	}
-
-	return results, nil
+func (dm DerivedMetrics) Find(filter []*SearchCondition) (
+	results []*DerivedMetric, err error) {
+	err = doSearch(filter, "derivedmetric", dm.client, &results)
+	return
 }
 
 // Create a DerivedMetric, name, query, and minutes are required

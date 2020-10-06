@@ -1,7 +1,6 @@
 package wavefront
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -84,33 +83,10 @@ func (g UserGroups) Get(userGroup *UserGroup) error {
 
 // Find returns all UsersGroups filtered by the given search conditions.
 // If filter is nil, all UserGroups are returned.
-func (g UserGroups) Find(filter []*SearchCondition) ([]*UserGroup, error) {
-	search := &Search{
-		client: g.client,
-		Type:   "usergroup",
-		Params: &SearchParams{
-			Conditions: filter,
-		},
-	}
-
-	var results []*UserGroup
-	moreItems := true
-	for moreItems {
-		resp, err := search.Execute()
-		if err != nil {
-			return nil, err
-		}
-		var tmpres []*UserGroup
-		err = json.Unmarshal(resp.Response.Items, &tmpres)
-		if err != nil {
-			return nil, err
-		}
-		results = append(results, tmpres...)
-		moreItems = resp.Response.MoreItems
-		search.Params.Offset = resp.NextOffset
-	}
-
-	return results, nil
+func (g UserGroups) Find(filter []*SearchCondition) (
+	results []*UserGroup, err error) {
+	err = doSearch(filter, "usergroup", g.client, &results)
+	return
 }
 
 // Update does not support updating the users on the group

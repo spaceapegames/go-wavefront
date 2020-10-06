@@ -93,6 +93,14 @@ func (c *Client) ServiceAccounts() *ServiceAccounts {
 	return &ServiceAccounts{client: c}
 }
 
+// Find returns all service accounts filtered by the given search conditions.
+// If filter is nil, all service accounts are returned.
+func (s *ServiceAccounts) Find(filter []*SearchCondition) (
+	results []*ServiceAccount, err error) {
+	err = doSearch(filter, "serviceaccount", s.client, &results)
+	return
+}
+
 // GetByID returns the ServiceAccount with given ID. If no such
 // ServiceAccount exists, GetByID returns an error. The caller can call
 // NotFound on err to determine whether or not the error is because the

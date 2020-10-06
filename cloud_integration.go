@@ -1,7 +1,6 @@
 package wavefront
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 )
@@ -247,33 +246,10 @@ func (c *Client) CloudIntegrations() *CloudIntegrations {
 	return &CloudIntegrations{client: c}
 }
 
-func (ci CloudIntegrations) Find(filter []*SearchCondition) ([]*CloudIntegration, error) {
-	search := &Search{
-		client: ci.client,
-		Type:   "cloudintegration",
-		Params: &SearchParams{
-			Conditions: filter,
-		},
-	}
-
-	var results []*CloudIntegration
-	moreItems := true
-	for moreItems {
-		resp, err := search.Execute()
-		if err != nil {
-			return nil, err
-		}
-		var tmpres []*CloudIntegration
-		err = json.Unmarshal(resp.Response.Items, &tmpres)
-		if err != nil {
-			return nil, err
-		}
-		results = append(results, tmpres...)
-		moreItems = resp.Response.MoreItems
-		search.Params.Offset = resp.NextOffset
-	}
-
-	return results, nil
+func (ci CloudIntegrations) Find(filter []*SearchCondition) (
+	results []*CloudIntegration, err error) {
+	err = doSearch(filter, "cloudintegration", ci.client, &results)
+	return
 }
 
 // Get a CloudIntegration for a given ID

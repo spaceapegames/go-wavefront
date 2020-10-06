@@ -284,33 +284,10 @@ func (c *Client) Dashboards() *Dashboards {
 
 // Find returns all Dashboards filtered by the given search conditions.
 // If filter is nil, all Dashboards are returned.
-func (d Dashboards) Find(filter []*SearchCondition) ([]*Dashboard, error) {
-	search := &Search{
-		client: d.client,
-		Type:   "dashboard",
-		Params: &SearchParams{
-			Conditions: filter,
-		},
-	}
-
-	var results []*Dashboard
-	moreItems := true
-	for moreItems {
-		resp, err := search.Execute()
-		if err != nil {
-			return nil, err
-		}
-		var tmpres []*Dashboard
-		err = json.Unmarshal(resp.Response.Items, &tmpres)
-		if err != nil {
-			return nil, err
-		}
-		results = append(results, tmpres...)
-		moreItems = resp.Response.MoreItems
-		search.Params.Offset = resp.NextOffset
-	}
-
-	return results, nil
+func (d Dashboards) Find(filter []*SearchCondition) (
+	results []*Dashboard, err error) {
+	err = doSearch(filter, "dashboard", d.client, &results)
+	return
 }
 
 // Create is used to create an Dashboard in Wavefront.
