@@ -38,6 +38,45 @@ func (m MockSearchClient) Do(req *http.Request) (io.ReadCloser, error) {
 	return ioutil.NopCloser(bytes.NewReader(m.Response)), nil
 }
 
+func TestDefensiveCopy(t *testing.T) {
+	assert := asserts.New(t)
+	baseurl, _ := url.Parse("http://testing.wavefront.com")
+	response, err := ioutil.ReadFile("./fixtures/search-alert-response.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	client := &MockSearchClient{
+		Response: response,
+		T:        t,
+		Client: Client{
+			Config:     &Config{Token: "1234-5678-9977"},
+			BaseURL:    baseurl,
+			httpClient: http.DefaultClient,
+		},
+	}
+	sc := &SearchCondition{
+		Key:            "id",
+		Value:          "1234",
+		MatchingMethod: "EXACT",
+	}
+	searchParams := &SearchParams{
+		Conditions: []*SearchCondition{sc},
+	}
+	search := client.NewSearch("extlink", searchParams)
+
+	// This step is necessary because the above call injects the real client
+	// into 'search'. We want search to have our mock client instead
+	search.client = client
+
+	assert.NotSame(search.Params, searchParams)
+	_, err = search.Execute()
+	assert.NoError(err)
+	assert.Equal(0, searchParams.Limit)
+	assert.Equal(0, searchParams.Offset)
+	assert.Equal(0, search.Params.Limit)
+	assert.Equal(0, search.Params.Offset)
+}
+
 func TestSearch(t *testing.T) {
 	assert := asserts.New(t)
 	sc := &SearchCondition{

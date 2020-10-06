@@ -99,10 +99,11 @@ const baseSearchPath = "/api/v2/search"
 // searchType is the type of entity to be searched for (i.e. alert, event, dashboard,
 // extlink, cloudintegration etc.)
 func (c *Client) NewSearch(searchType string, params *SearchParams) *Search {
+	paramsCopy := *params
 	return &Search{
 		client:  c,
 		Type:    searchType,
-		Params:  params,
+		Params:  &paramsCopy,
 		Deleted: false,
 	}
 }
@@ -125,20 +126,22 @@ func NewTimeRange(endTime, period int64) (*TimeRange, error) {
 
 // Execute is used to carry out a search
 func (s *Search) Execute() (*SearchResponse, error) {
+	paramsCopy := *s.Params
 	// set defaults
-	if s.Params.Limit == 0 {
-		s.Params.Limit = 100
-	}
-
-	payload, err := json.Marshal(s.Params)
-	if err != nil {
-		return nil, err
+	if paramsCopy.Limit == 0 {
+		paramsCopy.Limit = 100
 	}
 
 	path := baseSearchPath + "/" + s.Type
 	if s.Deleted {
 		path += "/deleted"
 	}
+
+	payload, err := json.Marshal(&paramsCopy)
+	if err != nil {
+		return nil, err
+	}
+
 	req, err := s.client.NewRequest("POST", path, nil, payload)
 	if err != nil {
 		return nil, err
@@ -164,7 +167,7 @@ func (s *Search) Execute() (*SearchResponse, error) {
 	}
 
 	if searchResp.Response.MoreItems {
-		searchResp.NextOffset = s.Params.Offset + s.Params.Limit
+		searchResp.NextOffset = paramsCopy.Offset + paramsCopy.Limit
 	} else {
 		searchResp.NextOffset = 0
 	}
