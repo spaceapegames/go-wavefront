@@ -145,6 +145,9 @@ type Chart struct {
 
 	// ChartSettings are custom settings for the chart
 	ChartSettings ChartSetting `json:"chartSettings"`
+
+	// ChartAttributes is arbitrary JSON used to configure chart attributes
+	ChartAttributes json.RawMessage `json:"chartAttributes,omitempty"`
 }
 
 // Source represents a single Source for a Chart
