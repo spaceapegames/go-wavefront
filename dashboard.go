@@ -202,7 +202,7 @@ type ChartSetting struct {
 	ShowLabels                         bool      `json:"showLabels,omitempty"`
 	ShowRawValues                      bool      `json:"showRawValues,omitempty"`
 	SortValuesDescending               bool      `json:"sortValuesDescending,omitempty"`
-	SparklineDecimalPrecision          int       `json:"sparklineDecimalPrecision,omitempty"`
+	SparklineDecimalPrecision          int       `json:"sparklineDecimalPrecision"`
 	SparklineDisplayColor              string    `json:"sparklineDisplayColor,omitempty"`
 	SparklineDisplayFontSize           string    `json:"sparklineDisplayFontSize,omitempty"`
 	SparklineDisplayHorizontalPosition string    `json:"sparklineDisplayHorizontalPosition,omitempty"`
