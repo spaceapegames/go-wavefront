@@ -1,0 +1,18 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response":       {
+    "sampledUserAccounts": [],
+    "userAccountCount": 0,
+    "sampledServiceAccounts": [],
+    "serviceAccountCount": 0,
+    "name": "newname",
+    "id": "test-policy-1607616352537",
+    "customer": "test",
+    "lastUpdatedMs": 1607694702333,
+    "lastUpdatedAccountId": "example@wavefront.com"
+  }
+}

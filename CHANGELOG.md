@@ -2,6 +2,10 @@
 
 Changelog for go-wavefront-management-api.
 
+## [1.14.0]
+
+* Add support for ingestion policies
+
 ## [1.12.0]
 
 *Add IsLogIntegration field to ExternalLink type*
@@ -27,18 +31,18 @@ Bug fixes:
 
 ## [1.10.0]
 
-*Add support for Service Accounts* 
+*Add support for Service Accounts*
 
 ## [1.9.0]
 
-*Adds support for roles* 
+*Adds support for roles*
 
 ## [1.8.1]
 *Fixes dashboard taggging after creation by adding SetTags functionality*
 
 ## [1.8.0]
 
-*Add Support for CloudIntegrations*   
+*Add Support for CloudIntegrations*
  - CloudWatch
  - CloudTrail
  - EC2
@@ -49,14 +53,14 @@ Bug fixes:
  - Tesla
  - Azure
  - Azure Activity Log
-  
+
 *Add Support for Advanced Alert settings*
 
 - CheckingFrequencyInMinutes
 - EvaluateRealtimeData
 - IncludeObsoleteMetrics
 
-*Common client operations refactored into centralized location*  
+*Common client operations refactored into centralized location*
 *Added support for skipTrash*
 
 - Alerts
@@ -64,12 +68,12 @@ Bug fixes:
 - DerivedMetrics
 - CloudIntegrations
 
-*Fixed some failing tests*  
+*Fixed some failing tests*
 *Add Annotations field to Events*
 
 ## [1.7.3]
 
-- Fixing go.mod file 
+- Fixing go.mod file
 
 ## [1.7.2]
 

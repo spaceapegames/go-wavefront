@@ -1,0 +1,31 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "items": [
+      {
+        "sampledUserAccounts": [],
+        "userAccountCount": 0,
+        "sampledServiceAccounts": [],
+        "serviceAccountCount": 0,
+        "name": "test-policy",
+        "id": "someid",
+        "customer": "test",
+        "lastUpdatedMs": 1589893291432,
+        "lastUpdatedAccountId": "example@wavefront.com"
+      }
+    ],
+    "offset": 0,
+    "limit": 10,
+    "totalItems": 1,
+    "moreItems": false,
+    "sort": {
+      "ascending": true,
+      "field": "name",
+      "default": false
+    }
+  }
+}
