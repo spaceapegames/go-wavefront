@@ -6,42 +6,45 @@ Golang SDK for interacting with the Wavefront v2 API, and sending metrics throug
 
 ### API Client
 
-Presently support for:
- * Querying
- * Searching
- * Dashboard Management
- * Alert (and Alert Target) Management
- * Events Management
-
-Please see the [examples](examples) directory for an example on how to use each, or check out the [documentation](https://godoc.org/github.com/WavefrontHQ/go-wavefront-management-api).
+Supports most public API paths. Refer to the
+[documentation](https://pkg.go.dev/github.com/WavefrontHQ/go-wavefront-management-api)
+for further information.
 
 ```Go
 package main
 
 import (
+    "fmt"
     "log"
+    "os"
 
     wavefront "github.com/WavefrontHQ/go-wavefront-management-api"
 )
 
 func main() {
-    client, err := wavefront.NewClient{
+    client, err := wavefront.NewClient(
         &wavefront.Config{
-            Address: "test.wavefront.com",
-            Token:   "xxxx-xxxx-xxxx-xxxx-xxxx",
+            Address: os.Getenv("WAVEFRONT_ADDRESS"),
+            Token:     os.Getenv("WAVEFRONT_TOKEN"),
         },
-    }
+    )
 
     query := client.NewQuery(
         wavefront.NewQueryParams(`ts("cpu.load.1m.avg", dc=dc1)`),
     )
 
-    if result, err := query.Execute(); err != nil {
+    result, err := query.Execute()
+
+    if err != nil {
         log.Fatal(err)
     }
 
-    fmt.Println(result.TimeSeries[0].Label)
-    fmt.Println(result.TimeSeries[0].DataPoints[0])
+    if len(result.TimeSeries) > 0 {
+        fmt.Println(result.TimeSeries[0].Label)
+        fmt.Println(result.TimeSeries[0].DataPoints[0])
+    } else {
+        fmt.Println("No matching data.")
+    }
 }
 ```
 
