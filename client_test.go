@@ -299,6 +299,18 @@ func TestHttpConnection(t *testing.T) {
 	assert.Equal("http://localhost:8080/api/v2/", client.BaseURL.String())
 }
 
+func TestHttpInDomain(t *testing.T) {
+	assert := asserts.New(t)
+	config := &Config{
+		Address:       "httpserver.com",
+		Token:         "987654321",
+		SkipTLSVerify: true,
+	}
+	client, err := NewClient(config)
+	assert.NoError(err)
+	assert.Equal("https://httpserver.com/api/v2/", client.BaseURL.String())
+}
+
 func TestDoRest_DirectResponse(t *testing.T) {
 	responseStr := `
 {

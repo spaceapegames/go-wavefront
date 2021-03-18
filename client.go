@@ -62,7 +62,7 @@ type Client struct {
 }
 
 func fixAddress(address string) string {
-	if !strings.HasPrefix(address, "http") {
+	if !strings.HasPrefix(address, "http://") && !strings.HasPrefix(address, "https://") {
 		address = "https://" + address
 	}
 	return address + "/api/v2/"
