@@ -280,10 +280,23 @@ func TestConfigDefensiveCopy(t *testing.T) {
 		Token:         "123456789",
 		SkipTLSVerify: true,
 	}
-	client, _ := NewClient(config)
+	client, err := NewClient(config)
+	assert.NoError(err)
 	assert.NotSame(config, client.Config)
 	assert.Equal("somehost.wavefront.com", client.Config.Address)
 	assert.Equal("123456789", client.Config.Token)
+}
+
+func TestHttpConnection(t *testing.T) {
+	assert := asserts.New(t)
+	config := &Config{
+		Address:       "http://localhost:8080",
+		Token:         "987654321",
+		SkipTLSVerify: true,
+	}
+	client, err := NewClient(config)
+	assert.NoError(err)
+	assert.Equal("http://localhost:8080/api/v2/", client.BaseURL.String())
 }
 
 func TestDoRest_DirectResponse(t *testing.T) {

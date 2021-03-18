@@ -14,6 +14,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"reflect"
+	"strings"
 	"time"
 )
 
@@ -26,7 +27,8 @@ type Wavefronter interface {
 
 // Config is used to hold configuration used when constructing a Client
 type Config struct {
-	// Address is the address of the Wavefront API, of the form example.wavefront.com
+	// Address is the address of the Wavefront API, of the form
+	// example.wavefront.com or http://localhost:8080.
 	Address string
 
 	// Token is an authentication token that will be passed with all requests
@@ -59,9 +61,16 @@ type Client struct {
 	debug bool
 }
 
+func fixAddress(address string) string {
+	if !strings.HasPrefix(address, "http") {
+		address = "https://" + address
+	}
+	return address + "/api/v2/"
+}
+
 // NewClient returns a new Wavefront client according to the given Config
 func NewClient(config *Config) (*Client, error) {
-	baseURL, err := url.Parse("https://" + config.Address + "/api/v2/")
+	baseURL, err := url.Parse(fixAddress(config.Address))
 	if err != nil {
 		return nil, err
 	}
