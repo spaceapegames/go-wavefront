@@ -1,6 +1,6 @@
 # Golang Wavefront Client
 
-Golang SDK for interacting with the Wavefront v2 API, and sending metrics through a Wavefront proxy.
+Golang SDK for interacting with the Wavefront v2 REST API, and sending metrics through a Wavefront proxy.
 
 ## Usage
 
