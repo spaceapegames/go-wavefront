@@ -1,0 +1,33 @@
+{
+  "status": {
+    "result": "OK",
+    "message": "",
+    "code": 200
+  },
+  "response": {
+    "policyRules": [
+      {
+        "accounts": [],
+        "userGroups": [
+          {
+            "name": "Everyone",
+            "id": "8bcffe68-5fcb-47fa-b935-ba7bc102b9a7",
+            "description": "System group which contains all users"
+          }
+        ],
+        "roles": [],
+        "name": "Allow All Metrics",
+        "tags": [],
+        "description": "Predefined policy rule. Allows access to all metrics (timeseries, histograms, and counters) for all accounts. If this rule is removed, all accounts can access all metrics if there are no matching blocking rules.",
+        "prefixes": [
+          "*"
+        ],
+        "tagsAnded": false,
+        "accessType": "ALLOW"
+      }
+    ],
+    "customer": "example",
+    "updaterId": "system",
+    "updatedEpochMillis": 1603762170831
+  }
+}

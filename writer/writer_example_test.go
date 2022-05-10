@@ -12,7 +12,7 @@ func ExampleWriter() {
 	// create a Writer with the source = hostname and
 	// with all metrics exhibiting the tag environment=staging
 	tags := []*wavefront.PointTag{
-		&wavefront.PointTag{
+		{
 			Key:   "environment",
 			Value: "staging",
 		},

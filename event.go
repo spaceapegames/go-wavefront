@@ -120,12 +120,11 @@ func (e Events) Find(filter []*SearchCondition, timeRange *TimeRange) ([]*Event,
 // FindByID returns the Event with the Wavefront-assigned ID.
 // If not found an error is returned
 func (e Events) FindByID(id string) (*Event, error) {
-	res, err := e.Find([]*SearchCondition{
-		&SearchCondition{
-			Key:            "id",
-			Value:          id,
-			MatchingMethod: "EXACT",
-		},
+	res, err := e.Find([]*SearchCondition{{
+		Key:            "id",
+		Value:          id,
+		MatchingMethod: "EXACT",
+	},
 	}, nil)
 
 	if err != nil {
