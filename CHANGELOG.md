@@ -2,6 +2,10 @@
 
 Changelog for go-wavefront-management-api.
 
+## [1.15.0]
+
+* Support for Metrics Policy GET & PUT APIs 
+
 ## [1.14.0]
 
 * Add support for ingestion policies
