@@ -101,7 +101,7 @@ type TimeSeries struct {
 const (
 	baseQueryPath = "/api/v2/chart/api"
 	// some constants provided for time convenience
-	LastHour    = 60 * 60
+	LastHour    = 60 * 60 * 1000
 	Last3Hours  = LastHour * 3
 	Last6Hours  = LastHour * 6
 	Last24Hours = LastHour * 24
@@ -112,7 +112,7 @@ const (
 // NewQueryParams takes a query string and returns a set of QueryParams with
 // a query window of one hour since now and a set of sensible default vakues
 func NewQueryParams(query string) *QueryParams {
-	endTime := time.Now().Unix()
+	endTime := time.Now().UnixMilli()
 	startTime := endTime - LastHour
 	return &QueryParams{
 		QueryString: query,
@@ -124,7 +124,7 @@ func NewQueryParams(query string) *QueryParams {
 }
 
 func NewQueryParamsNoStrict(query string) *QueryParams {
-	endTime := time.Now().Unix()
+	endTime := time.Now().UnixMilli()
 	startTime := endTime - LastHour
 	return &QueryParams{
 		QueryString: query,
@@ -202,13 +202,13 @@ func (q *Query) SetStartTime(seconds int64) error {
 	if err != nil {
 		return err
 	}
-	q.Params.StartTime = strconv.FormatInt(int64(end)-seconds, 10)
+	q.Params.StartTime = strconv.FormatInt(int64(end)-(seconds*1000), 10)
 	return nil
 }
 
 // SetEndTime sets the time at which the query should end
 func (q *Query) SetEndTime(endTime time.Time) {
-	q.Params.EndTime = strconv.FormatInt(endTime.Unix(), 10)
+	q.Params.EndTime = strconv.FormatInt(endTime.UnixMilli(), 10)
 }
 
 func (qr *QueryResponse) UnmarshalJSON(data []byte) error {
